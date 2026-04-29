@@ -55,7 +55,8 @@ public class SearchResultView {
             .margin(left: 10, right: 10, top: 10)
             .width(95.percent)
 
-            Text("搜索 ${searchQuery} 共 ${results.size} 件商品")
+            Text("搜索 ${searchQuery} 共" +
+                " ${results.size} 件商品")
                 .fontSize(12).fontColor(0x999999)
                 .margin(left: 16, top: 8, bottom: 8)
                 .width(100.percent)

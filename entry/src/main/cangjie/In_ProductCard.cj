@@ -21,8 +21,7 @@ public class ProductCard {
                 Column {
                     Text(item.title).fontSize(16)
                         .fontWeight(FontWeight.Medium)
-                        .fontColor(0x333333)
-                        .maxLines(2)
+                        .fontColor(0x333333).maxLines(2)
                         .textOverflow(TextOverflow.Ellipsis)
                         .margin(bottom: 8)
                     Row {
@@ -30,10 +29,10 @@ public class ProductCard {
                             .fontWeight(FontWeight.Bold)
                             .fontColor(0xFFFF4444)
                         Blank().width(12)
-                        Text("喜欢${item.loves}").fontSize(12)
+                        Text("喜欢${item.loves}")
+                            .fontSize(12)
                             .fontColor(0x999999)
                     }.margin(bottom: 8)
-
                     Button() {
                         Text("查看详情").fontSize(9)
                             .fontColor(0xFF4CAF50)

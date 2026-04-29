@@ -22,7 +22,8 @@ public class CategoryPage {
                 count++
             }
         }
-        var result = Array<ProductItem>(count, {i => allProducts[0]})
+        var result = Array<ProductItem>(
+            count, {i => allProducts[0]})
         var idx = 0
         for (product in allProducts) {
             if (product.category == selectedCategory) {
@@ -46,7 +47,8 @@ public class CategoryPage {
                 .onClick { evt => onBack() }
 
                 Text("商品分类 - ${selectedCategory}")
-                    .fontSize(18).fontWeight(FontWeight.Bold)
+                    .fontSize(18)
+                    .fontWeight(FontWeight.Bold)
                     .margin(left: 8)
             }
             .width(100.percent).height(48)
@@ -58,23 +60,26 @@ public class CategoryPage {
                         ForEach(
                             getFilteredProducts(),
                             itemGeneratorFunc: {
-                                item: ProductItem, index: Int64 =>
+                                item: ProductItem,
+                                index: Int64 =>
                                 ProductCard(
                                     item: item,
                                     onShowDetail: {
-                                        product => onShowDetail(product)
-                                    }
+                                        p =>
+                                        onShowDetail(p) }
                                 )
                             },
                             keyGeneratorFunc: {
-                                item: ProductItem, index: Int64 =>
+                                item: ProductItem,
+                                index: Int64 =>
                                 index.toString()
                             }
                         )
                     } else {
                         Column {
                             Text("暂无商品")
-                                .fontSize(14).fontColor(0x999999)
+                                .fontSize(14)
+                                .fontColor(0x999999)
                         }
                         .width(100.percent).height(200)
                         .justifyContent(FlexAlign.Center)

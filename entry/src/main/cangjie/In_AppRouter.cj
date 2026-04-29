@@ -32,11 +32,11 @@ public class AppRouter {
         ProductItem(@r(app.media.pdt_camera),
             "佳能EOSM50", 1680, 23, "电子数码"),
         ProductItem(@r(app.media.pdt_lamp),
-            "护眼台灯可调光", 45, 12, "生活用品"),
+            "护眼台灯", 45, 12, "生活用品"),
         ProductItem(@r(app.media.pdt_bike),
             "捷安特山地车", 320, 1, "运动户外"),
         ProductItem(@r(app.media.pdt_camera),
-            "索尼A6000微单", 2200, 56, "电子数码"),
+            "索尼A6000", 2200, 56, "电子数码"),
         ProductItem(@r(app.media.pdt_bike),
             "美利达公爵600", 800, 15, "运动户外"),
         ProductItem(@r(app.media.pdt_lamp),
@@ -46,11 +46,11 @@ public class AppRouter {
         ProductItem(@r(app.media.pdt_bike),
             "折叠滑板车", 650, 42, "运动户外"),
         ProductItem(@r(app.media.pdt_lamp),
-            "USB充电小夜灯", 25, 156, "生活用品"),
+            "USB小夜灯", 25, 156, "生活用品"),
         ProductItem(@r(app.media.pdt_camera),
             "GoPro运动相机", 1500, 9, "电子数码"),
         ProductItem(@r(app.media.pdt_bike),
-            "瑜伽垫加厚", 68, 88, "运动户外"),
+            "瑜伽垫", 68, 88, "运动户外"),
         ProductItem(@r(app.media.pdt_lamp),
             "酷毙灯磁吸款", 39, 203, "生活用品"),
         ProductItem(@r(app.media.pdt_camera),
@@ -130,33 +130,39 @@ public class AppRouter {
                     Text("欢迎回来").fontSize(40.fp)
                         .fontWeight(FontWeight.Bold)
                         .margin(bottom: 16)
-                    Text("登录你的账号").fontSize(18.fp)
+                    Text("登录你的账号")
+                        .fontSize(18.fp)
                         .fontColor(0x999999)
                         .margin(bottom: 48)
                     TextInput(text: loginUsername,
                         placeholder: "请输入账号")
-                        .fontSize(18.fp).width(100.percent)
-                        .height(56).margin(bottom: 20)
+                        .fontSize(18.fp)
+                        .width(100.percent).height(56)
+                        .margin(bottom: 20)
                     TextInput(text: loginPassword,
                         placeholder: "请输入密码")
-                        .fontSize(18.fp).width(100.percent)
-                        .height(56).margin(bottom: 32)
-                    Text("忘记密码?").fontSize(16.fp)
+                        .fontSize(18.fp)
+                        .width(100.percent).height(56)
+                        .margin(bottom: 32)
+                    Text("忘记密码?")
+                        .fontSize(16.fp)
                         .fontColor(0x999999)
                         .margin(bottom: 40)
                     Button() {
-                        Row() {
-                            Text("登录").fontSize(20.fp)
-                                .fontColor(Color.WHITE) } }
+                        Row() { Text("登录")
+                            .fontSize(20.fp)
+                            .fontColor(Color.WHITE) } }
                     .width(100.percent).height(56)
                     .borderRadius(28)
                     .backgroundColor(0xFF13A56F)
                     .onClick{evt => onLoginSuccess()}
                     .margin(bottom: 32)
                     Row() {
-                        Text("还没有账号？").fontSize(16.fp)
+                        Text("还没有账号？")
+                            .fontSize(16.fp)
                             .fontColor(0x999999)
-                        Text("去注册").fontSize(16.fp)
+                        Text("去注册")
+                            .fontSize(16.fp)
                             .fontColor(0x41AE3C) }
                     .onClick{
                         evt => showRegisterPanel = true }
@@ -167,21 +173,24 @@ public class AppRouter {
                     Text("创建账户").fontSize(40.fp)
                         .fontWeight(FontWeight.Bold)
                         .margin(bottom: 16)
-                    Text("注册新账号").fontSize(18.fp)
+                    Text("注册新账号")
+                        .fontSize(18.fp)
                         .fontColor(0x999999)
                         .margin(bottom: 40)
                     TextInput(text: registerUsername,
                         placeholder: "请输入账号")
-                        .fontSize(18.fp).width(100.percent)
-                        .height(56).margin(bottom: 20)
+                        .fontSize(18.fp)
+                        .width(100.percent).height(56)
+                        .margin(bottom: 20)
                     TextInput(text: registerPassword,
                         placeholder: "请输入密码")
-                        .fontSize(18.fp).width(100.percent)
-                        .height(56).margin(bottom: 32)
+                        .fontSize(18.fp)
+                        .width(100.percent).height(56)
+                        .margin(bottom: 32)
                     Button() {
-                        Row() {
-                            Text("注册").fontSize(20.fp)
-                                .fontColor(Color.WHITE) } }
+                        Row() { Text("注册")
+                            .fontSize(20.fp)
+                            .fontColor(Color.WHITE) } }
                     .width(100.percent).height(56)
                     .borderRadius(28)
                     .backgroundColor(0xFF13A56F)
@@ -189,9 +198,11 @@ public class AppRouter {
                         evt => onRegisterSuccess() }
                     .margin(bottom: 32)
                     Row() {
-                        Text("已有账号？").fontSize(16.fp)
+                        Text("已有账号？")
+                            .fontSize(16.fp)
                             .fontColor(0x999999)
-                        Text("去登录").fontSize(16.fp)
+                        Text("去登录")
+                            .fontSize(16.fp)
                             .fontColor(0x41AE3C) }
                     .onClick{
                         evt => showRegisterPanel = false }
@@ -224,7 +235,9 @@ public class AppRouter {
             } else if (showProductDetail) {
                 ProductDetail(
                     item: detailProduct,
-                    description: "卖家自用九成新,功能完好，配件齐全，支持自提或邮寄。",
+                    description: "卖家自用九成新," +
+                        "功能完好，配件齐全，" +
+                        "支持自提或邮寄。",
                     onBack: { => onBackFromDetail() }
                 )
             } else if (showLostDetail) {

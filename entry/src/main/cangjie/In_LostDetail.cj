@@ -85,7 +85,8 @@ public class LostDetail {
                 .fontColor(0x333333)
                 .margin(left: 16, top: 16)
 
-            Text("请联系失主确认物品特征,约定归还方式。")
+            Text("请联系失主确认物品特征," +
+                "约定归还方式。")
                 .fontSize(14).fontColor(0x666666)
                 .margin(left: 16, right: 16, top: 8)
                 .lineHeight(22)
