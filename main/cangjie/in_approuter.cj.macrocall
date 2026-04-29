@@ -1,0 +1,472 @@
+package ohos_app_cangjie_entry
+
+internal import ohos.base.*
+internal import ohos.component.*
+internal import ohos.state_manage.*
+import ohos.state_macro_manage.*
+
+/* ===== Emitted by MacroCall @Entry in in_approuter.cj:8:1 ===== */
+/* 8.1 */public class AppRouter <: CustomView {
+/* 8.2 */    private var stateVarDecl_routeIndex_: ObservedProperty < Int >= ObservedProperty < Int >("stateVarDecl_routeIndex_", 0)
+/* 8.3 */    private mut prop routeIndex: Int {
+/* 8.4 */        get() {
+/* 8.5 */            return this.stateVarDecl_routeIndex_.get()
+/* 8.6 */        }
+/* 8.7 */        set(v) {
+/* 8.8 */            this.stateVarDecl_routeIndex_.set(v)
+/* 8.9 */        }
+/* 8.10 */    }
+/* 8.11 */    private var stateVarDecl_loginUsername_: ObservedProperty < String >= ObservedProperty < String >("stateVarDecl_loginUsername_", "")
+/* 8.12 */    private mut prop loginUsername: String {
+/* 8.13 */        get() {
+/* 8.14 */            return this.stateVarDecl_loginUsername_.get()
+/* 8.15 */        }
+/* 8.16 */        set(v) {
+/* 8.17 */            this.stateVarDecl_loginUsername_.set(v)
+/* 8.18 */        }
+/* 8.19 */    }
+/* 8.20 */    private var stateVarDecl_loginPassword_: ObservedProperty < String >= ObservedProperty < String >("stateVarDecl_loginPassword_", "")
+/* 8.21 */    private mut prop loginPassword: String {
+/* 8.22 */        get() {
+/* 8.23 */            return this.stateVarDecl_loginPassword_.get()
+/* 8.24 */        }
+/* 8.25 */        set(v) {
+/* 8.26 */            this.stateVarDecl_loginPassword_.set(v)
+/* 8.27 */        }
+/* 8.28 */    }
+/* 8.29 */    private var stateVarDecl_registerUsername_: ObservedProperty < String >= ObservedProperty < String >("stateVarDecl_registerUsername_", "")
+/* 8.30 */    private mut prop registerUsername: String {
+/* 8.31 */        get() {
+/* 8.32 */            return this.stateVarDecl_registerUsername_.get()
+/* 8.33 */        }
+/* 8.34 */        set(v) {
+/* 8.35 */            this.stateVarDecl_registerUsername_.set(v)
+/* 8.36 */        }
+/* 8.37 */    }
+/* 8.38 */    private var stateVarDecl_registerPassword_: ObservedProperty < String >= ObservedProperty < String >("stateVarDecl_registerPassword_", "")
+/* 8.39 */    private mut prop registerPassword: String {
+/* 8.40 */        get() {
+/* 8.41 */            return this.stateVarDecl_registerPassword_.get()
+/* 8.42 */        }
+/* 8.43 */        set(v) {
+/* 8.44 */            this.stateVarDecl_registerPassword_.set(v)
+/* 8.45 */        }
+/* 8.46 */    }
+/* 8.47 */    private var stateVarDecl_showRegisterPanel_: ObservedProperty < Bool >= ObservedProperty < Bool >("stateVarDecl_showRegisterPanel_", false)
+/* 8.48 */    private mut prop showRegisterPanel: Bool {
+/* 8.49 */        get() {
+/* 8.50 */            return this.stateVarDecl_showRegisterPanel_.get()
+/* 8.51 */        }
+/* 8.52 */        set(v) {
+/* 8.53 */            this.stateVarDecl_showRegisterPanel_.set(v)
+/* 8.54 */        }
+/* 8.55 */    }
+/* 8.56 */    private var stateVarDecl_showSearchResult_: ObservedProperty < Bool >= ObservedProperty < Bool >("stateVarDecl_showSearchResult_", false)
+/* 8.57 */    private mut prop showSearchResult: Bool {
+/* 8.58 */        get() {
+/* 8.59 */            return this.stateVarDecl_showSearchResult_.get()
+/* 8.60 */        }
+/* 8.61 */        set(v) {
+/* 8.62 */            this.stateVarDecl_showSearchResult_.set(v)
+/* 8.63 */        }
+/* 8.64 */    }
+/* 8.65 */    private var stateVarDecl_searchQuery_: ObservedProperty < String >= ObservedProperty < String >("stateVarDecl_searchQuery_", "")
+/* 8.66 */    private mut prop searchQuery: String {
+/* 8.67 */        get() {
+/* 8.68 */            return this.stateVarDecl_searchQuery_.get()
+/* 8.69 */        }
+/* 8.70 */        set(v) {
+/* 8.71 */            this.stateVarDecl_searchQuery_.set(v)
+/* 8.72 */        }
+/* 8.73 */    }
+/* 8.74 */    private var stateVarDecl_showProductDetail_: ObservedProperty < Bool >= ObservedProperty < Bool >("stateVarDecl_showProductDetail_", false)
+/* 8.75 */    private mut prop showProductDetail: Bool {
+/* 8.76 */        get() {
+/* 8.77 */            return this.stateVarDecl_showProductDetail_.get()
+/* 8.78 */        }
+/* 8.79 */        set(v) {
+/* 8.80 */            this.stateVarDecl_showProductDetail_.set(v)
+/* 8.81 */        }
+/* 8.82 */    }
+/* 8.83 */    private var stateVarDecl_detailProduct_: ObservedProperty < ProductItem >= ObservedProperty < ProductItem >("stateVarDecl_detailProduct_", ProductItem(__GenerateResource__("", "", "", app.media.pdt_camera, "app.media.pdt_camera",[], 20000), "", 0, 0, ""))
+/* 8.84 */    private mut prop detailProduct: ProductItem {
+/* 8.85 */        get() {
+/* 8.86 */            return this.stateVarDecl_detailProduct_.get()
+/* 8.87 */        }
+/* 8.88 */        set(v) {
+/* 8.89 */            this.stateVarDecl_detailProduct_.set(v)
+/* 8.90 */        }
+/* 8.91 */    }
+/* 8.92 */    private var stateVarDecl_showLostDetail_: ObservedProperty < Bool >= ObservedProperty < Bool >("stateVarDecl_showLostDetail_", false)
+/* 8.93 */    private mut prop showLostDetail: Bool {
+/* 8.94 */        get() {
+/* 8.95 */            return this.stateVarDecl_showLostDetail_.get()
+/* 8.96 */        }
+/* 8.97 */        set(v) {
+/* 8.98 */            this.stateVarDecl_showLostDetail_.set(v)
+/* 8.99 */        }
+/* 8.100 */    }
+/* 8.101 */    private var stateVarDecl_detailLostItem_: ObservedProperty < LostItem >= ObservedProperty < LostItem >("stateVarDecl_detailLostItem_", LostItem(__GenerateResource__("", "", "", app.media.lost_bag, "app.media.lost_bag",[], 20000), "", "", "", "", ""))
+/* 8.102 */    private mut prop detailLostItem: LostItem {
+/* 8.103 */        get() {
+/* 8.104 */            return this.stateVarDecl_detailLostItem_.get()
+/* 8.105 */        }
+/* 8.106 */        set(v) {
+/* 8.107 */            this.stateVarDecl_detailLostItem_.set(v)
+/* 8.108 */        }
+/* 8.109 */    }
+/* 8.110 */    private var stateVarDecl_showCategory_: ObservedProperty < Bool >= ObservedProperty < Bool >("stateVarDecl_showCategory_", false)
+/* 8.111 */    private mut prop showCategory: Bool {
+/* 8.112 */        get() {
+/* 8.113 */            return this.stateVarDecl_showCategory_.get()
+/* 8.114 */        }
+/* 8.115 */        set(v) {
+/* 8.116 */            this.stateVarDecl_showCategory_.set(v)
+/* 8.117 */        }
+/* 8.118 */    }
+/* 8.119 */    private var stateVarDecl_selectedCategory_: ObservedProperty < String >= ObservedProperty < String >("stateVarDecl_selectedCategory_", "")
+/* 8.120 */    private mut prop selectedCategory: String {
+/* 8.121 */        get() {
+/* 8.122 */            return this.stateVarDecl_selectedCategory_.get()
+/* 8.123 */        }
+/* 8.124 */        set(v) {
+/* 8.125 */            this.stateVarDecl_selectedCategory_.set(v)
+/* 8.126 */        }
+/* 8.127 */    }
+/* 8.128 */    private var stateVarDecl_sampleProducts_: ObservedProperty < Array < ProductItem >>= ObservedProperty < Array < ProductItem >>("stateVarDecl_sampleProducts_", Array([ProductItem(__GenerateResource__("", "", "", app.media.pdt_camera, "app.media.pdt_camera",[], 20000), "佳能EOSM50", 1680, 23, "电子数码"), ProductItem(__GenerateResource__("", "", "", app.media.pdt_lamp, "app.media.pdt_lamp",[], 20000), "护眼台灯可调光", 45, 12, "生活用品"), ProductItem(__GenerateResource__("", "", "", app.media.pdt_bike, "app.media.pdt_bike",[], 20000), "捷安特山地车", 320, 1, "运动户外"), ProductItem(__GenerateResource__("", "", "", app.media.pdt_camera, "app.media.pdt_camera",[], 20000), "索尼A6000微单", 2200, 56, "电子数码"), ProductItem(__GenerateResource__("", "", "", app.media.pdt_bike, "app.media.pdt_bike",[], 20000), "美利达公爵600", 800, 15, "运动户外"), ProductItem(__GenerateResource__("", "", "", app.media.pdt_lamp, "app.media.pdt_lamp",[], 20000), "小米台灯Pro", 189, 32, "生活用品"), ProductItem(__GenerateResource__("", "", "", app.media.pdt_camera, "app.media.pdt_camera",[], 20000), "富士拍立得", 499, 78, "电子数码"), ProductItem(__GenerateResource__("", "", "", app.media.pdt_bike, "app.media.pdt_bike",[], 20000), "折叠滑板车", 650, 42, "运动户外"), ProductItem(__GenerateResource__("", "", "", app.media.pdt_lamp, "app.media.pdt_lamp",[], 20000), "USB充电小夜灯", 25, 156, "生活用品"), ProductItem(__GenerateResource__("", "", "", app.media.pdt_camera, "app.media.pdt_camera",[], 20000), "GoPro运动相机", 1500, 9, "电子数码"), ProductItem(__GenerateResource__("", "", "", app.media.pdt_bike, "app.media.pdt_bike",[], 20000), "瑜伽垫加厚", 68, 88, "运动户外"), ProductItem(__GenerateResource__("", "", "", app.media.pdt_lamp, "app.media.pdt_lamp",[], 20000), "酷毙灯磁吸款", 39, 203, "生活用品"), ProductItem(__GenerateResource__("", "", "", app.media.pdt_camera, "app.media.pdt_camera",[], 20000), "AirPodsPro", 1299, 334, "电子数码"), ProductItem(__GenerateResource__("", "", "", app.media.pdt_bike, "app.media.pdt_bike",[], 20000), "哑铃套装20kg", 168, 55, "运动户外"), ProductItem(__GenerateResource__("", "", "", app.media.pdt_lamp, "app.media.pdt_lamp",[], 20000), "LED护眼台灯", 128, 67, "生活用品")]))
+/* 8.129 */    private mut prop sampleProducts: Array < ProductItem > {
+/* 8.130 */        get() {
+/* 8.131 */            return this.stateVarDecl_sampleProducts_.get()
+/* 8.132 */        }
+/* 8.133 */        set(v) {
+/* 8.134 */            this.stateVarDecl_sampleProducts_.set(v)
+/* 8.135 */        }
+/* 8.136 */    }
+/* 8.137 */    func onSearch(query: String) {
+/* 8.138 */        searchQuery = query
+/* 8.139 */        showSearchResult = true
+/* 8.140 */    }
+/* 8.141 */    func onBackFromSearch() {
+/* 8.142 */        showSearchResult = false
+/* 8.143 */        searchQuery = ""
+/* 8.144 */    }
+/* 8.145 */    func onShowDetail(item: ProductItem) {
+/* 8.146 */        detailProduct = item
+/* 8.147 */        showProductDetail = true
+/* 8.148 */    }
+/* 8.149 */    func onBackFromDetail() {
+/* 8.150 */        showProductDetail = false
+/* 8.151 */    }
+/* 8.152 */    func onShowLostDetail(item: LostItem) {
+/* 8.153 */        detailLostItem = item
+/* 8.154 */        showLostDetail = true
+/* 8.155 */    }
+/* 8.156 */    func onBackFromLostDetail() {
+/* 8.157 */        showLostDetail = false
+/* 8.158 */    }
+/* 8.159 */    func onCategoryClick(category: String) {
+/* 8.160 */        selectedCategory = category
+/* 8.161 */        showCategory = true
+/* 8.162 */    }
+/* 8.163 */    func onBackFromCategory() {
+/* 8.164 */        showCategory = false
+/* 8.165 */        selectedCategory = ""
+/* 8.166 */    }
+/* 8.167 */    func getSearchResults(): Array < ProductItem > {
+/* 8.168 */        if(searchQuery == "") {
+/* 8.169 */            return sampleProducts
+/* 8.170 */        }
+/* 8.171 */        var count = 0
+/* 8.172 */        for(item in sampleProducts) {
+/* 8.173 */            if(item.title.contains(searchQuery)) {
+/* 8.174 */                count ++
+/* 8.175 */            }
+/* 8.176 */        }
+/* 8.177 */        var result = Array < ProductItem >(count, { i => sampleProducts[0] })
+/* 8.178 */        var idx = 0
+/* 8.179 */        for(item in sampleProducts) {
+/* 8.180 */            if(item.title.contains(searchQuery)) {
+/* 8.181 */                result[idx] = item
+/* 8.182 */                idx ++
+/* 8.183 */            }
+/* 8.184 */        }
+/* 8.185 */        return result
+/* 8.186 */    }
+/* 8.187 */    func onRegisterClick() {
+/* 8.188 */        AppLog.info("Register clicked")
+/* 8.189 */    }
+/* 8.190 */    func onLoginSuccess() {
+/* 8.191 */        routeIndex = 1
+/* 8.192 */    }
+/* 8.193 */    func onRegisterSuccess() {
+/* 8.194 */        AppLog.info("Registration successful:${registerUsername}")
+/* 8.195 */        loginUsername = registerUsername
+/* 8.196 */        loginPassword = ""
+/* 8.197 */        showRegisterPanel = false
+/* 8.198 */    }
+/* 8.199 */    func renderAuthPanel(thisView: CustomView): ViewBuilder {
+/* 8.200 */        func renderAuthPanel__inner__(thisView: CustomView): Unit {
+/* 8.201 */            thisView.observeComponentCreation({ elmtId, isInitialRender => Stack() { thisView.observeComponentCreation({ elmtId, isInitialRender => If { if(! showRegisterPanel) {
+/* 8.202 */                thisView.ifElseBranchUpdateFunction(0, { => thisView.observeComponentCreation({ elmtId, isInitialRender => Column() { thisView.observeComponentCreation({ elmtId, isInitialRender => Text("欢迎回来").fontSize(40.fp).fontWeight(FontWeight.Bold).margin(bottom: 16) })
+/* 8.203 */                thisView.observeComponentCreation({ elmtId, isInitialRender => Text("登录你的账号").fontSize(18.fp).fontColor(0x999999).margin(bottom: 48) })
+/* 8.204 */                thisView.observeComponentCreation({ elmtId, isInitialRender => TextInput(text: loginUsername, placeholder: "请输入账号").fontSize(18.fp).width(100.percent).height(56).margin(bottom: 20) })
+/* 8.205 */                thisView.observeComponentCreation({ elmtId, isInitialRender => TextInput(text: loginPassword, placeholder: "请输入密码").fontSize(18.fp).width(100.percent).height(56).margin(bottom: 32) })
+/* 8.206 */                thisView.observeComponentCreation({ elmtId, isInitialRender => Text("忘记密码?").fontSize(16.fp).fontColor(0x999999).margin(bottom: 40) })
+/* 8.207 */                thisView.observeComponentCreation({ elmtId, isInitialRender => Button() { thisView.observeComponentCreation({ elmtId, isInitialRender => Row() { thisView.observeComponentCreation({ elmtId, isInitialRender => Text("登录").fontSize(20.fp).fontColor(Color.WHITE) }) } }) }.width(100.percent).height(56).borderRadius(28).backgroundColor(0xFF13A56F).onClick { evt => onLoginSuccess() }.margin(bottom: 32) })
+/* 8.208 */                thisView.observeComponentCreation({ elmtId, isInitialRender => Row() { thisView.observeComponentCreation({ elmtId, isInitialRender => Text("还没有账号？").fontSize(16.fp).fontColor(0x999999) })
+/* 8.209 */                thisView.observeComponentCreation({ elmtId, isInitialRender => Text("去注册").fontSize(16.fp).fontColor(0x41AE3C) }) }.onClick { evt => showRegisterPanel = true } }) }.width(100.percent).height(100.percent).backgroundColor(Color.WHITE).padding(32) }) })
+/* 8.210 */            }
+/* 8.211 */            else {
+/* 8.212 */                thisView.ifElseBranchUpdateFunction(1, { => thisView.observeComponentCreation({ elmtId, isInitialRender => Column() { thisView.observeComponentCreation({ elmtId, isInitialRender => Text("创建账户").fontSize(40.fp).fontWeight(FontWeight.Bold).margin(bottom: 16) })
+/* 8.213 */                thisView.observeComponentCreation({ elmtId, isInitialRender => Text("注册新账号").fontSize(18.fp).fontColor(0x999999).margin(bottom: 40) })
+/* 8.214 */                thisView.observeComponentCreation({ elmtId, isInitialRender => TextInput(text: registerUsername, placeholder: "请输入账号").fontSize(18.fp).width(100.percent).height(56).margin(bottom: 20) })
+/* 8.215 */                thisView.observeComponentCreation({ elmtId, isInitialRender => TextInput(text: registerPassword, placeholder: "请输入密码").fontSize(18.fp).width(100.percent).height(56).margin(bottom: 32) })
+/* 8.216 */                thisView.observeComponentCreation({ elmtId, isInitialRender => Button() { thisView.observeComponentCreation({ elmtId, isInitialRender => Row() { thisView.observeComponentCreation({ elmtId, isInitialRender => Text("注册").fontSize(20.fp).fontColor(Color.WHITE) }) } }) }.width(100.percent).height(56).borderRadius(28).backgroundColor(0xFF13A56F).onClick { evt => onRegisterSuccess() }.margin(bottom: 32) })
+/* 8.217 */                thisView.observeComponentCreation({ elmtId, isInitialRender => Row() { thisView.observeComponentCreation({ elmtId, isInitialRender => Text("已有账号？").fontSize(16.fp).fontColor(0x999999) })
+/* 8.218 */                thisView.observeComponentCreation({ elmtId, isInitialRender => Text("去登录").fontSize(16.fp).fontColor(0x41AE3C) }) }.onClick { evt => showRegisterPanel = false } }) }.width(100.percent).height(100.percent).backgroundColor(Color.WHITE).padding(32) }) })
+/* 8.219 */            }
+/* 8.220 */        } }) }.width(100.percent).height(100.percent).backgroundColor(0xF5F5F5).align(Alignment.Center) })
+/* 8.221 */    }
+/* 8.222 */    ViewBuilder { renderAuthPanel__inner__(thisView) }
+/* 8.223 */}
+/* 8.224 */func renderHomePanel(thisView: CustomView): ViewBuilder {
+/* 8.225 */    func renderHomePanel__inner__(thisView: CustomView): Unit {
+/* 8.226 */        thisView.observeComponentCreation({ elmtId, isInitialRender => Stack() { match(Homeview(thisView, onSearch: ObservedProperty("", { query => onSearch(query) }), onShowDetail: ObservedProperty("", { item => onShowDetail(item) }), onShowLostDetail: ObservedProperty("", { item => onShowLostDetail(item) }), onCategoryClick: ObservedProperty("", { cat => onCategoryClick(cat) }))) {
+/* 8.227 */            case cv: CustomView => ViewStackProcessor.StartGetAccessRecordingFor(ViewStackProcessor.AllocateNewElmetIdForNextComponent())
+/* 8.228 */            CustomView.create(cv)
+/* 8.229 */            ViewStackProcessor.StopGetAccessRecording()
+/* 8.230 */            case vb: ViewBuilder => vb.build()
+/* 8.231 */            case _ => LegalCallCheck.check(Homeview(thisView, onSearch: ObservedProperty("", { query => onSearch(query) }), onShowDetail: ObservedProperty("", { item => onShowDetail(item) }), onShowLostDetail: ObservedProperty("", { item => onShowLostDetail(item) }), onCategoryClick: ObservedProperty("", { cat => onCategoryClick(cat) })))
+/* 8.232 */        } } })
+/* 8.233 */    }
+/* 8.234 */    ViewBuilder { renderHomePanel__inner__(thisView) }
+/* 8.235 */}
+/* 8.236 */public func build() {
+/* 8.237 */    this.observeComponentCreation({ elmtId, isInitialRender => Stack() { this.observeComponentCreation({ elmtId, isInitialRender => If { if(routeIndex == 0) {
+/* 8.238 */        this.ifElseBranchUpdateFunction(0, { => renderAuthPanel(this).build() })
+/* 8.239 */    }
+/* 8.240 */    else if(showProductDetail) {
+/* 8.241 */        this.ifElseBranchUpdateFunction(1, { => ViewStackProcessor.StartGetAccessRecordingFor(ViewStackProcessor.AllocateNewElmetIdForNextComponent())
+/* 8.242 */            CustomView.create(ProductDetail(this, item: stateVarDecl_detailProduct_, description: ObservedProperty("", "卖家自用九成新,功能完好，配件齐全，支持自提或邮寄。"), onBack: ObservedProperty("", { => onBackFromDetail() })))
+/* 8.243 */        ViewStackProcessor.StopGetAccessRecording() })
+/* 8.244 */    }
+/* 8.245 */    else if(showLostDetail) {
+/* 8.246 */        this.ifElseBranchUpdateFunction(2, { => match(LostDetail(this, item: stateVarDecl_detailLostItem_, onBack: ObservedProperty("", { => onBackFromLostDetail() }))) {
+/* 8.247 */            case cv: CustomView => ViewStackProcessor.StartGetAccessRecordingFor(ViewStackProcessor.AllocateNewElmetIdForNextComponent())
+/* 8.248 */            CustomView.create(cv)
+/* 8.249 */            ViewStackProcessor.StopGetAccessRecording()
+/* 8.250 */            case vb: ViewBuilder => vb.build()
+/* 8.251 */            case _ => LegalCallCheck.check(LostDetail(this, item: stateVarDecl_detailLostItem_, onBack: ObservedProperty("", { => onBackFromLostDetail() })))
+/* 8.252 */        } })
+/* 8.253 */    }
+/* 8.254 */    else if(showCategory) {
+/* 8.255 */        this.ifElseBranchUpdateFunction(3, { => ViewStackProcessor.StartGetAccessRecordingFor(ViewStackProcessor.AllocateNewElmetIdForNextComponent())
+/* 8.256 */            CustomView.create(CategoryPage(this, selectedCategory: stateVarDecl_selectedCategory_, allProducts: stateVarDecl_sampleProducts_, onBack: ObservedProperty("", { => onBackFromCategory() }), onShowDetail: ObservedProperty("", { item => onShowDetail(item) })))
+/* 8.257 */        ViewStackProcessor.StopGetAccessRecording() })
+/* 8.258 */    }
+/* 8.259 */    else if(showSearchResult) {
+/* 8.260 */        this.ifElseBranchUpdateFunction(4, { => ViewStackProcessor.StartGetAccessRecordingFor(ViewStackProcessor.AllocateNewElmetIdForNextComponent())
+/* 8.261 */            CustomView.create(SearchResultView(this, searchQuery: stateVarDecl_searchQuery_, results: ObservedProperty("", getSearchResults()), onBack: ObservedProperty("", { => onBackFromSearch() }), onSearch: ObservedProperty("", { query => onSearch(query) }), onShowDetail: ObservedProperty("", { item => onShowDetail(item) })))
+/* 8.262 */        ViewStackProcessor.StopGetAccessRecording() })
+/* 8.263 */    }
+/* 8.264 */    else {
+/* 8.265 */        this.ifElseBranchUpdateFunction(5, { => renderHomePanel(this).build() })
+/* 8.266 */    }
+/* 8.267 */} }) } })
+/* 8.268 */()
+/* 8.269 */}
+/* 8.270 */public init(parent: Option < CustomView >, routeIndex!: Option < ObservedProperty < Int >>= None, loginUsername!: Option < ObservedProperty < String >>= None, loginPassword!: Option < ObservedProperty < String >>= None, registerUsername!: Option < ObservedProperty < String >>= None, registerPassword!: Option < ObservedProperty < String >>= None, showRegisterPanel!: Option < ObservedProperty < Bool >>= None, showSearchResult!: Option < ObservedProperty < Bool >>= None, searchQuery!: Option < ObservedProperty < String >>= None, showProductDetail!: Option < ObservedProperty < Bool >>= None, detailProduct!: Option < ObservedProperty < ProductItem >>= None, showLostDetail!: Option < ObservedProperty < Bool >>= None, detailLostItem!: Option < ObservedProperty < LostItem >>= None, showCategory!: Option < ObservedProperty < Bool >>= None, selectedCategory!: Option < ObservedProperty < String >>= None, sampleProducts!: Option < ObservedProperty < Array < ProductItem >>>= None, localStorage!: Option < LocalStorage >= None) {
+/* 8.271 */super(parent, localStorage)
+/* 8.272 */match(routeIndex) {
+/* 8.273 */    case Some(v) => this.stateVarDecl_routeIndex_ = ObservedProperty < Int >("stateVarDecl_routeIndex_", v.get())
+/* 8.274 */    case _ =>()
+/* 8.275 */}
+/* 8.276 */match(loginUsername) {
+/* 8.277 */    case Some(v) => this.stateVarDecl_loginUsername_ = ObservedProperty < String >("stateVarDecl_loginUsername_", v.get())
+/* 8.278 */    case _ =>()
+/* 8.279 */}
+/* 8.280 */match(loginPassword) {
+/* 8.281 */    case Some(v) => this.stateVarDecl_loginPassword_ = ObservedProperty < String >("stateVarDecl_loginPassword_", v.get())
+/* 8.282 */    case _ =>()
+/* 8.283 */}
+/* 8.284 */match(registerUsername) {
+/* 8.285 */    case Some(v) => this.stateVarDecl_registerUsername_ = ObservedProperty < String >("stateVarDecl_registerUsername_", v.get())
+/* 8.286 */    case _ =>()
+/* 8.287 */}
+/* 8.288 */match(registerPassword) {
+/* 8.289 */    case Some(v) => this.stateVarDecl_registerPassword_ = ObservedProperty < String >("stateVarDecl_registerPassword_", v.get())
+/* 8.290 */    case _ =>()
+/* 8.291 */}
+/* 8.292 */match(showRegisterPanel) {
+/* 8.293 */    case Some(v) => this.stateVarDecl_showRegisterPanel_ = ObservedProperty < Bool >("stateVarDecl_showRegisterPanel_", v.get())
+/* 8.294 */    case _ =>()
+/* 8.295 */}
+/* 8.296 */match(showSearchResult) {
+/* 8.297 */    case Some(v) => this.stateVarDecl_showSearchResult_ = ObservedProperty < Bool >("stateVarDecl_showSearchResult_", v.get())
+/* 8.298 */    case _ =>()
+/* 8.299 */}
+/* 8.300 */match(searchQuery) {
+/* 8.301 */    case Some(v) => this.stateVarDecl_searchQuery_ = ObservedProperty < String >("stateVarDecl_searchQuery_", v.get())
+/* 8.302 */    case _ =>()
+/* 8.303 */}
+/* 8.304 */match(showProductDetail) {
+/* 8.305 */    case Some(v) => this.stateVarDecl_showProductDetail_ = ObservedProperty < Bool >("stateVarDecl_showProductDetail_", v.get())
+/* 8.306 */    case _ =>()
+/* 8.307 */}
+/* 8.308 */match(detailProduct) {
+/* 8.309 */    case Some(v) => this.stateVarDecl_detailProduct_ = ObservedProperty < ProductItem >("stateVarDecl_detailProduct_", v.get())
+/* 8.310 */    case _ =>()
+/* 8.311 */}
+/* 8.312 */match(showLostDetail) {
+/* 8.313 */    case Some(v) => this.stateVarDecl_showLostDetail_ = ObservedProperty < Bool >("stateVarDecl_showLostDetail_", v.get())
+/* 8.314 */    case _ =>()
+/* 8.315 */}
+/* 8.316 */match(detailLostItem) {
+/* 8.317 */    case Some(v) => this.stateVarDecl_detailLostItem_ = ObservedProperty < LostItem >("stateVarDecl_detailLostItem_", v.get())
+/* 8.318 */    case _ =>()
+/* 8.319 */}
+/* 8.320 */match(showCategory) {
+/* 8.321 */    case Some(v) => this.stateVarDecl_showCategory_ = ObservedProperty < Bool >("stateVarDecl_showCategory_", v.get())
+/* 8.322 */    case _ =>()
+/* 8.323 */}
+/* 8.324 */match(selectedCategory) {
+/* 8.325 */    case Some(v) => this.stateVarDecl_selectedCategory_ = ObservedProperty < String >("stateVarDecl_selectedCategory_", v.get())
+/* 8.326 */    case _ =>()
+/* 8.327 */}
+/* 8.328 */match(sampleProducts) {
+/* 8.329 */    case Some(v) => this.stateVarDecl_sampleProducts_ = ObservedProperty < Array < ProductItem >>("stateVarDecl_sampleProducts_", v.get())
+/* 8.330 */    case _ =>()
+/* 8.331 */}
+/* 8.332 */this.stateVarDecl_routeIndex_.subscribeEx(this)
+/* 8.333 */this.stateVarDecl_loginUsername_.subscribeEx(this)
+/* 8.334 */this.stateVarDecl_loginPassword_.subscribeEx(this)
+/* 8.335 */this.stateVarDecl_registerUsername_.subscribeEx(this)
+/* 8.336 */this.stateVarDecl_registerPassword_.subscribeEx(this)
+/* 8.337 */this.stateVarDecl_showRegisterPanel_.subscribeEx(this)
+/* 8.338 */this.stateVarDecl_showSearchResult_.subscribeEx(this)
+/* 8.339 */this.stateVarDecl_searchQuery_.subscribeEx(this)
+/* 8.340 */this.stateVarDecl_showProductDetail_.subscribeEx(this)
+/* 8.341 */this.stateVarDecl_detailProduct_.subscribeEx(this)
+/* 8.342 */this.stateVarDecl_showLostDetail_.subscribeEx(this)
+/* 8.343 */this.stateVarDecl_detailLostItem_.subscribeEx(this)
+/* 8.344 */this.stateVarDecl_showCategory_.subscribeEx(this)
+/* 8.345 */this.stateVarDecl_selectedCategory_.subscribeEx(this)
+/* 8.346 */this.stateVarDecl_sampleProducts_.subscribeEx(this)
+/* 8.347 */SubscriberManager.getInstance().add(this)
+/* 8.348 */registerSelf()
+/* 8.349 */parent?.addChildById(id(), this)
+/* 8.350 */}
+/* 8.351 */public override func aboutToBeDeleted() {
+/* 8.352 */this.stateVarDecl_routeIndex_.unsubscribeEx(this)
+/* 8.353 */this.stateVarDecl_loginUsername_.unsubscribeEx(this)
+/* 8.354 */this.stateVarDecl_loginPassword_.unsubscribeEx(this)
+/* 8.355 */this.stateVarDecl_registerUsername_.unsubscribeEx(this)
+/* 8.356 */this.stateVarDecl_registerPassword_.unsubscribeEx(this)
+/* 8.357 */this.stateVarDecl_showRegisterPanel_.unsubscribeEx(this)
+/* 8.358 */this.stateVarDecl_showSearchResult_.unsubscribeEx(this)
+/* 8.359 */this.stateVarDecl_searchQuery_.unsubscribeEx(this)
+/* 8.360 */this.stateVarDecl_showProductDetail_.unsubscribeEx(this)
+/* 8.361 */this.stateVarDecl_detailProduct_.unsubscribeEx(this)
+/* 8.362 */this.stateVarDecl_showLostDetail_.unsubscribeEx(this)
+/* 8.363 */this.stateVarDecl_detailLostItem_.unsubscribeEx(this)
+/* 8.364 */this.stateVarDecl_showCategory_.unsubscribeEx(this)
+/* 8.365 */this.stateVarDecl_selectedCategory_.unsubscribeEx(this)
+/* 8.366 */this.stateVarDecl_sampleProducts_.unsubscribeEx(this)
+/* 8.367 */SubscriberManager.getInstance().delete(this)
+/* 8.368 */this.aboutToBeDeletedInternal()
+/* 8.369 */}
+/* 8.370 */func updateWithValueParams(routeIndex!: Option < Int >= Option < Int >.None, loginUsername!: Option < String >= Option < String >.None, loginPassword!: Option < String >= Option < String >.None, registerUsername!: Option < String >= Option < String >.None, registerPassword!: Option < String >= Option < String >.None, showRegisterPanel!: Option < Bool >= Option < Bool >.None, showSearchResult!: Option < Bool >= Option < Bool >.None, searchQuery!: Option < String >= Option < String >.None, showProductDetail!: Option < Bool >= Option < Bool >.None, detailProduct!: Option < ProductItem >= Option < ProductItem >.None, showLostDetail!: Option < Bool >= Option < Bool >.None, detailLostItem!: Option < LostItem >= Option < LostItem >.None, showCategory!: Option < Bool >= Option < Bool >.None, selectedCategory!: Option < String >= Option < String >.None, sampleProducts!: Option < Array < ProductItem >>= Option < Array < ProductItem >>.None): Unit {
+/* 8.371 */match(routeIndex) {
+/* 8.372 */    case Some(v) => this.routeIndex = v
+/* 8.373 */    case _ =>()
+/* 8.374 */}
+/* 8.375 */match(loginUsername) {
+/* 8.376 */    case Some(v) => this.loginUsername = v
+/* 8.377 */    case _ =>()
+/* 8.378 */}
+/* 8.379 */match(loginPassword) {
+/* 8.380 */    case Some(v) => this.loginPassword = v
+/* 8.381 */    case _ =>()
+/* 8.382 */}
+/* 8.383 */match(registerUsername) {
+/* 8.384 */    case Some(v) => this.registerUsername = v
+/* 8.385 */    case _ =>()
+/* 8.386 */}
+/* 8.387 */match(registerPassword) {
+/* 8.388 */    case Some(v) => this.registerPassword = v
+/* 8.389 */    case _ =>()
+/* 8.390 */}
+/* 8.391 */match(showRegisterPanel) {
+/* 8.392 */    case Some(v) => this.showRegisterPanel = v
+/* 8.393 */    case _ =>()
+/* 8.394 */}
+/* 8.395 */match(showSearchResult) {
+/* 8.396 */    case Some(v) => this.showSearchResult = v
+/* 8.397 */    case _ =>()
+/* 8.398 */}
+/* 8.399 */match(searchQuery) {
+/* 8.400 */    case Some(v) => this.searchQuery = v
+/* 8.401 */    case _ =>()
+/* 8.402 */}
+/* 8.403 */match(showProductDetail) {
+/* 8.404 */    case Some(v) => this.showProductDetail = v
+/* 8.405 */    case _ =>()
+/* 8.406 */}
+/* 8.407 */match(detailProduct) {
+/* 8.408 */    case Some(v) => this.detailProduct = v
+/* 8.409 */    case _ =>()
+/* 8.410 */}
+/* 8.411 */match(showLostDetail) {
+/* 8.412 */    case Some(v) => this.showLostDetail = v
+/* 8.413 */    case _ =>()
+/* 8.414 */}
+/* 8.415 */match(detailLostItem) {
+/* 8.416 */    case Some(v) => this.detailLostItem = v
+/* 8.417 */    case _ =>()
+/* 8.418 */}
+/* 8.419 */match(showCategory) {
+/* 8.420 */    case Some(v) => this.showCategory = v
+/* 8.421 */    case _ =>()
+/* 8.422 */}
+/* 8.423 */match(selectedCategory) {
+/* 8.424 */    case Some(v) => this.selectedCategory = v
+/* 8.425 */    case _ =>()
+/* 8.426 */}
+/* 8.427 */match(sampleProducts) {
+/* 8.428 */    case Some(v) => this.sampleProducts = v
+/* 8.429 */    case _ =>()
+/* 8.430 */}
+/* 8.431 */}
+/* 8.432 */public func rerender() {
+/* 8.433 */this.updateDirtyElements()
+/* 8.434 */}
+/* 8.435 */public func purgeVariableDependenciesOnElmtId(rmElmtId: Int64) {
+/* 8.436 */this.stateVarDecl_routeIndex_.purgeDependencyOnElmtId(rmElmtId)
+/* 8.437 */this.stateVarDecl_loginUsername_.purgeDependencyOnElmtId(rmElmtId)
+/* 8.438 */this.stateVarDecl_loginPassword_.purgeDependencyOnElmtId(rmElmtId)
+/* 8.439 */this.stateVarDecl_registerUsername_.purgeDependencyOnElmtId(rmElmtId)
+/* 8.440 */this.stateVarDecl_registerPassword_.purgeDependencyOnElmtId(rmElmtId)
+/* 8.441 */this.stateVarDecl_showRegisterPanel_.purgeDependencyOnElmtId(rmElmtId)
+/* 8.442 */this.stateVarDecl_showSearchResult_.purgeDependencyOnElmtId(rmElmtId)
+/* 8.443 */this.stateVarDecl_searchQuery_.purgeDependencyOnElmtId(rmElmtId)
+/* 8.444 */this.stateVarDecl_showProductDetail_.purgeDependencyOnElmtId(rmElmtId)
+/* 8.445 */this.stateVarDecl_detailProduct_.purgeDependencyOnElmtId(rmElmtId)
+/* 8.446 */this.stateVarDecl_showLostDetail_.purgeDependencyOnElmtId(rmElmtId)
+/* 8.447 */this.stateVarDecl_detailLostItem_.purgeDependencyOnElmtId(rmElmtId)
+/* 8.448 */this.stateVarDecl_showCategory_.purgeDependencyOnElmtId(rmElmtId)
+/* 8.449 */this.stateVarDecl_selectedCategory_.purgeDependencyOnElmtId(rmElmtId)
+/* 8.450 */this.stateVarDecl_sampleProducts_.purgeDependencyOnElmtId(rmElmtId)
+/* 8.451 */}
+/* 8.452 */public func forceRerender(deep!: Bool = false) {
+/* 8.453 */this.forceCompleteRerender(deep)
+/* 8.454 */}
+/* 8.455 */}
+/* 8.456 */
+/* 8.457 */public func appEntry_0(): Bool {
+/* 8.458 */let view = AppRouter(Option < CustomView >.None)
+/* 8.459 */loadNativeView(view)
+/* 8.460 */}
+/* 8.461 */
+/* 8.462 */let a_p_1 = CJEntry.getInstance().registerEntry("AppRouter", appEntry_0)
+/* 8.463 */
+/* ===== End of the Emit ===== */
