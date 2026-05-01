@@ -202,6 +202,8 @@ public class TradeService {
                                 .InvalidTransition)
                         }
                         req.status = RequestStatus.REJECTED
+                        req.updatedAt =
+                            DateTime.now().toString()
                         return ApiResponse<Request>.ok(
                             reqRepo.save(req)
                         )
@@ -238,6 +240,8 @@ public class TradeService {
                             )
                         }
                         req.status = RequestStatus.CANCELLED
+                        req.updatedAt =
+                            DateTime.now().toString()
                         return ApiResponse<Request>.ok(
                             reqRepo.save(req)
                         )
@@ -553,6 +557,8 @@ public class ClaimService {
                                 .InvalidTransition)
                         }
                         req.status = RequestStatus.REJECTED
+                        req.updatedAt =
+                            DateTime.now().toString()
                         return ApiResponse<Request>.ok(
                             reqRepo.save(req)
                         )
@@ -589,6 +595,8 @@ public class ClaimService {
                         }
                         req.status =
                             RequestStatus.CANCELLED
+                        req.updatedAt =
+                            DateTime.now().toString()
                         return ApiResponse<Request>.ok(
                             reqRepo.save(req)
                         )

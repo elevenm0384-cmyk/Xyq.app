@@ -59,6 +59,11 @@ public class AuthService {
                     ErrorCode.UserNotFound
                 )
             case Some(u) =>
+                if (u.status != UserStatus.Active) {
+                    return ApiResponse<String>.fail(
+                        ErrorCode.Forbidden
+                    )
+                }
                 if (u.password != password) {
                     return ApiResponse<String>.fail(
                         ErrorCode.WrongPassword
