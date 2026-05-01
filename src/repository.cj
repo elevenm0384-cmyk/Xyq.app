@@ -115,99 +115,120 @@ public class UserRepository {
         }
         return list
     }
+
+    public func count(): Int64 {
+        return Int64(store.size)
+    }
 }
 
-// ===== ItemRepository =====
-public class ItemRepository {
+// ===== PostRepository =====
+public class PostRepository {
     private var store:
-        HashMap<Int64, BaseItem> =
-        HashMap<Int64, BaseItem>()
+        HashMap<Int64, Post> =
+        HashMap<Int64, Post>()
     private var nextId: Int64 = 1
 
     private static var inst:
-        Option<ItemRepository> = None
+        Option<PostRepository> = None
 
     private init() {}
 
     public static func getInstance()
-        : ItemRepository
+        : PostRepository
     {
         match (inst) {
             case Some(r) => return r
             case None =>
-                let r = ItemRepository()
+                let r = PostRepository()
                 inst = Some(r)
                 return r
         }
     }
 
-    public func save(
-        item: BaseItem
-    ): BaseItem {
-        if (item.id == 0) {
-            item.id = nextId
+    public func save(post: Post): Post {
+        if (post.id == 0) {
+            post.id = nextId
             nextId++
         }
-        store.add(item.id, item)
-        return item
+        store.add(post.id, post)
+        return post
     }
 
     public func findById(
         id: Int64
-    ): Option<BaseItem> {
+    ): Option<Post> {
         return store.get(id)
     }
 
     public func findAll()
-        : ArrayList<BaseItem>
+        : ArrayList<Post>
     {
-        let list = ArrayList<BaseItem>()
-        for ((_, item) in store) {
-            list.add(item)
-        }
-        return list
-    }
-
-    public func findByType(
-        t: ItemType
-    ): ArrayList<BaseItem> {
-        let list = ArrayList<BaseItem>()
-        for ((_, item) in store) {
-            if (item.itemType == t) {
-                list.add(item)
+        let list = ArrayList<Post>()
+        for ((_, post) in store) {
+            if (!post.isDeleted) {
+                list.add(post)
             }
         }
         return list
     }
 
-    public func findByStatus(
-        s: ItemStatus
-    ): ArrayList<BaseItem> {
-        let list = ArrayList<BaseItem>()
-        for ((_, item) in store) {
-            if (item.status == s) {
-                list.add(item)
+    public func findByType(
+        t: BusinessType
+    ): ArrayList<Post> {
+        let list = ArrayList<Post>()
+        for ((_, post) in store) {
+            if (post.businessType == t &&
+                !post.isDeleted) {
+                list.add(post)
+            }
+        }
+        return list
+    }
+
+    public func findByAuthor(
+        authorId: Int64
+    ): ArrayList<Post> {
+        let list = ArrayList<Post>()
+        for ((_, post) in store) {
+            if (post.authorId == authorId &&
+                !post.isDeleted) {
+                list.add(post)
+            }
+        }
+        return list
+    }
+
+    public func findByAuditStatus(
+        s: AuditStatus
+    ): ArrayList<Post> {
+        let list = ArrayList<Post>()
+        for ((_, post) in store) {
+            if (post.auditStatus == s &&
+                !post.isDeleted) {
+                list.add(post)
             }
         }
         return list
     }
 
     public func count(): Int64 {
-        return Int64(store.size)
+        var c: Int64 = 0
+        for ((_, post) in store) {
+            if (!post.isDeleted) { c++ }
+        }
+        return c
     }
 
     public func findPage(
         page: Int64,
         size: Int64
-    ): ArrayList<BaseItem> {
+    ): ArrayList<Post> {
         let all = findAll()
         let from = (page - 1) * size
-        let result = ArrayList<BaseItem>()
+        let result = ArrayList<Post>()
         var i = from
-        while (
-            i < from + size &&
-            i < Int64(all.size)
-        ) {
+        while (i < from + size &&
+            i < Int64(all.size)) {
             result.add(all[i])
             i++
         }
@@ -242,25 +263,25 @@ public class CategoryRepository {
     }
 
     private func initDefaults(): Unit {
-        let names = [
-            "教材书籍",
-            "数码电器",
-            "生活用品",
-            "运动户外",
-            "失物招领"
+        let defs = [
+            ("教材书籍", SceneType.SECONDHAND, 1),
+            ("数码电器", SceneType.SECONDHAND, 2),
+            ("生活用品", SceneType.ALL, 3),
+            ("运动户外", SceneType.ALL, 4),
+            ("校园卡/证件", SceneType.LOST, 5),
+            ("其他物品", SceneType.ALL, 6)
         ]
-        for (name in names) {
+        for ((name, scene, order) in defs) {
             let c = Category(
-                nextId, name, None
+                nextId, name, None,
+                scene, Int64(order), true
             )
             store.add(nextId, c)
             nextId++
         }
     }
 
-    public func save(
-        c: Category
-    ): Category {
+    public func save(c: Category): Category {
         if (c.id == 0) {
             c.id = nextId
             nextId++
@@ -280,22 +301,87 @@ public class CategoryRepository {
     {
         let list = ArrayList<Category>()
         for ((_, c) in store) {
-            list.add(c)
+            if (c.isEnabled) {
+                list.add(c)
+            }
         }
         return list
     }
 
-    public func findRoots()
-        : ArrayList<Category>
-    {
+    public func findByScene(
+        scene: SceneType
+    ): ArrayList<Category> {
         let list = ArrayList<Category>()
         for ((_, c) in store) {
-            match (c.parentId) {
-                case None => list.add(c)
-                case _    => ()
+            if (c.isEnabled &&
+                (c.sceneType == scene ||
+                 c.sceneType == SceneType.ALL)) {
+                list.add(c)
             }
         }
         return list
+    }
+}
+
+// ===== RequestRepository =====
+public class RequestRepository {
+    private var store:
+        HashMap<Int64, Request> =
+        HashMap<Int64, Request>()
+    private var nextId: Int64 = 1
+
+    private static var inst:
+        Option<RequestRepository> = None
+
+    private init() {}
+
+    public static func getInstance()
+        : RequestRepository
+    {
+        match (inst) {
+            case Some(r) => return r
+            case None =>
+                let r = RequestRepository()
+                inst = Some(r)
+                return r
+        }
+    }
+
+    public func save(req: Request): Request {
+        if (req.id == 0) {
+            req.id = nextId
+            nextId++
+        }
+        store.add(req.id, req)
+        return req
+    }
+
+    public func findById(
+        id: Int64
+    ): Option<Request> {
+        return store.get(id)
+    }
+
+    public func findByPost(
+        postId: Int64
+    ): ArrayList<Request> {
+        let list = ArrayList<Request>()
+        for ((_, r) in store) {
+            if (r.postId == postId) {
+                list.add(r)
+            }
+        }
+        return list
+    }
+
+    public func countByPost(
+        postId: Int64
+    ): Int64 {
+        var c: Int64 = 0
+        for ((_, r) in store) {
+            if (r.postId == postId) { c++ }
+        }
+        return c
     }
 }
 
@@ -303,66 +389,85 @@ public class CategoryRepository {
 public func mockDataInit(): Unit {
     let userRepo =
         UserRepository.getInstance()
-    let itemRepo =
-        ItemRepository.getInstance()
+    let postRepo =
+        PostRepository.getInstance()
 
-    // 初始化管理员账号
+    // 管理员
     let admin = User(
         0, "admin", "admin123",
-        "admin@campus.edu", Role.Admin
+        "管理员", "", "",
+        Role.Admin
     )
     userRepo.save(admin)
 
-    // 初始化普通用户
+    // 普通用户
     let alice = User(
         0, "alice", "pass123",
-        "alice@campus.edu", Role.Student
+        "Alice", "", "13800001111",
+        Role.User
     )
     userRepo.save(alice)
 
     let bob = User(
         0, "bob", "pass123",
-        "bob@campus.edu", Role.Student
+        "Bob", "", "13800002222",
+        Role.User
     )
     userRepo.save(bob)
 
-    // 初始化二手物品
-    let items = [
-        ("高数教材全套", "九成新", 1,
-         ItemType.SecondHand),
-        ("蓝牙耳机", "AirPods Pro", 2,
-         ItemType.SecondHand),
-        ("羽毛球拍", "双拍套装", 4,
-         ItemType.SecondHand),
-        ("英语四级词汇书", "有笔记", 1,
-         ItemType.SecondHand),
-        ("台灯", "护眼LED", 3,
-         ItemType.SecondHand)
+    // 二手商品
+    let shItems = [
+        ("高数教材全套", "九成新，几乎没划线", 1,
+         Some(25.0), "学院路校区"),
+        ("蓝牙耳机", "AirPods Pro 二代", 2,
+         Some(800.0), "沙河校区"),
+        ("羽毛球拍", "双拍套装，送羽毛球", 4,
+         Some(120.0), "学院路校区"),
+        ("台灯", "护眼LED台灯，三档调光", 3,
+         Some(45.0), "沙河校区")
     ]
-    for ((title, desc, catId, t) in items) {
-        let item = BaseItem(
-            0, title, desc,
-            Int64(catId), alice.id,
-            t, ItemStatus.Approved,
-            "", "微信: alice_sell"
+    for ((title, desc, catId, price, loc) in shItems) {
+        let post = Post(
+            0, alice.id, Int64(catId),
+            BusinessType.SecondHand,
+            title, desc, price, loc,
+            "[]", "微信: alice_sell"
         )
-        itemRepo.save(item)
+        post.auditStatus = AuditStatus.APPROVED
+        post.bizStatus = BizStatus.ON_SALE
+        postRepo.save(post)
     }
 
-    // 初始化失物招领
-    let losts = [
-        ("黑色钱包", "图书馆3楼捡到"),
-        ("学生证", "姓名：张三"),
-        ("充电宝", "小米20000mAh")
+    // 失物
+    let lostItems = [
+        ("黑色钱包", "图书馆3楼捡到", 5, "学院路校区"),
+        ("学生证", "姓名：张三，学号2024xxxx", 5, "沙河校区")
     ]
-    for ((title, desc) in losts) {
-        let item = BaseItem(
-            0, title, desc,
-            5, bob.id,
-            ItemType.LostFound,
-            ItemStatus.Approved,
-            "", "联系: bob_lost"
+    for ((title, desc, catId, loc) in lostItems) {
+        let post = Post(
+            0, bob.id, Int64(catId),
+            BusinessType.LOST,
+            title, desc, None, loc,
+            "[]", "联系: bob_lost"
         )
-        itemRepo.save(item)
+        post.auditStatus = AuditStatus.APPROVED
+        post.bizStatus = BizStatus.OPEN
+        postRepo.save(post)
+    }
+
+    // 招领
+    let foundItems = [
+        ("充电宝", "小米20000mAh，食堂门口捡到", 6, "沙河校区")
+    ]
+    for ((title, desc, catId, loc) in foundItems) {
+        let post = Post(
+            0, alice.id, Int64(catId),
+            BusinessType.FOUND,
+            title, desc, None, loc,
+            "[]", "联系: alice_found"
+        )
+        post.auditStatus = AuditStatus.APPROVED
+        post.bizStatus = BizStatus.OPEN
+        postRepo.save(post)
     }
 }

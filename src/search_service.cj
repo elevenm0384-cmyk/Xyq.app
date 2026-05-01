@@ -4,17 +4,17 @@ import std.collection.*
 
 // ================================================
 //  SearchService — 搜索 / 筛选 / 排序
-//  支持：关键词、分类、类型、排序、分页
+//  支持：关键词、分类、类型、状态、排序、分页
 // ================================================
 public class SearchService {
-    private let itemRepo: ItemRepository
+    private let postRepo: PostRepository
 
     private static var inst:
         Option<SearchService> = None
 
     private init() {
-        itemRepo =
-            ItemRepository.getInstance()
+        postRepo =
+            PostRepository.getInstance()
     }
 
     public static func getInstance()
@@ -31,34 +31,38 @@ public class SearchService {
 
     public func search(
         params: SearchParams
-    ): ApiResponse<PageResult<BaseItem>> {
-        let all = itemRepo.findAll()
-        var filtered = ArrayList<BaseItem>()
+    ): ApiResponse<PageResult<Post>> {
+        let all = postRepo.findAll()
+        var filtered = ArrayList<Post>()
 
-        for (item in all) {
-            if (!matchKeyword(item, params.keyword)) {
+        for (post in all) {
+            if (!matchKeyword(post, params.keyword)) {
                 continue
             }
-            if (!matchCategory(item, params.categoryId)) {
+            if (!matchCategory(post, params.categoryId)) {
                 continue
             }
-            if (!matchType(item, params.itemType)) {
+            if (!matchBizType(post, params.businessType)) {
                 continue
             }
-            if (!matchStatus(item, params.status)) {
+            if (!matchAuditSt(post, params.auditStatus)) {
                 continue
             }
-            if (item.status != ItemStatus.Approved) {
+            if (!matchBizSt(post, params.bizStatus)) {
                 continue
             }
-            filtered.add(item)
+            // 只展示审核通过的
+            if (post.auditStatus != AuditStatus.APPROVED) {
+                continue
+            }
+            filtered.add(post)
         }
 
-        sortItems(filtered, params.sortBy)
+        sortPosts(filtered, params.sortBy)
 
         let total = Int64(filtered.size)
         let from = (params.page - 1) * params.pageSize
-        let paged = ArrayList<BaseItem>()
+        let paged = ArrayList<Post>()
         var i = from
         while (i < from + params.pageSize &&
             i < Int64(filtered.size)) {
@@ -66,116 +70,103 @@ public class SearchService {
             i++
         }
 
-        let pr = PageResult<BaseItem>(
+        let pr = PageResult<Post>(
             total, params.page,
             params.pageSize, paged.toArray()
         )
-        return ApiResponse<PageResult<BaseItem>>
-            .ok(pr)
+        return ApiResponse<PageResult<Post>>.ok(pr)
     }
 
     private func matchKeyword(
-        item: BaseItem,
+        post: Post,
         keyword: String
     ): Bool {
         if (keyword.isEmpty()) { return true }
-        return containsStr(
-            item.title, keyword
-        ) || containsStr(
-            item.description, keyword
-        )
-    }
-
-    private func containsStr(
-        s: String,
-        sub: String
-    ): Bool {
-        // contains 方法已内置
-        return s.contains(sub)
+        return post.title.contains(keyword) ||
+            post.description.contains(keyword)
     }
 
     private func matchCategory(
-        item: BaseItem,
+        post: Post,
         catOpt: Option<Int64>
     ): Bool {
         match (catOpt) {
             case None => return true
             case Some(cid) =>
-                return item.categoryId == cid
+                return post.categoryId == cid
         }
     }
 
-    private func matchType(
-        item: BaseItem,
-        typeOpt: Option<ItemType>
+    private func matchBizType(
+        post: Post,
+        btOpt: Option<BusinessType>
     ): Bool {
-        match (typeOpt) {
+        match (btOpt) {
             case None => return true
-            case Some(t) =>
-                match (item.itemType == t) {
+            case Some(bt) =>
+                match (post.businessType == bt) {
                     case true => return true
                     case false => return false
                 }
         }
     }
 
-    private func matchStatus(
-        item: BaseItem,
-        statusOpt: Option<ItemStatus>
+    private func matchAuditSt(
+        post: Post,
+        asOpt: Option<AuditStatus>
     ): Bool {
-        match (statusOpt) {
+        match (asOpt) {
             case None => return true
             case Some(s) =>
-                match (item.status == s) {
+                match (post.auditStatus == s) {
                     case true => return true
                     case false => return false
                 }
         }
     }
 
-    private func sortItems(
-        list: ArrayList<BaseItem>,
+    private func matchBizSt(
+        post: Post,
+        bsOpt: Option<BizStatus>
+    ): Bool {
+        match (bsOpt) {
+            case None => return true
+            case Some(s) =>
+                match (post.bizStatus == s) {
+                    case true => return true
+                    case false => return false
+                }
+        }
+    }
+
+    private func sortPosts(
+        list: ArrayList<Post>,
         sortBy: String
     ): Unit {
         let arr = list.toArray()
-        match (sortBy) {
-            case "time_asc" =>
-                bubbleSort(arr, compareTimeAsc)
-            case _ =>
-                bubbleSort(arr, compareTimeDesc)
-        }
-        list.clear()
-        for (item in arr) {
-            list.add(item)
-        }
-    }
-
-    private func compareTimeDesc(
-        a: BaseItem, b: BaseItem
-    ): Bool {
-        return a.id > b.id
-    }
-
-    private func compareTimeAsc(
-        a: BaseItem, b: BaseItem
-    ): Bool {
-        return a.id < b.id
-    }
-
-    private func bubbleSort(
-        arr: Array<BaseItem>,
-        cmp: (BaseItem, BaseItem) -> Bool
-    ): Unit {
         let n = arr.size
         if (n <= 1) { return }
         for (i in 0..n - 1) {
             for (j in 0..n - 2 - i) {
-                if (!cmp(arr[j], arr[j + 1])) {
+                let swap = match (sortBy) {
+                    case "latest" =>
+                        arr[j].id < arr[j + 1].id
+                    case "hottest" =>
+                        arr[j].viewCount <
+                            arr[j + 1].viewCount
+                    case _ =>
+                        arr[j].id < arr[j + 1].id
+                }
+                if (swap) {
                     let tmp = arr[j]
                     arr[j] = arr[j + 1]
                     arr[j + 1] = tmp
                 }
             }
+        }
+        list.clear()
+        for (post in arr) {
+            list.add(post)
         }
     }
 }

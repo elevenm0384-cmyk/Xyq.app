@@ -1,171 +1,252 @@
 package cangjie
 
+import std.collection.*
+
 // ===== 枚举：角色 =====
 public enum Role <: ToString {
-    | Student
+    | User
     | Admin
 
     public func toString(): String {
         match (this) {
-            case Student => "STUDENT"
-            case Admin   => "ADMIN"
+            case User  => "USER"
+            case Admin => "ADMIN"
         }
     }
 }
 
-// ===== 枚举：物品类型 =====
-public enum ItemType <: ToString & Equatable<ItemType> {
-    | SecondHand
-    | LostFound
+// ===== 枚举：用户状态 =====
+public enum UserStatus <: ToString & Equatable<UserStatus> {
+    | Active
+    | Disabled
 
     public func toString(): String {
         match (this) {
-            case SecondHand => "二手交易"
-            case LostFound  => "失物招领"
+            case Active   => "ACTIVE"
+            case Disabled => "DISABLED"
         }
     }
 
-    public operator func ==(
-        right: ItemType
-    ): Bool {
+    public operator func ==(right: UserStatus): Bool {
+        match ((this, right)) {
+            case (Active, Active) => true
+            case (Disabled, Disabled) => true
+            case _ => false
+        }
+    }
+
+    public operator func !=(right: UserStatus): Bool {
+        return !(this == right)
+    }
+}
+
+// ===== 枚举：业务类型 =====
+public enum BusinessType <: ToString & Equatable<BusinessType> {
+    | SecondHand
+    | LOST
+    | FOUND
+
+    public func toString(): String {
+        match (this) {
+            case SecondHand => "SECONDHAND"
+            case LOST       => "LOST"
+            case FOUND      => "FOUND"
+        }
+    }
+
+    public operator func ==(right: BusinessType): Bool {
         match ((this, right)) {
             case (SecondHand, SecondHand) => true
-            case (LostFound,  LostFound)  => true
+            case (LOST,       LOST)       => true
+            case (FOUND,      FOUND)      => true
             case _ => false
         }
     }
 
-    public operator func !=(
-        right: ItemType
-    ): Bool {
+    public operator func !=(right: BusinessType): Bool {
         return !(this == right)
     }
 }
 
-// ===== 枚举：物品状态 =====
-public enum ItemStatus <: ToString & Equatable<ItemStatus> {
-    | Pending
-    | Approved
-    | Rejected
-    | Closed
+// ===== 枚举：审核状态 =====
+public enum AuditStatus <: ToString & Equatable<AuditStatus> {
+    | PENDING
+    | APPROVED
+    | REJECTED
 
     public func toString(): String {
         match (this) {
-            case Pending  => "待审核"
-            case Approved => "已上架"
-            case Rejected => "已拒绝"
-            case Closed   => "已关闭"
+            case PENDING  => "待审核"
+            case APPROVED => "已通过"
+            case REJECTED => "已驳回"
         }
     }
 
-    public operator func ==(
-        right: ItemStatus
-    ): Bool {
+    public operator func ==(right: AuditStatus): Bool {
         match ((this, right)) {
-            case (Pending,  Pending)  => true
-            case (Approved, Approved) => true
-            case (Rejected, Rejected) => true
-            case (Closed,   Closed)   => true
+            case (PENDING,  PENDING)  => true
+            case (APPROVED, APPROVED) => true
+            case (REJECTED, REJECTED) => true
             case _ => false
         }
     }
 
-    public operator func !=(
-        right: ItemStatus
-    ): Bool {
+    public operator func !=(right: AuditStatus): Bool {
         return !(this == right)
     }
 }
 
-// ===== 枚举：交易状态（二手商品精细流转）=====
-public enum TradeStatus <: ToString & Equatable<TradeStatus> {
-    | Idle
-    | Reserved
-    | Sold
+// ===== 枚举：业务状态 =====
+public enum BizStatus <: ToString & Equatable<BizStatus> {
+    | ON_SALE    // 二手：在售
+    | RESERVED   // 二手：预定中
+    | SOLD       // 二手：已售出
+    | CLOSED     // 通用：已关闭
+    | OPEN       // 失物/招领：待认领
+    | MATCHING   // 失物/招领：认领处理中
+    | CLAIMED    // 失物/招领：已认领
 
     public func toString(): String {
         match (this) {
-            case Idle     => "空闲"
-            case Reserved => "交易中"
-            case Sold     => "已售出"
+            case ON_SALE  => "在售"
+            case RESERVED => "预定中"
+            case SOLD     => "已售出"
+            case CLOSED   => "已关闭"
+            case OPEN     => "待认领"
+            case MATCHING => "认领处理中"
+            case CLAIMED  => "已认领"
         }
     }
 
-    public operator func ==(
-        right: TradeStatus
-    ): Bool {
+    public operator func ==(right: BizStatus): Bool {
         match ((this, right)) {
-            case (Idle,     Idle)     => true
-            case (Reserved, Reserved) => true
-            case (Sold,     Sold)     => true
+            case (ON_SALE,  ON_SALE)  => true
+            case (RESERVED, RESERVED) => true
+            case (SOLD,     SOLD)     => true
+            case (CLOSED,   CLOSED)   => true
+            case (OPEN,     OPEN)     => true
+            case (MATCHING, MATCHING) => true
+            case (CLAIMED,  CLAIMED)  => true
             case _ => false
         }
     }
 
-    public operator func !=(
-        right: TradeStatus
-    ): Bool {
-        return !(this == right)
-    }
-}
-
-// ===== 枚举：认领状态（失物精细流转）=====
-public enum ClaimStatus <: ToString & Equatable<ClaimStatus> {
-    | Idle
-    | Claimed
-    | Returned
-
-    public func toString(): String {
-        match (this) {
-            case Idle     => "空闲"
-            case Claimed  => "已认领"
-            case Returned => "已归还"
-        }
-    }
-
-    public operator func ==(
-        right: ClaimStatus
-    ): Bool {
-        match ((this, right)) {
-            case (Idle,     Idle)     => true
-            case (Claimed,  Claimed)  => true
-            case (Returned, Returned) => true
-            case _ => false
-        }
-    }
-
-    public operator func !=(
-        right: ClaimStatus
-    ): Bool {
+    public operator func !=(right: BizStatus): Bool {
         return !(this == right)
     }
 }
 
 // ===== 枚举：留言类型 =====
 public enum MessageType <: ToString & Equatable<MessageType> {
-    | Comment
-    | PrivateMsg
+    | PUBLIC_COMMENT
+    | PRIVATE_MESSAGE
 
     public func toString(): String {
         match (this) {
-            case Comment    => "留言"
-            case PrivateMsg => "私信"
+            case PUBLIC_COMMENT  => "PUBLIC_COMMENT"
+            case PRIVATE_MESSAGE => "PRIVATE_MESSAGE"
         }
     }
 
-    public operator func ==(
-        right: MessageType
-    ): Bool {
+    public operator func ==(right: MessageType): Bool {
         match ((this, right)) {
-            case (Comment,    Comment)    => true
-            case (PrivateMsg, PrivateMsg) => true
+            case (PUBLIC_COMMENT,  PUBLIC_COMMENT)  => true
+            case (PRIVATE_MESSAGE, PRIVATE_MESSAGE) => true
             case _ => false
         }
     }
 
-    public operator func !=(
-        right: MessageType
-    ): Bool {
+    public operator func !=(right: MessageType): Bool {
+        return !(this == right)
+    }
+}
+
+// ===== 枚举：申请类型 =====
+public enum RequestType <: ToString & Equatable<RequestType> {
+    | BUY
+    | CLAIM
+
+    public func toString(): String {
+        match (this) {
+            case BUY   => "BUY"
+            case CLAIM => "CLAIM"
+        }
+    }
+
+    public operator func ==(right: RequestType): Bool {
+        match ((this, right)) {
+            case (BUY,   BUY)   => true
+            case (CLAIM, CLAIM) => true
+            case _ => false
+        }
+    }
+
+    public operator func !=(right: RequestType): Bool {
+        return !(this == right)
+    }
+}
+
+// ===== 枚举：申请状态 =====
+public enum RequestStatus <: ToString & Equatable<RequestStatus> {
+    | PENDING
+    | ACCEPTED
+    | REJECTED
+    | CANCELLED
+    | DONE
+
+    public func toString(): String {
+        match (this) {
+            case PENDING   => "PENDING"
+            case ACCEPTED  => "ACCEPTED"
+            case REJECTED  => "REJECTED"
+            case CANCELLED => "CANCELLED"
+            case DONE      => "DONE"
+        }
+    }
+
+    public operator func ==(right: RequestStatus): Bool {
+        match ((this, right)) {
+            case (PENDING,   PENDING)   => true
+            case (ACCEPTED,  ACCEPTED)  => true
+            case (REJECTED,  REJECTED)  => true
+            case (CANCELLED, CANCELLED) => true
+            case (DONE,      DONE)      => true
+            case _ => false
+        }
+    }
+
+    public operator func !=(right: RequestStatus): Bool {
+        return !(this == right)
+    }
+}
+
+// ===== 枚举：分类场景 =====
+public enum SceneType <: ToString & Equatable<SceneType> {
+    | SECONDHAND
+    | LOST
+    | FOUND
+    | ALL
+
+    public func toString(): String {
+        match (this) {
+            case SECONDHAND => "SECONDHAND"
+            case LOST       => "LOST"
+            case FOUND      => "FOUND"
+            case ALL        => "ALL"
+        }
+    }
+
+    public operator func ==(right: SceneType): Bool {
+        match ((this, right)) {
+            case (SECONDHAND, SECONDHAND) => true
+            case (LOST,       LOST)       => true
+            case (FOUND,      FOUND)      => true
+            case (ALL,        ALL)        => true
+            case _ => false
+        }
+    }
+
+    public operator func !=(right: SceneType): Bool {
         return !(this == right)
     }
 }
@@ -175,26 +256,39 @@ public class User {
     public var id: Int64
     public let username: String
     public let password: String
-    public let email: String
+    public let nickname: String
+    public let avatarUrl: String
+    public let phone: String
     public let role: Role
+    public var status: UserStatus
+    public let createdAt: String
+    public var updatedAt: String
 
     public init(
         id: Int64,
         username: String,
         password: String,
-        email: String,
+        nickname: String,
+        avatarUrl: String,
+        phone: String,
         role: Role
     ) {
         this.id       = id
         this.username = username
         this.password = password
-        this.email    = email
+        this.nickname = nickname
+        this.avatarUrl = avatarUrl
+        this.phone    = phone
         this.role     = role
+        this.status   = UserStatus.Active
+        this.createdAt = ""
+        this.updatedAt = ""
     }
 
     public func toString(): String {
         return "User{id=${id}" +
             ", username=${username}" +
+            ", nickname=${nickname}" +
             ", role=${role}}"
     }
 }
@@ -204,99 +298,123 @@ public class Category {
     public var id: Int64
     public let name: String
     public let parentId: Option<Int64>
+    public let sceneType: SceneType
+    public var sortOrder: Int64
+    public var isEnabled: Bool
 
     public init(
         id: Int64,
         name: String,
-        parentId: Option<Int64>
+        parentId: Option<Int64>,
+        sceneType: SceneType,
+        sortOrder: Int64,
+        isEnabled: Bool
     ) {
         this.id       = id
         this.name     = name
         this.parentId = parentId
+        this.sceneType = sceneType
+        this.sortOrder = sortOrder
+        this.isEnabled = isEnabled
     }
 
     public func toString(): String {
         return "Category{id=${id}" +
-            ", name=${name}}"
+            ", name=${name}" +
+            ", scene=${sceneType}}"
     }
 }
 
-// ===== Entity: BaseItem =====
-public class BaseItem {
+// ===== Entity: Post (原 BaseItem) =====
+public class Post {
     public var id: Int64
+    public var authorId: Int64
+    public var categoryId: Int64
+    public let businessType: BusinessType
     public let title: String
     public let description: String
-    public let categoryId: Int64
-    public let publisherId: Int64
-    public let itemType: ItemType
-    public var status: ItemStatus
-    public let imageUrl: String
+    public var price: Option<Float64>
+    public let location: String
+    public let imageUrls: String
     public let contactInfo: String
-    // 交易扩展字段（仅二手）
-    public var buyerId: Option<Int64>
-    public var tradeStatus: TradeStatus
-    // 认领扩展字段（仅失物）
-    public var claimerId: Option<Int64>
-    public var claimStatus: ClaimStatus
+    public var auditStatus: AuditStatus
+    public var bizStatus: BizStatus
+    public var viewCount: Int64
+    public var favoriteCount: Int64
+    public let createdAt: String
+    public var updatedAt: String
+    public var closedAt: Option<String>
+    public var isDeleted: Bool
 
     public init(
         id: Int64,
+        authorId: Int64,
+        categoryId: Int64,
+        businessType: BusinessType,
         title: String,
         description: String,
-        categoryId: Int64,
-        publisherId: Int64,
-        itemType: ItemType,
-        status: ItemStatus,
-        imageUrl: String,
+        price: Option<Float64>,
+        location: String,
+        imageUrls: String,
         contactInfo: String
     ) {
-        this.id          = id
-        this.title       = title
+        this.id         = id
+        this.authorId   = authorId
+        this.categoryId = categoryId
+        this.businessType = businessType
+        this.title      = title
         this.description = description
-        this.categoryId  = categoryId
-        this.publisherId = publisherId
-        this.itemType    = itemType
-        this.status      = status
-        this.imageUrl    = imageUrl
+        this.price      = price
+        this.location   = location
+        this.imageUrls  = imageUrls
         this.contactInfo = contactInfo
-        this.buyerId     = None
-        this.tradeStatus = TradeStatus.Idle
-        this.claimerId   = None
-        this.claimStatus = ClaimStatus.Idle
+        this.auditStatus = AuditStatus.PENDING
+        this.bizStatus  = BizStatus.ON_SALE
+        this.viewCount  = 0
+        this.favoriteCount = 0
+        this.createdAt  = ""
+        this.updatedAt  = ""
+        this.closedAt   = None
+        this.isDeleted  = false
     }
 
     public func toString(): String {
-        return "BaseItem{id=${id}" +
+        return "Post{id=${id}" +
             ", title=${title}" +
-            ", type=${itemType}" +
-            ", status=${status}" +
-            ", trade=${tradeStatus}" +
-            ", claim=${claimStatus}}"
+            ", type=${businessType}" +
+            ", audit=${auditStatus}" +
+            ", biz=${bizStatus}}"
     }
 }
 
-// ===== DTO: PublishItemReq =====
-public class PublishItemReq {
+// ===== DTO: PublishPostReq =====
+public class PublishPostReq {
+    public let categoryId: Int64
+    public let businessType: BusinessType
     public let title: String
     public let description: String
-    public let categoryId: Int64
-    public let itemType: ItemType
-    public let imageUrl: String
+    public let price: Option<Float64>
+    public let location: String
+    public let imageUrls: String
     public let contactInfo: String
 
     public init(
+        categoryId: Int64,
+        businessType: BusinessType,
         title: String,
         description: String,
-        categoryId: Int64,
-        itemType: ItemType,
-        imageUrl: String,
+        price: Option<Float64>,
+        location: String,
+        imageUrls: String,
         contactInfo: String
     ) {
-        this.title       = title
+        this.categoryId = categoryId
+        this.businessType = businessType
+        this.title      = title
         this.description = description
-        this.categoryId  = categoryId
-        this.itemType    = itemType
-        this.imageUrl    = imageUrl
+        this.price      = price
+        this.location   = location
+        this.imageUrls  = imageUrls
         this.contactInfo = contactInfo
     }
 }
@@ -319,10 +437,11 @@ public class LoginReq {
 public class SearchParams {
     public var keyword: String
     public var categoryId: Option<Int64>
-    public var itemType: Option<ItemType>
+    public var businessType: Option<BusinessType>
     public var minPrice: Option<Float64>
     public var maxPrice: Option<Float64>
-    public var status: Option<ItemStatus>
+    public var auditStatus: Option<AuditStatus>
+    public var bizStatus: Option<BizStatus>
     public var sortBy: String
     public var page: Int64
     public var pageSize: Int64
@@ -330,11 +449,12 @@ public class SearchParams {
     public init() {
         keyword = ""
         categoryId = None
-        itemType = None
+        businessType = None
         minPrice = None
         maxPrice = None
-        status = None
-        sortBy = "time_desc"
+        auditStatus = None
+        bizStatus = None
+        sortBy = "latest"
         page = 1
         pageSize = 20
     }
@@ -342,24 +462,22 @@ public class SearchParams {
 
 // ===== DTO: OverviewStats =====
 public class OverviewStats {
-    public var totalItems: Int64
-    public var totalSecondHand: Int64
-    public var totalLostFound: Int64
-    public var pendingReviews: Int64
-    public var activeTrades: Int64
-    public var soldItems: Int64
-    public var activeClaims: Int64
-    public var returnedItems: Int64
+    public var totalUsers: Int64
+    public var totalPosts: Int64
+    public var pendingAuditCount: Int64
+    public var secondhandCount: Int64
+    public var lostCount: Int64
+    public var foundCount: Int64
+    public var hotCategories: ArrayList<CategoryStats>
 
     public init() {
-        totalItems = 0
-        totalSecondHand = 0
-        totalLostFound = 0
-        pendingReviews = 0
-        activeTrades = 0
-        soldItems = 0
-        activeClaims = 0
-        returnedItems = 0
+        totalUsers = 0
+        totalPosts = 0
+        pendingAuditCount = 0
+        secondhandCount = 0
+        lostCount = 0
+        foundCount = 0
+        hotCategories = ArrayList<CategoryStats>()
     }
 }
 
@@ -394,11 +512,10 @@ public class StatusDist {
 // ===== Entity: Message =====
 public class Message {
     public var id: Int64
-    public let targetType: String
-    public let targetId: Int64
+    public let postId: Option<Int64>
     public let fromUserId: Int64
     public let toUserId: Option<Int64>
-    public let msgType: MessageType
+    public let messageType: MessageType
     public let content: String
     public let parentId: Option<Int64>
     public var isRead: Bool
@@ -406,21 +523,19 @@ public class Message {
 
     public init(
         id: Int64,
-        targetType: String,
-        targetId: Int64,
+        postId: Option<Int64>,
         fromUserId: Int64,
         toUserId: Option<Int64>,
-        msgType: MessageType,
+        messageType: MessageType,
         content: String,
         parentId: Option<Int64>,
         createdAt: String
     ) {
         this.id         = id
-        this.targetType = targetType
-        this.targetId   = targetId
+        this.postId     = postId
         this.fromUserId = fromUserId
         this.toUserId   = toUserId
-        this.msgType    = msgType
+        this.messageType = messageType
         this.content    = content
         this.parentId   = parentId
         this.isRead     = false
@@ -429,74 +544,76 @@ public class Message {
 
     public func toString(): String {
         return "Message{id=${id}" +
-            ", type=${msgType}" +
-            ", from=${fromUserId}" +
-            ", content=${content}}"
+            ", type=${messageType}" +
+            ", from=${fromUserId}}"
     }
 }
 
-// ===== Entity: ReviewRecord =====
-public enum ReviewResult <: ToString & Equatable<ReviewResult> {
-    | Pending
-    | Approved
-    | Rejected
-
-    public func toString(): String {
-        match (this) {
-            case Pending  => "待审核"
-            case Approved => "已通过"
-            case Rejected => "已驳回"
-        }
-    }
-
-    public operator func ==(
-        right: ReviewResult
-    ): Bool {
-        match ((this, right)) {
-            case (Pending,  Pending)  => true
-            case (Approved, Approved) => true
-            case (Rejected, Rejected) => true
-            case _ => false
-        }
-    }
-
-    public operator func !=(
-        right: ReviewResult
-    ): Bool {
-        return !(this == right)
-    }
-}
-
-public class ReviewRecord {
+// ===== Entity: AuditRecord =====
+public class AuditRecord {
     public var id: Int64
-    public let targetType: String
-    public let targetId: Int64
-    public let reviewerId: Int64
-    public let result: ReviewResult
+    public let postId: Int64
+    public let auditorId: Int64
+    public let auditResult: AuditStatus
     public let reason: String
-    public let reviewedAt: String
+    public let createdAt: String
 
     public init(
         id: Int64,
-        targetType: String,
-        targetId: Int64,
-        reviewerId: Int64,
-        result: ReviewResult,
+        postId: Int64,
+        auditorId: Int64,
+        auditResult: AuditStatus,
         reason: String,
-        reviewedAt: String
+        createdAt: String
     ) {
         this.id         = id
-        this.targetType = targetType
-        this.targetId   = targetId
-        this.reviewerId = reviewerId
-        this.result     = result
+        this.postId     = postId
+        this.auditorId  = auditorId
+        this.auditResult = auditResult
         this.reason     = reason
-        this.reviewedAt = reviewedAt
+        this.createdAt  = createdAt
     }
 
     public func toString(): String {
-        return "ReviewRecord{id=${id}" +
-            ", target=${targetType}" +
-            ", result=${result}}"
+        return "AuditRecord{id=${id}" +
+            ", post=${postId}" +
+            ", result=${auditResult}}"
+    }
+}
+
+// ===== Entity: Request（意向申请）=====
+public class Request {
+    public var id: Int64
+    public let postId: Int64
+    public let requesterId: Int64
+    public let requestType: RequestType
+    public var status: RequestStatus
+    public let note: String
+    public let createdAt: String
+    public var updatedAt: String
+
+    public init(
+        id: Int64,
+        postId: Int64,
+        requesterId: Int64,
+        requestType: RequestType,
+        note: String,
+        createdAt: String
+    ) {
+        this.id          = id
+        this.postId      = postId
+        this.requesterId = requesterId
+        this.requestType = requestType
+        this.status      = RequestStatus.PENDING
+        this.note        = note
+        this.createdAt   = createdAt
+        this.updatedAt   = createdAt
+    }
+
+    public func toString(): String {
+        return "Request{id=${id}" +
+            ", post=${postId}" +
+            ", type=${requestType}" +
+            ", status=${status}}"
     }
 }

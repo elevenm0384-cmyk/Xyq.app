@@ -1,48 +1,36 @@
 package cangjie
 
 main(): Int64 {
-    // 初始化 Mock 数据
     mockDataInit()
 
-    let auth =
-        AuthService.getInstance()
-    let itemSvc =
-        ItemBaseService.getInstance()
-    let catSvc =
-        CategoryService.getInstance()
-    let tradeSvc =
-        TradeService.getInstance()
-    let claimSvc =
-        ClaimService.getInstance()
-    let enhAdminSvc =
-        EnhancedAdminService.getInstance()
-    let msgSvc =
-        MessageService.getInstance()
-    let searchSvc =
-        SearchService.getInstance()
-    let statsSvc =
-        StatisticsService.getInstance()
+    let auth = AuthService.getInstance()
+    let postSvc = PostBaseService.getInstance()
+    let catSvc = CategoryService.getInstance()
+    let tradeSvc = TradeService.getInstance()
+    let claimSvc = ClaimService.getInstance()
+    let enhAdmin = EnhancedAdminService.getInstance()
+    let msgSvc = MessageService.getInstance()
+    let searchSvc = SearchService.getInstance()
+    let statsSvc = StatisticsService.getInstance()
 
-    // ======== 基础模块（3号）========
+    // ======== 基础模块 ========
     sep("=== 分类列表 ===")
     println(catSvc.listAll().toString())
 
-    sep("=== 注册新用户 ===")
+    sep("=== 注册 charlie ===")
     println(auth.register(
         "charlie", "pass123",
-        "charlie@campus.edu"
+        "Charlie", "13800003333"
     ).toString())
 
     sep("=== 重复注册（应报错）===")
     println(auth.register(
         "charlie", "pass123",
-        "charlie@campus.edu"
+        "Charlie", "13800003333"
     ).toString())
 
     sep("=== 登录 charlie ===")
-    let loginRes = auth.login(
-        "charlie", "pass123"
-    )
+    let loginRes = auth.login("charlie", "pass123")
     println(loginRes.toString())
     let token = match (loginRes.data) {
         case Some(t) => t
@@ -52,287 +40,188 @@ main(): Int64 {
     sep("=== 查看当前用户 ===")
     println(auth.whoami(token).toString())
 
-    sep("=== 发布二手物品 ===")
-    let req = PublishItemReq(
+    sep("=== 发布二手商品 ===")
+    let req = PublishPostReq(
+        1, BusinessType.SecondHand,
         "二手笔记本电脑",
         "ThinkPad X1，8成新",
-        2,
-        ItemType.SecondHand,
-        "",
+        Some(2500.0),
+        "学院路校区",
+        "[]",
         "微信: charlie_sell"
     )
-    let pubRes = itemSvc.publish(token, req)
+    let pubRes = postSvc.publish(token, req)
     println(pubRes.toString())
-    let newItemId = match (pubRes.data) {
-        case Some(item) => item.id
-        case None       => -1
+    let newId = match (pubRes.data) {
+        case Some(p) => p.id
+        case None    => -1
     }
 
+    // ======== 管理员审核 ========
     sep("=== 管理员登录 ===")
-    let adminLogin = auth.login(
-        "admin", "admin123"
-    )
-    println(adminLogin.toString())
-    let adminToken = match (adminLogin.data) {
+    let admLogin = auth.login("admin", "admin123")
+    println(admLogin.toString())
+    let admToken = match (admLogin.data) {
         case Some(t) => t
         case None    => ""
     }
 
-    sep("=== [增强审核] 管理员审核通过 ===")
-    println(
-        enhAdminSvc.approveWithRecord(
-            adminToken, newItemId
-        ).toString()
-    )
+    sep("=== [增强审核] 审核通过 ===")
+    println(enhAdmin.approveWithRecord(
+        admToken, newId
+    ).toString())
 
     sep("=== [增强审核] 查看审核历史 ===")
-    println(
-        enhAdminSvc.getReviewHistory(
-            adminToken, newItemId
-        ).toString()
-    )
+    println(enhAdmin.getAuditHistory(
+        admToken, newId
+    ).toString())
 
-    // ======== 交易状态机（4号）========
-    sep("=== [交易] 买家 bob 登录 ===")
-    let bobLogin = auth.login(
-        "bob", "pass123"
-    )
+    // ======== Request 交易流程 ========
+    sep("=== bob 登录 ===")
+    let bobLogin = auth.login("bob", "pass123")
     println(bobLogin.toString())
     let bobToken = match (bobLogin.data) {
         case Some(t) => t
         case None    => ""
     }
 
-    sep("=== [交易] bob 购买 charlie 的商品 ===")
-    println(
-        tradeSvc.reserve(
-            bobToken, newItemId
-        ).toString()
+    sep("=== [Request] bob 发起购买申请 ===")
+    let buyRes = tradeSvc.requestBuy(
+        bobToken, newId, "我今晚可以自提"
     )
-
-    sep("=== [交易] 重复购买（应报错）===")
-    println(
-        tradeSvc.reserve(
-            bobToken, newItemId
-        ).toString()
-    )
-
-    sep("=== [交易] 取消交易 ===")
-    println(
-        tradeSvc.cancelTrade(
-            bobToken, newItemId
-        ).toString()
-    )
-
-    sep("=== [交易] 自己买自己（应报错）===")
-    println(
-        tradeSvc.reserve(
-            token, newItemId
-        ).toString()
-    )
-
-    sep("=== [交易] 再次购买 ===")
-    println(
-        tradeSvc.reserve(
-            bobToken, newItemId
-        ).toString()
-    )
-
-    sep("=== [交易] charlie 确认交易完成 ===")
-    println(
-        tradeSvc.completeTrade(
-            token, newItemId
-        ).toString()
-    )
-
-    // ======== 失物认领状态机（4号）========
-    sep("=== [认领] 发布失物招领 ===")
-    let lostReq = PublishItemReq(
-        "黑色钱包",
-        "图书馆3楼捡到，请失主认领",
-        5,
-        ItemType.LostFound,
-        "",
-        "联系: charlie_found"
-    )
-    let lostPubRes =
-        itemSvc.publish(token, lostReq)
-    println(lostPubRes.toString())
-    let lostId = match (lostPubRes.data) {
-        case Some(item) => item.id
-        case None       => -1
+    println(buyRes.toString())
+    let reqId = match (buyRes.data) {
+        case Some(r) => r.id
+        case None    => -1
     }
 
-    sep("=== [增强审核] 审核通过失物 ===")
-    println(
-        enhAdminSvc.approveWithRecord(
-            adminToken, lostId
-        ).toString()
-    )
+    sep("=== [Request] 自己买自己（应报错）===")
+    println(tradeSvc.requestBuy(
+        token, newId, "test"
+    ).toString())
 
-    sep("=== [认领] bob 认领失物 ===")
-    println(
-        claimSvc.claim(
-            bobToken, lostId
-        ).toString()
-    )
+    sep("=== [Request] charlie 接受申请 → RESERVED ===")
+    println(tradeSvc.acceptRequest(
+        token, reqId
+    ).toString())
 
-    sep("=== [认领] 重复认领（应报错）===")
-    println(
-        claimSvc.claim(
-            bobToken, lostId
-        ).toString()
-    )
+    sep("=== [Request] 已完成交易 → SOLD ===")
+    println(tradeSvc.doneRequest(
+        token, reqId
+    ).toString())
 
-    sep("=== [认领] 不能认领自己的失物 ===")
-    println(
-        claimSvc.claim(token, lostId)
-            .toString()
+    // ======== 失物认领流程 ========
+    sep("=== 发布失物信息 ===")
+    let lostReq = PublishPostReq(
+        5, BusinessType.LOST,
+        "黑色钱包",
+        "图书馆3楼捡到，内有身份证",
+        None, "沙河校区", "[]",
+        "联系: charlie"
     )
+    let lostPub = postSvc.publish(token, lostReq)
+    println(lostPub.toString())
+    let lostId = match (lostPub.data) {
+        case Some(p) => p.id
+        case None    => -1
+    }
 
-    sep("=== [认领] charlie 确认已归还 ===")
-    println(
-        claimSvc.confirmReturn(
-            token, lostId
-        ).toString()
-    )
+    sep("=== 审核通过失物 ===")
+    println(enhAdmin.approveWithRecord(
+        admToken, lostId
+    ).toString())
 
-    // ======== 留言/私信（4号）========
-    sep("=== [留言] bob 给商品留言 ===")
-    println(
-        msgSvc.postComment(
-            bobToken, "item", 1,
-            "这个电脑还在吗？"
-        ).toString()
+    sep("=== [Request] bob 发起认领申请 ===")
+    let claimRes = claimSvc.requestClaim(
+        bobToken, lostId, "这是我的钱包"
     )
+    println(claimRes.toString())
+    let claimReqId = match (claimRes.data) {
+        case Some(r) => r.id
+        case None    => -1
+    }
+
+    sep("=== [Request] 不能认领自己的失物 ===")
+    println(claimSvc.requestClaim(
+        token, lostId, "test"
+    ).toString())
+
+    sep("=== [Request] charlie 接受认领 → MATCHING ===")
+    println(claimSvc.acceptClaim(
+        token, claimReqId
+    ).toString())
+
+    sep("=== [Request] 完成认领 → CLAIMED ===")
+    println(claimSvc.doneClaim(
+        token, claimReqId
+    ).toString())
+
+    // ======== 留言 / 私信 ========
+    sep("=== [留言] bob 留言 ===")
+    println(msgSvc.postComment(
+        bobToken, 1, "这个还在吗？", None
+    ).toString())
 
     sep("=== [留言] charlie 回复 ===")
-    println(
-        msgSvc.postComment(
-            token, "item", 1,
-            "还在的，可以私聊"
-        ).toString()
-    )
+    println(msgSvc.postComment(
+        token, 1, "还在的！", None
+    ).toString())
 
     sep("=== [留言] 查看留言列表 ===")
-    println(
-        msgSvc.getComments(
-            "item", 1, 1, 10
-        ).toString()
-    )
+    println(msgSvc.getComments(1, 1, 10).toString())
 
-    sep("=== [私信] bob 给 charlie 发私信 ===")
-    println(
-        msgSvc.sendPrivateMsg(
-            bobToken, 4, "item", 1,
-            "你好，我想买你的电脑"
-        ).toString()
-    )
+    sep("=== [私信] bob→charlie ===")
+    println(msgSvc.sendPrivateMsg(
+        bobToken, 4, Some(1),
+        "你好，我想买你的电脑"
+    ).toString())
 
-    sep("=== [私信] charlie 查看未读私信数 ===")
-    println(
-        msgSvc.getUnreadCount(token)
-            .toString()
-    )
+    sep("=== [私信] charlie 未读私信数 ===")
+    println(msgSvc.getUnreadCount(token).toString())
 
-    // ======== 搜索（4号）========
+    // ======== 搜索 ========
     sep("=== [搜索] 关键词'电脑' ===")
     let sp1 = SearchParams()
     sp1.keyword = "电脑"
-    sp1.page = 1
-    sp1.pageSize = 10
     println(searchSvc.search(sp1).toString())
 
-    sep("=== [搜索] 筛选二手+教材分类 ===")
+    sep("=== [搜索] 筛选二手 ===")
     let sp2 = SearchParams()
-    sp2.itemType = Some(ItemType.SecondHand)
-    sp2.categoryId = Some(1)
-    sp2.page = 1
-    sp2.pageSize = 10
+    sp2.businessType = Some(BusinessType.SecondHand)
     println(searchSvc.search(sp2).toString())
 
-    sep("=== [搜索] 筛选失物招领 ===")
+    sep("=== [搜索] 筛选失物 ===")
     let sp3 = SearchParams()
-    sp3.itemType = Some(ItemType.LostFound)
-    sp3.page = 1
-    sp3.pageSize = 10
+    sp3.businessType = Some(BusinessType.LOST)
     println(searchSvc.search(sp3).toString())
 
-    // ======== 统计（4号）========
+    // ======== 统计 ========
     sep("=== [统计] 平台总览 ===")
     println(statsSvc.getOverview().toString())
 
-    sep("=== [统计] 热门分类 ===")
-    println(statsSvc.getHotCategories().toString())
-
     sep("=== [统计] 状态分布 ===")
-    println(
-        statsSvc.getStatusDistribution()
-            .toString()
-    )
+    println(statsSvc.getStatusDistribution().toString())
 
     // ======== 边界情况 ========
-    sep("=== [边界] 下架商品 ===")
-    // 先发一个新商品并审核通过
-    let req2 = PublishItemReq(
-        "台灯", "护眼LED台灯",
-        3, ItemType.SecondHand, "",
-        "微信: charlie_sell"
+    sep("=== [边界] 驳回审核（需原因）===")
+    let badReq = PublishPostReq(
+        1, BusinessType.SecondHand,
+        "违规商品", "测试",
+        Some(1.0), "", "[]", ""
     )
-    match (itemSvc.publish(token, req2).data) {
-        case Some(item) =>
-            enhAdminSvc.approveWithRecord(
-                adminToken, item.id
-            )
-            sep("=== [边界] charlie 下架 ===")
-            println(
-                tradeSvc.delist(
-                    token, item.id
-                ).toString()
-            )
-            sep("=== [边界] 下架后不可购买 ===")
-            println(
-                tradeSvc.reserve(
-                    bobToken, item.id
-                ).toString()
-            )
-            sep("=== [边界] 重新上架 ===")
-            println(
-                tradeSvc.relist(
-                    token, item.id
-                ).toString()
-            )
-        case None => ()
-    }
-
-    sep("=== [边界] 驳回审核（需填原因）===")
-    let req3 = PublishItemReq(
-        "违规商品", "测试驳回",
-        1, ItemType.SecondHand, "", ""
-    )
-    match (itemSvc.publish(token, req3).data) {
-        case Some(item) =>
-            println(
-                enhAdminSvc.rejectWithRecord(
-                    adminToken, item.id,
-                    "商品信息不实，请修改后重新提交"
-                ).toString()
-            )
-            sep("=== [边界] 审核历史（含驳回）===")
-            println(
-                enhAdminSvc.getReviewHistory(
-                    adminToken, item.id
-                ).toString()
-            )
+    match (postSvc.publish(token, badReq).data) {
+        case Some(p) =>
+            println(enhAdmin.rejectWithRecord(
+                admToken, p.id, "信息不实"
+            ).toString())
         case None => ()
     }
 
     sep("=== [边界] 登出后操作（应401）===")
-    println(auth.logout(token).toString())
-    println(
-        tradeSvc.reserve(token, 1)
-            .toString()
-    )
+    println(auth.logout(bobToken).toString())
+    println(tradeSvc.requestBuy(
+        bobToken, 1, "test"
+    ).toString())
 
     return 0
 }

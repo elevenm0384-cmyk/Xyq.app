@@ -41,42 +41,47 @@ public class MessageRepository {
         return store.get(id)
     }
 
-    public func findByTarget(
-        targetType: String,
-        targetId: Int64,
+    public func findByPost(
+        postId: Int64,
         page: Int64,
         size: Int64
     ): ArrayList<Message> {
-        let result = ArrayList<Message>()
+        let all = ArrayList<Message>()
         for ((_, m) in store) {
-            if (m.targetType == targetType &&
-                m.targetId == targetId &&
-                m.msgType == MessageType.Comment) {
-                result.add(m)
+            match (m.postId) {
+                case Some(pid) =>
+                    if (pid == postId &&
+                        m.messageType ==
+                        MessageType.PUBLIC_COMMENT) {
+                        all.add(m)
+                    }
+                case None => ()
             }
         }
-        // 分页截取
         let from = (page - 1) * size
-        let paged = ArrayList<Message>()
+        let result = ArrayList<Message>()
         var i = from
         while (i < from + size &&
-            i < Int64(result.size)) {
-            paged.add(result[i])
+            i < Int64(all.size)) {
+            result.add(all[i])
             i++
         }
-        return paged
+        return result
     }
 
-    public func countByTarget(
-        targetType: String,
-        targetId: Int64
+    public func countByPost(
+        postId: Int64
     ): Int64 {
         var c: Int64 = 0
         for ((_, m) in store) {
-            if (m.targetType == targetType &&
-                m.targetId == targetId &&
-                m.msgType == MessageType.Comment) {
-                c++
+            match (m.postId) {
+                case Some(pid) =>
+                    if (pid == postId &&
+                        m.messageType ==
+                        MessageType.PUBLIC_COMMENT) {
+                        c++
+                    }
+                case None => ()
             }
         }
         return c
@@ -88,35 +93,83 @@ public class MessageRepository {
         page: Int64,
         size: Int64
     ): ArrayList<Message> {
-        let result = ArrayList<Message>()
+        let all = ArrayList<Message>()
         for ((_, m) in store) {
-            if (m.msgType != MessageType.PrivateMsg) {
+            if (m.messageType !=
+                MessageType.PRIVATE_MESSAGE) {
                 continue
-            }
-            let matchAB = (m.fromUserId == userA)
-            let matchBA = (m.fromUserId == userB)
-            let toA = match (m.toUserId) {
-                case Some(uid) => uid == userA
-                case None      => false
             }
             let toB = match (m.toUserId) {
                 case Some(uid) => uid == userB
                 case None      => false
             }
-            if ((matchAB && toB) ||
-                (matchBA && toA)) {
-                result.add(m)
+            let toA = match (m.toUserId) {
+                case Some(uid) => uid == userA
+                case None      => false
+            }
+            if ((m.fromUserId == userA && toB) ||
+                (m.fromUserId == userB && toA)) {
+                all.add(m)
             }
         }
         let from = (page - 1) * size
-        let paged = ArrayList<Message>()
+        let result = ArrayList<Message>()
         var i = from
         while (i < from + size &&
-            i < Int64(result.size)) {
-            paged.add(result[i])
+            i < Int64(all.size)) {
+            result.add(all[i])
             i++
         }
-        return paged
+        return result
+    }
+
+    public func findByUser(
+        userId: Int64,
+        msgType: Option<MessageType>,
+        isRead: Option<Bool>,
+        page: Int64,
+        size: Int64
+    ): ArrayList<Message> {
+        let all = ArrayList<Message>()
+        for ((_, m) in store) {
+            var found = false
+            match (m.toUserId) {
+                case Some(uid) =>
+                    if (uid == userId) {
+                        found = true
+                    }
+                case None => ()
+            }
+            if (m.fromUserId == userId) {
+                found = true
+            }
+            if (!found) { continue }
+
+            match (msgType) {
+                case Some(mt) =>
+                    if (m.messageType != mt) {
+                        continue
+                    }
+                case None => ()
+            }
+            match (isRead) {
+                case Some(rd) =>
+                    if (m.isRead != rd) {
+                        continue
+                    }
+                case None => ()
+            }
+            all.add(m)
+        }
+        let from = (page - 1) * size
+        let result = ArrayList<Message>()
+        var i = from
+        while (i < from + size &&
+            i < Int64(all.size)) {
+            result.add(all[i])
+            i++
+        }
+        return result
     }
 
     public func countUnread(
@@ -147,33 +200,33 @@ public class MessageRepository {
     }
 }
 
-// ===== ReviewRepository =====
-public class ReviewRepository {
+// ===== AuditRepository =====
+public class AuditRepository {
     private var store:
-        HashMap<Int64, ReviewRecord> =
-        HashMap<Int64, ReviewRecord>()
+        HashMap<Int64, AuditRecord> =
+        HashMap<Int64, AuditRecord>()
     private var nextId: Int64 = 1
 
     private static var inst:
-        Option<ReviewRepository> = None
+        Option<AuditRepository> = None
 
     private init() {}
 
     public static func getInstance()
-        : ReviewRepository
+        : AuditRepository
     {
         match (inst) {
             case Some(r) => return r
             case None =>
-                let r = ReviewRepository()
+                let r = AuditRepository()
                 inst = Some(r)
                 return r
         }
     }
 
     public func save(
-        record: ReviewRecord
-    ): ReviewRecord {
+        record: AuditRecord
+    ): AuditRecord {
         if (record.id == 0) {
             record.id = nextId
             nextId++
@@ -182,31 +235,15 @@ public class ReviewRepository {
         return record
     }
 
-    public func findByTarget(
-        targetType: String,
-        targetId: Int64
-    ): ArrayList<ReviewRecord> {
-        let result = ArrayList<ReviewRecord>()
+    public func findByPost(
+        postId: Int64
+    ): ArrayList<AuditRecord> {
+        let result = ArrayList<AuditRecord>()
         for ((_, r) in store) {
-            if (r.targetType == targetType &&
-                r.targetId == targetId) {
+            if (r.postId == postId) {
                 result.add(r)
             }
         }
         return result
-    }
-
-    public func countByTarget(
-        targetType: String,
-        targetId: Int64
-    ): Int64 {
-        var c: Int64 = 0
-        for ((_, r) in store) {
-            if (r.targetType == targetType &&
-                r.targetId == targetId) {
-                c++
-            }
-        }
-        return c
     }
 }

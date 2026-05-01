@@ -11,21 +11,22 @@ public enum ErrorCode {
     | UserAlreadyExists
     | UserNotFound
     | WrongPassword
-    | ItemNotFound
-    | ItemAlreadyClosed
-    | CategoryNotFound
-    | ItemNotAvailable
+    | PostNotFound
+    | PostAlreadyClosed
+    | PostNotAvailable
     | AlreadyReserved
     | AlreadyClaimed
     | CannotBuyOwn
     | CannotClaimOwn
-    | TradeNotFound
-    | MessageNotFound
+    | RequestNotFound
     | InvalidTransition
+    | CategoryNotFound
+    | MessageNotFound
+    | ReviewNotFound
 
     public func code(): Int64 {
         match (this) {
-            case Success          => 200
+            case Success          => 0
             case BadRequest       => 400
             case Unauthorized     => 401
             case Forbidden        => 403
@@ -34,24 +35,25 @@ public enum ErrorCode {
             case UserAlreadyExists => 1001
             case UserNotFound     => 1002
             case WrongPassword    => 1003
-            case ItemNotFound     => 2001
-            case ItemAlreadyClosed => 2002
-            case ItemNotAvailable => 2003
+            case PostNotFound     => 2001
+            case PostAlreadyClosed => 2002
+            case PostNotAvailable => 2003
             case AlreadyReserved  => 2004
             case AlreadyClaimed   => 2005
             case CannotBuyOwn     => 2006
             case CannotClaimOwn   => 2007
-            case TradeNotFound    => 2008
-            case MessageNotFound  => 3001
-            case CategoryNotFound => 3002
+            case RequestNotFound  => 2008
             case InvalidTransition => 4001
+            case CategoryNotFound => 3002
+            case MessageNotFound  => 3003
+            case ReviewNotFound   => 3004
         }
     }
 
-    public func msg(): String {
+    public func message(): String {
         match (this) {
             case Success =>
-                "操作成功"
+                "ok"
             case BadRequest =>
                 "请求参数错误"
             case Unauthorized =>
@@ -68,28 +70,30 @@ public enum ErrorCode {
                 "用户不存在"
             case WrongPassword =>
                 "密码错误"
-            case ItemNotFound =>
-                "物品不存在"
-            case ItemAlreadyClosed =>
-                "物品已关闭"
-            case ItemNotAvailable =>
-                "物品当前状态不可操作"
+            case PostNotFound =>
+                "内容不存在"
+            case PostAlreadyClosed =>
+                "内容已关闭"
+            case PostNotAvailable =>
+                "当前状态不可操作"
             case AlreadyReserved =>
-                "该商品已被他人锁定"
+                "已被他人锁定"
             case AlreadyClaimed =>
-                "该失物已被他人认领"
+                "已被他人认领"
             case CannotBuyOwn =>
                 "不能购买自己的商品"
             case CannotClaimOwn =>
                 "不能认领自己发布的失物"
-            case TradeNotFound =>
-                "未找到进行中的交易"
-            case MessageNotFound =>
-                "留言不存在"
-            case CategoryNotFound =>
-                "分类不存在"
+            case RequestNotFound =>
+                "申请不存在"
             case InvalidTransition =>
                 "当前状态不允许此操作"
+            case CategoryNotFound =>
+                "分类不存在"
+            case MessageNotFound =>
+                "留言不存在"
+            case ReviewNotFound =>
+                "审核记录不存在"
         }
     }
 }
@@ -97,7 +101,7 @@ public enum ErrorCode {
 // ===== ApiResponse<T> =====
 public class ApiResponse<T> {
     public let code: Int64
-    public let msg: String
+    public let message: String
     public let data: Option<T>
 
     private init(
@@ -106,14 +110,14 @@ public class ApiResponse<T> {
         d: Option<T>
     ) {
         code = c
-        msg  = m
+        message = m
         data = d
     }
 
     public static func ok(d: T): ApiResponse<T> {
         let ec = ErrorCode.Success
         return ApiResponse<T>(
-            ec.code(), ec.msg(), Some(d)
+            ec.code(), ec.message(), Some(d)
         )
     }
 
@@ -122,7 +126,7 @@ public class ApiResponse<T> {
     {
         let ec = ErrorCode.Success
         return ApiResponse<Unit>(
-            ec.code(), ec.msg(), None
+            ec.code(), ec.message(), None
         )
     }
 
@@ -130,7 +134,7 @@ public class ApiResponse<T> {
         ec: ErrorCode
     ): ApiResponse<T> {
         return ApiResponse<T>(
-            ec.code(), ec.msg(), None
+            ec.code(), ec.message(), None
         )
     }
 
@@ -141,7 +145,7 @@ public class ApiResponse<T> {
         }
         return "ApiResponse{" +
             "code=${code}" +
-            ", msg=${msg}" +
+            ", message=${message}" +
             ", data=${d}}"
     }
 }
@@ -149,20 +153,20 @@ public class ApiResponse<T> {
 // ===== PageResult<T> =====
 public class PageResult<T> {
     public let total: Int64
-    public let currentPage: Int64
+    public let page: Int64
     public let pageSize: Int64
     public let list: Array<T>
 
     public init(
         total: Int64,
-        currentPage: Int64,
+        page: Int64,
         pageSize: Int64,
         list: Array<T>
     ) {
-        this.total       = total
-        this.currentPage = currentPage
-        this.pageSize    = pageSize
-        this.list        = list
+        this.total    = total
+        this.page     = page
+        this.pageSize = pageSize
+        this.list     = list
     }
 
     public func totalPages(): Int64 {
@@ -173,9 +177,8 @@ public class PageResult<T> {
     public func toString(): String {
         return "PageResult{" +
             "total=${total}" +
-            ", page=${currentPage}" +
-            "/" +
-            "${totalPages()}" +
+            ", page=${page}" +
+            "/${totalPages()}" +
             ", size=${list.size}}"
     }
 }

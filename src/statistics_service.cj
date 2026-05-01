@@ -3,18 +3,20 @@ package cangjie
 import std.collection.*
 
 // ================================================
-//  StatisticsService — 数据统计
-//  支持：平台总览、热门分类、状态分布
+//  StatisticsService — 平台数据统计
 // ================================================
 public class StatisticsService {
-    private let itemRepo: ItemRepository
+    private let postRepo: PostRepository
+    private let userRepo: UserRepository
 
     private static var inst:
         Option<StatisticsService> = None
 
     private init() {
-        itemRepo =
-            ItemRepository.getInstance()
+        postRepo =
+            PostRepository.getInstance()
+        userRepo =
+            UserRepository.getInstance()
     }
 
     public static func getInstance()
@@ -29,88 +31,62 @@ public class StatisticsService {
         }
     }
 
+    // 总览统计
     public func getOverview()
         : ApiResponse<OverviewStats> {
-        let all = itemRepo.findAll()
+        let all = postRepo.findAll()
         let stats = OverviewStats()
-        stats.totalItems = Int64(all.size)
-
-        for (item in all) {
-            match (ItemType.SecondHand == item.itemType) {
-                case true => stats.totalSecondHand++
-                case false => stats.totalLostFound++
-            }
-
-            match (ItemStatus.Pending == item.status) {
-                case true => stats.pendingReviews++
-                case false => ()
-            }
-
-            match (TradeStatus.Reserved ==
-                item.tradeStatus) {
-                case true => stats.activeTrades++
-                case false => ()
-            }
-            match (TradeStatus.Sold ==
-                item.tradeStatus) {
-                case true => stats.soldItems++
-                case false => ()
-            }
-
-            match (ClaimStatus.Claimed ==
-                item.claimStatus) {
-                case true => stats.activeClaims++
-                case false => ()
-            }
-            match (ClaimStatus.Returned ==
-                item.claimStatus) {
-                case true => stats.returnedItems++
-                case false => ()
-            }
-        }
-
-        return ApiResponse<OverviewStats>
-            .ok(stats)
-    }
-
-    // 热门分类（按物品数量降序）
-    public func getHotCategories()
-        : ApiResponse<ArrayList<CategoryStats>> {
-        let all = itemRepo.findAll()
-        let catRepo =
-            CategoryRepository.getInstance()
+        stats.totalUsers = userRepo.count()
+        stats.totalPosts = Int64(all.size)
 
         var catMap: HashMap<Int64, Int64> =
             HashMap<Int64, Int64>()
-        for (item in all) {
-            match (catMap.get(item.categoryId)) {
+        let catRepo =
+            CategoryRepository.getInstance()
+
+        for (post in all) {
+            if (post.businessType ==
+                BusinessType.SecondHand) {
+                stats.secondhandCount++
+            }
+            match (BusinessType.LOST ==
+                post.businessType) {
+                case true => stats.lostCount++
+                case false => ()
+            }
+            match (BusinessType.FOUND ==
+                post.businessType) {
+                case true => stats.foundCount++
+                case false => ()
+            }
+            if (post.auditStatus ==
+                AuditStatus.PENDING) {
+                stats.pendingAuditCount++
+            }
+            // 分类统计
+            match (catMap.get(post.categoryId)) {
                 case Some(cnt) =>
-                    catMap.add(
-                        item.categoryId, cnt + 1
-                    )
+                    catMap.add(post.categoryId, cnt + 1)
                 case None =>
-                    catMap.add(item.categoryId, 1)
+                    catMap.add(post.categoryId, 1)
             }
         }
 
-        let result = ArrayList<CategoryStats>()
+        // 热门分类 TOP N
+        let hotList = ArrayList<CategoryStats>()
         for ((catId, cnt) in catMap) {
             let name = match (catRepo.findById(catId)) {
                 case Some(c) => c.name
-                case None    => "未知分类"
+                case None    => "未知"
             }
-            result.add(
-                CategoryStats(catId, name, cnt)
-            )
+            hotList.add(CategoryStats(catId, name, cnt))
         }
-
-        let arr = result.toArray()
+        let arr = hotList.toArray()
         let n = arr.size
         if (n > 1) {
             for (i in 0..n - 1) {
                 for (j in 0..n - 2 - i) {
-                    if (arr[j].count <
-                        arr[j + 1].count) {
+                    if (arr[j].count < arr[j + 1].count) {
                         let tmp = arr[j]
                         arr[j] = arr[j + 1]
                         arr[j + 1] = tmp
@@ -118,25 +94,22 @@ public class StatisticsService {
                 }
             }
         }
-        result.clear()
         for (item in arr) {
-            result.add(item)
+            stats.hotCategories.add(item)
         }
 
-        return ApiResponse<
-            ArrayList<CategoryStats>
-        >.ok(result)
+        return ApiResponse<OverviewStats>.ok(stats)
     }
 
-    // 状态分布统计
+    // 状态分布
     public func getStatusDistribution()
         : ApiResponse<ArrayList<StatusDist>> {
-        let all = itemRepo.findAll()
+        let all = postRepo.findAll()
         var statusMap: HashMap<String, Int64> =
             HashMap<String, Int64>()
 
-        for (item in all) {
-            let key = item.status.toString()
+        for (post in all) {
+            let key = post.bizStatus.toString()
             match (statusMap.get(key)) {
                 case Some(cnt) =>
                     statusMap.add(key, cnt + 1)

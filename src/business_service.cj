@@ -4,20 +4,23 @@ import std.collection.*
 import std.time.*
 
 // ================================================
-//  TradeService — 二手交易状态机
-//  状态: Idle → Reserved → Sold / Idle
-//  约束: 只有 Approved 状态的二手商品可交易
+//  TradeService — 二手交易（基于 Request 流程）
+//  流程: 发起BUY申请 → 卖家ACCEPT →
+//        post→RESERVED → DONE → post→SOLD
 // ================================================
 public class TradeService {
-    private let itemRepo: ItemRepository
+    private let postRepo: PostRepository
+    private let reqRepo: RequestRepository
     private let sessions: SessionManager
 
     private static var inst:
         Option<TradeService> = None
 
     private init() {
-        itemRepo =
-            ItemRepository.getInstance()
+        postRepo =
+            PostRepository.getInstance()
+        reqRepo =
+            RequestRepository.getInstance()
         sessions =
             SessionManager.getInstance()
     }
@@ -34,233 +37,273 @@ public class TradeService {
         }
     }
 
-    // 买家发起交易
-    public func reserve(
+    // 发起购买申请
+    public func requestBuy(
         token: String,
-        itemId: Int64
-    ): ApiResponse<BaseItem> {
+        postId: Int64,
+        note: String
+    ): ApiResponse<Request> {
         match (sessions.getUserId(token)) {
             case None =>
-                return ApiResponse<BaseItem>
-                    .fail(ErrorCode.Unauthorized)
+                return ApiResponse<Request>.fail(
+                    ErrorCode.Unauthorized
+                )
             case Some(uid) =>
-                match (itemRepo.findById(itemId)) {
+                match (postRepo.findById(postId)) {
                     case None =>
-                        return ApiResponse<BaseItem>
-                            .fail(ErrorCode.ItemNotFound)
-                    case Some(item) =>
-                        return doReserve(item, uid)
+                        return ApiResponse<Request>.fail(
+                            ErrorCode.PostNotFound
+                        )
+                    case Some(post) =>
+                        return doRequestBuy(post, uid, note)
                 }
         }
     }
 
-    private func doReserve(
-        item: BaseItem,
-        buyerId: Int64
-    ): ApiResponse<BaseItem> {
-        if (item.itemType != ItemType.SecondHand) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.ItemNotAvailable)
+    private func doRequestBuy(
+        post: Post,
+        uid: Int64,
+        note: String
+    ): ApiResponse<Request> {
+        if (post.businessType !=
+            BusinessType.SecondHand) {
+            return ApiResponse<Request>.fail(
+                ErrorCode.PostNotAvailable
+            )
         }
-        if (item.status != ItemStatus.Approved) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.ItemNotAvailable)
+        if (post.bizStatus != BizStatus.ON_SALE) {
+            return ApiResponse<Request>.fail(
+                ErrorCode.PostNotAvailable
+            )
         }
-        if (item.tradeStatus != TradeStatus.Idle) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.AlreadyReserved)
+        if (post.authorId == uid) {
+            return ApiResponse<Request>.fail(
+                ErrorCode.CannotBuyOwn
+            )
         }
-        if (item.publisherId == buyerId) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.CannotBuyOwn)
-        }
-        item.tradeStatus = TradeStatus.Reserved
-        item.buyerId = Some(buyerId)
-        return ApiResponse<BaseItem>
-            .ok(itemRepo.save(item))
+        let req = Request(
+            0, post.id, uid,
+            RequestType.BUY, note,
+            DateTime.now().toString()
+        )
+        return ApiResponse<Request>.ok(
+            reqRepo.save(req)
+        )
     }
 
-    // 卖家确认交易完成
-    public func completeTrade(
+    // 卖家接受申请 → post→RESERVED
+    public func acceptRequest(
         token: String,
-        itemId: Int64
-    ): ApiResponse<BaseItem> {
+        requestId: Int64
+    ): ApiResponse<Request> {
         match (sessions.getUserId(token)) {
             case None =>
-                return ApiResponse<BaseItem>
-                    .fail(ErrorCode.Unauthorized)
+                return ApiResponse<Request>.fail(
+                    ErrorCode.Unauthorized
+                )
             case Some(uid) =>
-                match (itemRepo.findById(itemId)) {
+                match (reqRepo.findById(requestId)) {
                     case None =>
-                        return ApiResponse<BaseItem>
-                            .fail(ErrorCode.ItemNotFound)
-                    case Some(item) =>
-                        return doComplete(item, uid)
+                        return ApiResponse<Request>.fail(
+                            ErrorCode.RequestNotFound
+                        )
+                    case Some(req) =>
+                        return doAccept(req, uid)
                 }
         }
     }
 
-    private func doComplete(
-        item: BaseItem,
-        userId: Int64
-    ): ApiResponse<BaseItem> {
-        if (item.publisherId != userId) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.Forbidden)
+    private func doAccept(
+        req: Request,
+        uid: Int64
+    ): ApiResponse<Request> {
+        match (postRepo.findById(req.postId)) {
+            case None =>
+                return ApiResponse<Request>.fail(
+                    ErrorCode.PostNotFound
+                )
+            case Some(post) =>
+                if (post.authorId != uid) {
+                    return ApiResponse<Request>.fail(
+                        ErrorCode.Forbidden
+                    )
+                }
+                if (req.status != RequestStatus.PENDING) {
+                    return ApiResponse<Request>.fail(
+                        ErrorCode.InvalidTransition
+                    )
+                }
+                req.status = RequestStatus.ACCEPTED
+                post.bizStatus = BizStatus.RESERVED
+                postRepo.save(post)
+                return ApiResponse<Request>.ok(
+                    reqRepo.save(req)
+                )
         }
-        if (item.tradeStatus != TradeStatus.Reserved) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.TradeNotFound)
-        }
-        item.tradeStatus = TradeStatus.Sold
-        item.status = ItemStatus.Closed
-        return ApiResponse<BaseItem>
-            .ok(itemRepo.save(item))
     }
 
-    // 取消交易（买家或卖家均可）
-    public func cancelTrade(
+    // 拒绝申请
+    public func rejectRequest(
         token: String,
-        itemId: Int64
-    ): ApiResponse<BaseItem> {
+        requestId: Int64
+    ): ApiResponse<Request> {
         match (sessions.getUserId(token)) {
             case None =>
-                return ApiResponse<BaseItem>
-                    .fail(ErrorCode.Unauthorized)
+                return ApiResponse<Request>.fail(
+                    ErrorCode.Unauthorized
+                )
             case Some(uid) =>
-                match (itemRepo.findById(itemId)) {
+                match (reqRepo.findById(requestId)) {
                     case None =>
-                        return ApiResponse<BaseItem>
-                            .fail(ErrorCode.ItemNotFound)
-                    case Some(item) =>
-                        return doCancel(item, uid)
+                        return ApiResponse<Request>.fail(
+                            ErrorCode.RequestNotFound
+                        )
+                    case Some(req) =>
+                        match (postRepo.findById(req.postId)) {
+                            case Some(post) =>
+                                if (post.authorId != uid) {
+                                    return ApiResponse<Request>
+                                        .fail(ErrorCode.Forbidden)
+                                }
+                            case None => ()
+                        }
+                        if (req.status !=
+                            RequestStatus.PENDING) {
+                            return ApiResponse<Request>.fail(
+                                ErrorCode.InvalidTransition
+                            )
+                        }
+                        req.status = RequestStatus.REJECTED
+                        return ApiResponse<Request>.ok(
+                            reqRepo.save(req)
+                        )
                 }
         }
     }
 
-    private func doCancel(
-        item: BaseItem,
-        userId: Int64
-    ): ApiResponse<BaseItem> {
-        if (item.tradeStatus != TradeStatus.Reserved) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.TradeNotFound)
-        }
-        let isSeller = item.publisherId == userId
-        let isBuyer = match (item.buyerId) {
-            case Some(bid) => bid == userId
-            case None      => false
-        }
-        if (!isSeller && !isBuyer) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.Forbidden)
-        }
-        item.tradeStatus = TradeStatus.Idle
-        item.buyerId = None
-        return ApiResponse<BaseItem>
-            .ok(itemRepo.save(item))
-    }
-
-    // 卖家下架商品
-    public func delist(
+    // 取消申请
+    public func cancelRequest(
         token: String,
-        itemId: Int64
-    ): ApiResponse<BaseItem> {
+        requestId: Int64
+    ): ApiResponse<Request> {
         match (sessions.getUserId(token)) {
             case None =>
-                return ApiResponse<BaseItem>
-                    .fail(ErrorCode.Unauthorized)
+                return ApiResponse<Request>.fail(
+                    ErrorCode.Unauthorized
+                )
             case Some(uid) =>
-                match (itemRepo.findById(itemId)) {
+                match (reqRepo.findById(requestId)) {
                     case None =>
-                        return ApiResponse<BaseItem>
-                            .fail(ErrorCode.ItemNotFound)
-                    case Some(item) =>
-                        return doDelist(item, uid)
+                        return ApiResponse<Request>.fail(
+                            ErrorCode.RequestNotFound
+                        )
+                    case Some(req) =>
+                        if (req.requesterId != uid) {
+                            return ApiResponse<Request>.fail(
+                                ErrorCode.Forbidden
+                            )
+                        }
+                        if (req.status !=
+                            RequestStatus.PENDING) {
+                            return ApiResponse<Request>.fail(
+                                ErrorCode.InvalidTransition
+                            )
+                        }
+                        req.status = RequestStatus.CANCELLED
+                        return ApiResponse<Request>.ok(
+                            reqRepo.save(req)
+                        )
                 }
         }
     }
 
-    private func doDelist(
-        item: BaseItem,
-        userId: Int64
-    ): ApiResponse<BaseItem> {
-        if (item.publisherId != userId) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.Forbidden)
-        }
-        if (item.status != ItemStatus.Approved) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.ItemNotAvailable)
-        }
-        if (item.tradeStatus == TradeStatus.Reserved) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.ItemNotAvailable)
-        }
-        item.status = ItemStatus.Closed
-        return ApiResponse<BaseItem>
-            .ok(itemRepo.save(item))
-    }
-
-    // 卖家重新上架
-    public func relist(
+    // 完成交易 → post→SOLD
+    public func doneRequest(
         token: String,
-        itemId: Int64
-    ): ApiResponse<BaseItem> {
+        requestId: Int64
+    ): ApiResponse<Request> {
         match (sessions.getUserId(token)) {
             case None =>
-                return ApiResponse<BaseItem>
-                    .fail(ErrorCode.Unauthorized)
+                return ApiResponse<Request>.fail(
+                    ErrorCode.Unauthorized
+                )
             case Some(uid) =>
-                match (itemRepo.findById(itemId)) {
+                match (reqRepo.findById(requestId)) {
                     case None =>
-                        return ApiResponse<BaseItem>
-                            .fail(ErrorCode.ItemNotFound)
-                    case Some(item) =>
-                        return doRelist(item, uid)
+                        return ApiResponse<Request>.fail(
+                            ErrorCode.RequestNotFound
+                        )
+                    case Some(req) =>
+                        match (postRepo.findById(req.postId)) {
+                            case Some(post) =>
+                                if (post.authorId != uid) {
+                                    return ApiResponse<Request>
+                                        .fail(ErrorCode.Forbidden)
+                                }
+                            case None => ()
+                        }
+                        if (req.status !=
+                            RequestStatus.ACCEPTED) {
+                            return ApiResponse<Request>.fail(
+                                ErrorCode.InvalidTransition
+                            )
+                        }
+                        req.status = RequestStatus.DONE
+                        match (postRepo.findById(req.postId)) {
+                            case Some(post) =>
+                                post.bizStatus = BizStatus.SOLD
+                                postRepo.save(post)
+                            case None => ()
+                        }
+                        return ApiResponse<Request>.ok(
+                            reqRepo.save(req)
+                        )
                 }
         }
     }
 
-    private func doRelist(
-        item: BaseItem,
-        userId: Int64
-    ): ApiResponse<BaseItem> {
-        if (item.publisherId != userId) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.Forbidden)
+    // 获取某个 post 的申请列表
+    public func listRequests(
+        token: String,
+        postId: Int64
+    ): ApiResponse<ArrayList<Request>> {
+        match (sessions.getUserId(token)) {
+            case None =>
+                return ApiResponse<ArrayList<Request>>
+                    .fail(ErrorCode.Unauthorized)
+            case Some(uid) =>
+                match (postRepo.findById(postId)) {
+                    case Some(post) =>
+                        if (post.authorId != uid) {
+                            // 管理员也可查看
+                            ()
+                        }
+                    case None => ()
+                }
+                return ApiResponse<ArrayList<Request>>
+                    .ok(reqRepo.findByPost(postId))
         }
-        if (item.status != ItemStatus.Closed) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.ItemNotAvailable)
-        }
-        if (item.tradeStatus == TradeStatus.Sold) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.InvalidTransition)
-        }
-        item.status = ItemStatus.Approved
-        item.tradeStatus = TradeStatus.Idle
-        item.buyerId = None
-        return ApiResponse<BaseItem>
-            .ok(itemRepo.save(item))
     }
 }
 
 // ================================================
-//  ClaimService — 失物认领状态机
-//  状态: Idle → Claimed → Returned / Idle
-//  约束: 只有 Approved 状态的失物可被认领
+//  ClaimService — 失物认领（基于 Request 流程）
+//  流程: 发起CLAIM申请 → 发布者ACCEPT →
+//        post→MATCHING → DONE → post→CLAIMED
 // ================================================
 public class ClaimService {
-    private let itemRepo: ItemRepository
+    private let postRepo: PostRepository
+    private let reqRepo: RequestRepository
     private let sessions: SessionManager
 
     private static var inst:
         Option<ClaimService> = None
 
     private init() {
-        itemRepo =
-            ItemRepository.getInstance()
+        postRepo =
+            PostRepository.getInstance()
+        reqRepo =
+            RequestRepository.getInstance()
         sessions =
             SessionManager.getInstance()
     }
@@ -277,170 +320,194 @@ public class ClaimService {
         }
     }
 
-    // 发起认领
-    public func claim(
+    // 发起认领申请
+    public func requestClaim(
         token: String,
-        itemId: Int64
-    ): ApiResponse<BaseItem> {
+        postId: Int64,
+        note: String
+    ): ApiResponse<Request> {
         match (sessions.getUserId(token)) {
             case None =>
-                return ApiResponse<BaseItem>
-                    .fail(ErrorCode.Unauthorized)
+                return ApiResponse<Request>.fail(
+                    ErrorCode.Unauthorized
+                )
             case Some(uid) =>
-                match (itemRepo.findById(itemId)) {
+                match (postRepo.findById(postId)) {
                     case None =>
-                        return ApiResponse<BaseItem>
-                            .fail(ErrorCode.ItemNotFound)
-                    case Some(item) =>
-                        return doClaim(item, uid)
+                        return ApiResponse<Request>.fail(
+                            ErrorCode.PostNotFound
+                        )
+                    case Some(post) =>
+                        return doRequestClaim(post, uid, note)
                 }
         }
     }
 
-    private func doClaim(
-        item: BaseItem,
-        claimerId: Int64
-    ): ApiResponse<BaseItem> {
-        if (item.itemType != ItemType.LostFound) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.ItemNotAvailable)
+    private func doRequestClaim(
+        post: Post,
+        uid: Int64,
+        note: String
+    ): ApiResponse<Request> {
+        let bt = post.businessType
+        if (bt != BusinessType.LOST &&
+            bt != BusinessType.FOUND) {
+            return ApiResponse<Request>.fail(
+                ErrorCode.PostNotAvailable
+            )
         }
-        if (item.status != ItemStatus.Approved) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.ItemNotAvailable)
+        if (post.bizStatus != BizStatus.OPEN) {
+            return ApiResponse<Request>.fail(
+                ErrorCode.PostNotAvailable
+            )
         }
-        if (item.claimStatus != ClaimStatus.Idle) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.AlreadyClaimed)
+        if (post.authorId == uid) {
+            return ApiResponse<Request>.fail(
+                ErrorCode.CannotClaimOwn
+            )
         }
-        if (item.publisherId == claimerId) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.CannotClaimOwn)
-        }
-        item.claimStatus = ClaimStatus.Claimed
-        item.claimerId = Some(claimerId)
-        return ApiResponse<BaseItem>
-            .ok(itemRepo.save(item))
+        let req = Request(
+            0, post.id, uid,
+            RequestType.CLAIM, note,
+            DateTime.now().toString()
+        )
+        return ApiResponse<Request>.ok(
+            reqRepo.save(req)
+        )
     }
 
-    // 确认归还（发布者确认）
-    public func confirmReturn(
+    // 发布者接受认领 → post→MATCHING
+    public func acceptClaim(
         token: String,
-        itemId: Int64
-    ): ApiResponse<BaseItem> {
+        requestId: Int64
+    ): ApiResponse<Request> {
         match (sessions.getUserId(token)) {
             case None =>
-                return ApiResponse<BaseItem>
-                    .fail(ErrorCode.Unauthorized)
+                return ApiResponse<Request>.fail(
+                    ErrorCode.Unauthorized
+                )
             case Some(uid) =>
-                match (itemRepo.findById(itemId)) {
+                match (reqRepo.findById(requestId)) {
                     case None =>
-                        return ApiResponse<BaseItem>
-                            .fail(ErrorCode.ItemNotFound)
-                    case Some(item) =>
-                        return doConfirm(item, uid)
+                        return ApiResponse<Request>.fail(
+                            ErrorCode.RequestNotFound
+                        )
+                    case Some(req) =>
+                        return doAcceptClaim(req, uid)
                 }
         }
     }
 
-    private func doConfirm(
-        item: BaseItem,
-        userId: Int64
-    ): ApiResponse<BaseItem> {
-        if (item.publisherId != userId) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.Forbidden)
+    private func doAcceptClaim(
+        req: Request,
+        uid: Int64
+    ): ApiResponse<Request> {
+        match (postRepo.findById(req.postId)) {
+            case None =>
+                return ApiResponse<Request>.fail(
+                    ErrorCode.PostNotFound
+                )
+            case Some(post) =>
+                if (post.authorId != uid) {
+                    return ApiResponse<Request>.fail(
+                        ErrorCode.Forbidden
+                    )
+                }
+                if (req.status != RequestStatus.PENDING) {
+                    return ApiResponse<Request>.fail(
+                        ErrorCode.InvalidTransition
+                    )
+                }
+                req.status = RequestStatus.ACCEPTED
+                post.bizStatus = BizStatus.MATCHING
+                postRepo.save(post)
+                return ApiResponse<Request>.ok(
+                    reqRepo.save(req)
+                )
         }
-        if (item.claimStatus != ClaimStatus.Claimed) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.TradeNotFound)
-        }
-        item.claimStatus = ClaimStatus.Returned
-        item.status = ItemStatus.Closed
-        return ApiResponse<BaseItem>
-            .ok(itemRepo.save(item))
     }
 
-    // 驳回认领（发布者或管理员）
+    // 拒绝认领
     public func rejectClaim(
         token: String,
-        itemId: Int64,
-        isAdmin: Bool
-    ): ApiResponse<BaseItem> {
+        requestId: Int64
+    ): ApiResponse<Request> {
         match (sessions.getUserId(token)) {
             case None =>
-                return ApiResponse<BaseItem>
-                    .fail(ErrorCode.Unauthorized)
+                return ApiResponse<Request>.fail(
+                    ErrorCode.Unauthorized
+                )
             case Some(uid) =>
-                match (itemRepo.findById(itemId)) {
+                match (reqRepo.findById(requestId)) {
                     case None =>
-                        return ApiResponse<BaseItem>
-                            .fail(ErrorCode.ItemNotFound)
-                    case Some(item) =>
-                        return doReject(item, uid, isAdmin)
+                        return ApiResponse<Request>.fail(
+                            ErrorCode.RequestNotFound
+                        )
+                    case Some(req) =>
+                        match (postRepo.findById(req.postId)) {
+                            case Some(post) =>
+                                if (post.authorId != uid) {
+                                    return ApiResponse<Request>
+                                        .fail(ErrorCode.Forbidden)
+                                }
+                            case None => ()
+                        }
+                        if (req.status !=
+                            RequestStatus.PENDING) {
+                            return ApiResponse<Request>.fail(
+                                ErrorCode.InvalidTransition
+                            )
+                        }
+                        req.status = RequestStatus.REJECTED
+                        return ApiResponse<Request>.ok(
+                            reqRepo.save(req)
+                        )
                 }
         }
     }
 
-    private func doReject(
-        item: BaseItem,
-        userId: Int64,
-        isAdmin: Bool
-    ): ApiResponse<BaseItem> {
-        if (!isAdmin && item.publisherId != userId) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.Forbidden)
-        }
-        if (item.claimStatus != ClaimStatus.Claimed) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.TradeNotFound)
-        }
-        item.claimStatus = ClaimStatus.Idle
-        item.claimerId = None
-        return ApiResponse<BaseItem>
-            .ok(itemRepo.save(item))
-    }
-
-    // 认领者取消认领
-    public func cancelClaim(
+    // 完成认领 → post→CLAIMED
+    public func doneClaim(
         token: String,
-        itemId: Int64
-    ): ApiResponse<BaseItem> {
+        requestId: Int64
+    ): ApiResponse<Request> {
         match (sessions.getUserId(token)) {
             case None =>
-                return ApiResponse<BaseItem>
-                    .fail(ErrorCode.Unauthorized)
+                return ApiResponse<Request>.fail(
+                    ErrorCode.Unauthorized
+                )
             case Some(uid) =>
-                match (itemRepo.findById(itemId)) {
+                match (reqRepo.findById(requestId)) {
                     case None =>
-                        return ApiResponse<BaseItem>
-                            .fail(ErrorCode.ItemNotFound)
-                    case Some(item) =>
-                        return doCancelClaim(item, uid)
+                        return ApiResponse<Request>.fail(
+                            ErrorCode.RequestNotFound
+                        )
+                    case Some(req) =>
+                        match (postRepo.findById(req.postId)) {
+                            case Some(post) =>
+                                if (post.authorId != uid) {
+                                    return ApiResponse<Request>
+                                        .fail(ErrorCode.Forbidden)
+                                }
+                            case None => ()
+                        }
+                        if (req.status !=
+                            RequestStatus.ACCEPTED) {
+                            return ApiResponse<Request>.fail(
+                                ErrorCode.InvalidTransition
+                            )
+                        }
+                        req.status = RequestStatus.DONE
+                        match (postRepo.findById(req.postId)) {
+                            case Some(post) =>
+                                post.bizStatus = BizStatus.CLAIMED
+                                postRepo.save(post)
+                            case None => ()
+                        }
+                        return ApiResponse<Request>.ok(
+                            reqRepo.save(req)
+                        )
                 }
         }
-    }
-
-    private func doCancelClaim(
-        item: BaseItem,
-        userId: Int64
-    ): ApiResponse<BaseItem> {
-        if (item.claimStatus != ClaimStatus.Claimed) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.TradeNotFound)
-        }
-        match (item.claimerId) {
-            case Some(cid) =>
-                if (cid != userId) {
-                    return ApiResponse<BaseItem>
-                        .fail(ErrorCode.Forbidden)
-                }
-            case None => ()
-        }
-        item.claimStatus = ClaimStatus.Idle
-        item.claimerId = None
-        return ApiResponse<BaseItem>
-            .ok(itemRepo.save(item))
     }
 }
 
@@ -448,21 +515,21 @@ public class ClaimService {
 //  EnhancedAdminService — 增强审核（带审核记录）
 // ================================================
 public class EnhancedAdminService {
-    private let itemRepo: ItemRepository
+    private let postRepo: PostRepository
     private let userRepo: UserRepository
-    private let reviewRepo: ReviewRepository
+    private let auditRepo: AuditRepository
     private let sessions: SessionManager
 
     private static var inst:
         Option<EnhancedAdminService> = None
 
     private init() {
-        itemRepo =
-            ItemRepository.getInstance()
+        postRepo =
+            PostRepository.getInstance()
         userRepo =
             UserRepository.getInstance()
-        reviewRepo =
-            ReviewRepository.getInstance()
+        auditRepo =
+            AuditRepository.getInstance()
         sessions =
             SessionManager.getInstance()
     }
@@ -496,114 +563,122 @@ public class EnhancedAdminService {
         }
     }
 
-    // 审核通过（写入审核记录）
+    // 审核通过 → audit_status=APPROVED, 写入记录
     public func approveWithRecord(
         token: String,
-        itemId: Int64
-    ): ApiResponse<BaseItem> {
+        postId: Int64
+    ): ApiResponse<Post> {
         if (!isAdmin(token)) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.Forbidden)
+            return ApiResponse<Post>.fail(
+                ErrorCode.Forbidden
+            )
         }
         match (sessions.getUserId(token)) {
             case None =>
-                return ApiResponse<BaseItem>
-                    .fail(ErrorCode.Unauthorized)
-            case Some(reviewerId) =>
-                match (itemRepo.findById(itemId)) {
+                return ApiResponse<Post>.fail(
+                    ErrorCode.Unauthorized
+                )
+            case Some(auditorId) =>
+                match (postRepo.findById(postId)) {
                     case None =>
-                        return ApiResponse<BaseItem>
-                            .fail(ErrorCode.ItemNotFound)
-                    case Some(item) =>
-                        if (item.status != ItemStatus.Pending) {
-                            return ApiResponse<BaseItem>
-                                .fail(ErrorCode.InvalidTransition)
+                        return ApiResponse<Post>.fail(
+                            ErrorCode.PostNotFound
+                        )
+                    case Some(post) =>
+                        if (post.auditStatus !=
+                            AuditStatus.PENDING) {
+                            return ApiResponse<Post>.fail(
+                                ErrorCode.InvalidTransition
+                            )
                         }
-                        item.status = ItemStatus.Approved
-                        // 写审核记录
-                        let nowStr = currentTimeStr()
-                        reviewRepo.save(ReviewRecord(
-                            0, "item", itemId,
-                            reviewerId, ReviewResult.Approved,
+                        post.auditStatus =
+                            AuditStatus.APPROVED
+                        let nowStr =
+                            DateTime.now().toString()
+                        auditRepo.save(AuditRecord(
+                            0, postId, auditorId,
+                            AuditStatus.APPROVED,
                             "", nowStr
                         ))
-                        return ApiResponse<BaseItem>
-                            .ok(itemRepo.save(item))
+                        return ApiResponse<Post>.ok(
+                            postRepo.save(post)
+                        )
                 }
         }
     }
 
-    // 审核驳回（必须填写原因）
+    // 审核驳回 → 必须填写原因
     public func rejectWithRecord(
         token: String,
-        itemId: Int64,
+        postId: Int64,
         reason: String
-    ): ApiResponse<BaseItem> {
+    ): ApiResponse<Post> {
         if (!isAdmin(token)) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.Forbidden)
+            return ApiResponse<Post>.fail(
+                ErrorCode.Forbidden
+            )
         }
         if (reason.isEmpty()) {
-            return ApiResponse<BaseItem>
-                .fail(ErrorCode.BadRequest)
+            return ApiResponse<Post>.fail(
+                ErrorCode.BadRequest
+            )
         }
         match (sessions.getUserId(token)) {
             case None =>
-                return ApiResponse<BaseItem>
-                    .fail(ErrorCode.Unauthorized)
-            case Some(reviewerId) =>
-                match (itemRepo.findById(itemId)) {
+                return ApiResponse<Post>.fail(
+                    ErrorCode.Unauthorized
+                )
+            case Some(auditorId) =>
+                match (postRepo.findById(postId)) {
                     case None =>
-                        return ApiResponse<BaseItem>
-                            .fail(ErrorCode.ItemNotFound)
-                    case Some(item) =>
-                        if (item.status != ItemStatus.Pending) {
-                            return ApiResponse<BaseItem>
-                                .fail(ErrorCode.InvalidTransition)
+                        return ApiResponse<Post>.fail(
+                            ErrorCode.PostNotFound
+                        )
+                    case Some(post) =>
+                        if (post.auditStatus !=
+                            AuditStatus.PENDING) {
+                            return ApiResponse<Post>.fail(
+                                ErrorCode.InvalidTransition
+                            )
                         }
-                        item.status = ItemStatus.Rejected
-                        let nowStr = currentTimeStr()
-                        reviewRepo.save(ReviewRecord(
-                            0, "item", itemId,
-                            reviewerId, ReviewResult.Rejected,
+                        post.auditStatus =
+                            AuditStatus.REJECTED
+                        let nowStr =
+                            DateTime.now().toString()
+                        auditRepo.save(AuditRecord(
+                            0, postId, auditorId,
+                            AuditStatus.REJECTED,
                             reason, nowStr
                         ))
-                        return ApiResponse<BaseItem>
-                            .ok(itemRepo.save(item))
+                        return ApiResponse<Post>.ok(
+                            postRepo.save(post)
+                        )
                 }
         }
     }
 
     // 获取审核历史
-    public func getReviewHistory(
+    public func getAuditHistory(
         token: String,
-        itemId: Int64
-    ): ApiResponse<ArrayList<ReviewRecord>> {
+        postId: Int64
+    ): ApiResponse<ArrayList<AuditRecord>> {
         if (!isAdmin(token)) {
             return ApiResponse<
-                ArrayList<ReviewRecord>
+                ArrayList<AuditRecord>
             >.fail(ErrorCode.Forbidden)
         }
-        let records =
-            reviewRepo.findByTarget("item", itemId)
         return ApiResponse<
-            ArrayList<ReviewRecord>
-        >.ok(records)
-    }
-
-    // 获取当前时间字符串
-    private func currentTimeStr(): String {
-        let now = DateTime.now()
-        return now.toString()
+            ArrayList<AuditRecord>
+        >.ok(auditRepo.findByPost(postId))
     }
 }
 
 // ================================================
-//  MessageService — 留言 / 站内信
+//  MessageService — 留言 / 私信
 // ================================================
 public class MessageService {
     private let msgRepo: MessageRepository
-    private let itemRepo: ItemRepository
+    private let postRepo: PostRepository
     private let sessions: SessionManager
 
     private static var inst:
@@ -612,8 +687,8 @@ public class MessageService {
     private init() {
         msgRepo =
             MessageRepository.getInstance()
-        itemRepo =
-            ItemRepository.getInstance()
+        postRepo =
+            PostRepository.getInstance()
         sessions =
             SessionManager.getInstance()
     }
@@ -630,37 +705,40 @@ public class MessageService {
         }
     }
 
-    // 发表留言
+    // 发表公开留言
     public func postComment(
         token: String,
-        targetType: String,
-        targetId: Int64,
-        content: String
+        postId: Int64,
+        content: String,
+        parentId: Option<Int64>
     ): ApiResponse<Message> {
         if (content.isEmpty()) {
-            return ApiResponse<Message>
-                .fail(ErrorCode.BadRequest)
+            return ApiResponse<Message>.fail(
+                ErrorCode.BadRequest
+            )
         }
         match (sessions.getUserId(token)) {
             case None =>
-                return ApiResponse<Message>
-                    .fail(ErrorCode.Unauthorized)
+                return ApiResponse<Message>.fail(
+                    ErrorCode.Unauthorized
+                )
             case Some(uid) =>
-                match (itemRepo.findById(targetId)) {
+                match (postRepo.findById(postId)) {
                     case None =>
-                        return ApiResponse<Message>
-                            .fail(ErrorCode.ItemNotFound)
-                    case Some(_) =>
-                        let nowStr = DateTime.now()
-                            .toString()
-                        let msg = Message(
-                            0, targetType, targetId,
-                            uid, None,
-                            MessageType.Comment,
-                            content, None, nowStr
+                        return ApiResponse<Message>.fail(
+                            ErrorCode.PostNotFound
                         )
-                        return ApiResponse<Message>
-                            .ok(msgRepo.save(msg))
+                    case Some(_) =>
+                        let msg = Message(
+                            0, Some(postId),
+                            uid, None,
+                            MessageType.PUBLIC_COMMENT,
+                            content, parentId,
+                            DateTime.now().toString()
+                        )
+                        return ApiResponse<Message>.ok(
+                            msgRepo.save(msg)
+                        )
                 }
         }
     }
@@ -669,53 +747,79 @@ public class MessageService {
     public func sendPrivateMsg(
         token: String,
         toUserId: Int64,
-        targetType: String,
-        targetId: Int64,
+        postId: Option<Int64>,
         content: String
     ): ApiResponse<Message> {
         if (content.isEmpty()) {
-            return ApiResponse<Message>
-                .fail(ErrorCode.BadRequest)
+            return ApiResponse<Message>.fail(
+                ErrorCode.BadRequest
+            )
         }
         match (sessions.getUserId(token)) {
             case None =>
-                return ApiResponse<Message>
-                    .fail(ErrorCode.Unauthorized)
+                return ApiResponse<Message>.fail(
+                    ErrorCode.Unauthorized
+                )
             case Some(uid) =>
                 if (uid == toUserId) {
-                    return ApiResponse<Message>
-                        .fail(ErrorCode.BadRequest)
+                    return ApiResponse<Message>.fail(
+                        ErrorCode.BadRequest
+                    )
                 }
-                let nowStr = DateTime.now().toString()
                 let msg = Message(
-                    0, targetType, targetId,
+                    0, postId,
                     uid, Some(toUserId),
-                    MessageType.PrivateMsg,
-                    content, None, nowStr
+                    MessageType.PRIVATE_MESSAGE,
+                    content, None,
+                    DateTime.now().toString()
                 )
-                return ApiResponse<Message>
-                    .ok(msgRepo.save(msg))
+                return ApiResponse<Message>.ok(
+                    msgRepo.save(msg)
+                )
         }
     }
 
     // 获取留言列表
     public func getComments(
-        targetType: String,
-        targetId: Int64,
+        postId: Int64,
         page: Int64,
         size: Int64
     ): ApiResponse<PageResult<Message>> {
-        let list = msgRepo.findByTarget(
-            targetType, targetId, page, size
+        let list = msgRepo.findByPost(
+            postId, page, size
         )
-        let total = msgRepo.countByTarget(
-            targetType, targetId
-        )
+        let total = msgRepo.countByPost(postId)
         let pr = PageResult<Message>(
             total, page, size, list.toArray()
         )
         return ApiResponse<PageResult<Message>>
             .ok(pr)
+    }
+
+    // 获取我的消息列表
+    public func getMyMessages(
+        token: String,
+        msgType: Option<MessageType>,
+        isRead: Option<Bool>,
+        page: Int64,
+        size: Int64
+    ): ApiResponse<PageResult<Message>> {
+        match (sessions.getUserId(token)) {
+            case None =>
+                return ApiResponse<PageResult<Message>>
+                    .fail(ErrorCode.Unauthorized)
+            case Some(uid) =>
+                let list = msgRepo.findByUser(
+                    uid, msgType, isRead, page, size
+                )
+                let pr = PageResult<Message>(
+                    Int64(list.size), page, size,
+                    list.toArray()
+                )
+                return ApiResponse<
+                    PageResult<Message>
+                >.ok(pr)
+        }
     }
 
     // 获取未读私信数
@@ -724,11 +828,13 @@ public class MessageService {
     ): ApiResponse<Int64> {
         match (sessions.getUserId(token)) {
             case None =>
-                return ApiResponse<Int64>
-                    .fail(ErrorCode.Unauthorized)
+                return ApiResponse<Int64>.fail(
+                    ErrorCode.Unauthorized
+                )
             case Some(uid) =>
-                let c = msgRepo.countUnread(uid)
-                return ApiResponse<Int64>.ok(c)
+                return ApiResponse<Int64>.ok(
+                    msgRepo.countUnread(uid)
+                )
         }
     }
 
@@ -739,41 +845,16 @@ public class MessageService {
     ): ApiResponse<Unit> {
         match (sessions.getUserId(token)) {
             case None =>
-                return ApiResponse<Unit>
-                    .fail(ErrorCode.Unauthorized)
+                return ApiResponse<Unit>.fail(
+                    ErrorCode.Unauthorized
+                )
             case Some(_) =>
-                let ok = msgRepo.markRead(msgId)
-                if (ok) {
-                    return ApiResponse<Unit>
-                        .okEmpty()
+                if (msgRepo.markRead(msgId)) {
+                    return ApiResponse<Unit>.okEmpty()
                 }
-                return ApiResponse<Unit>
-                    .fail(ErrorCode.MessageNotFound)
-        }
-    }
-
-    // 删除留言
-    public func deleteMessage(
-        token: String,
-        msgId: Int64
-    ): ApiResponse<Unit> {
-        match (sessions.getUserId(token)) {
-            case None =>
-                return ApiResponse<Unit>
-                    .fail(ErrorCode.Unauthorized)
-            case Some(uid) =>
-                match (msgRepo.findById(msgId)) {
-                    case None =>
-                        return ApiResponse<Unit>
-                            .fail(ErrorCode.MessageNotFound)
-                    case Some(msg) =>
-                        if (msg.fromUserId != uid) {
-                            return ApiResponse<Unit>
-                                .fail(ErrorCode.Forbidden)
-                        }
-                        return ApiResponse<Unit>
-                            .okEmpty()
-                }
+                return ApiResponse<Unit>.fail(
+                    ErrorCode.MessageNotFound
+                )
         }
     }
 }
