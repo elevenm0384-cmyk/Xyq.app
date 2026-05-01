@@ -59,3 +59,5 @@ local.properties
 # --------------------
 .DS_Store
 Thumbs.db
+
+**/module_**_entry.cj
