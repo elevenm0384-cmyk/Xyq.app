@@ -1,5 +1,6 @@
 package ohos_app_cangjie_entry
 
+// 后端测试用 - 数据结构定义
 public class ApiResponse<T> {
     public var code: Int64 = 0
     public var message: String = "ok"

@@ -1,5 +1,6 @@
 package ohos_app_cangjie_entry
 
+// 后端测试用 - 业务逻辑层
 var g_currentUserId: Int64 = 0
 var g_currentToken: String = ""
 var g_currentUserVO: UserVO = UserVO()

@@ -1,5 +1,6 @@
 package ohos_app_cangjie_entry
 
+// 后端测试用 - 类型常量和工具函数
 internal import ohos.base.*
 internal import cj_res_entry.app
 import ohos.state_macro_manage.r

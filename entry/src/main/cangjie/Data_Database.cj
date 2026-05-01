@@ -1,5 +1,6 @@
 package ohos_app_cangjie_entry
 
+// 后端测试用 - 内存数据库模拟
 class UserRow {
     var id: Int64 = 0
     var username: String = ""
