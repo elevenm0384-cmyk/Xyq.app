@@ -193,6 +193,17 @@ public class PostBaseService {
                     ErrorCode.Unauthorized
                 )
             case Some(uid) =>
+                // SECONDHAND 必须填价格
+                if (req.businessType ==
+                    BusinessType.SecondHand) {
+                    match (req.price) {
+                        case None =>
+                            return ApiResponse<Post>
+                                .fail(ErrorCode
+                                .BadRequest)
+                        case Some(_) => ()
+                    }
+                }
                 let post = Post(
                     0, uid,
                     req.categoryId,
