@@ -1,0 +1,9 @@
+target/
+.cache/
+.claude/
+.vscode/
+.arts/
+out/
+*.exe
+*.cjo
+.DS_Store
