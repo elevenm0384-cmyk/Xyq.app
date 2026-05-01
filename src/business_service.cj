@@ -122,6 +122,11 @@ public class TradeService {
         req: Request,
         uid: Int64
     ): ApiResponse<Request> {
+        if (req.requestType != RequestType.BUY) {
+            return ApiResponse<Request>.fail(
+                ErrorCode.InvalidTransition
+            )
+        }
         match (postRepo.findById(req.postId)) {
             case None =>
                 return ApiResponse<Request>.fail(
@@ -171,19 +176,30 @@ public class TradeService {
                             ErrorCode.RequestNotFound
                         )
                     case Some(req) =>
-                        match (postRepo.findById(req.postId)) {
+                        if (req.requestType !=
+                            RequestType.BUY) {
+                            return ApiResponse<Request>
+                                .fail(ErrorCode
+                                .InvalidTransition)
+                        }
+                        match (postRepo.findById(
+                            req.postId
+                        )) {
                             case Some(post) =>
-                                if (post.authorId != uid) {
-                                    return ApiResponse<Request>
-                                        .fail(ErrorCode.Forbidden)
+                                if (post.authorId !=
+                                    uid) {
+                                    return ApiResponse<
+                                        Request
+                                    >.fail(ErrorCode
+                                    .Forbidden)
                                 }
                             case None => ()
                         }
                         if (req.status !=
                             RequestStatus.PENDING) {
-                            return ApiResponse<Request>.fail(
-                                ErrorCode.InvalidTransition
-                            )
+                            return ApiResponse<Request>
+                                .fail(ErrorCode
+                                .InvalidTransition)
                         }
                         req.status = RequestStatus.REJECTED
                         return ApiResponse<Request>.ok(
@@ -246,26 +262,40 @@ public class TradeService {
                             ErrorCode.RequestNotFound
                         )
                     case Some(req) =>
-                        match (postRepo.findById(req.postId)) {
+                        if (req.requestType !=
+                            RequestType.BUY) {
+                            return ApiResponse<Request>
+                                .fail(ErrorCode
+                                .InvalidTransition)
+                        }
+                        match (postRepo.findById(
+                            req.postId
+                        )) {
                             case Some(post) =>
-                                if (post.authorId != uid) {
-                                    return ApiResponse<Request>
-                                        .fail(ErrorCode.Forbidden)
+                                if (post.authorId !=
+                                    uid) {
+                                    return ApiResponse<
+                                        Request
+                                    >.fail(ErrorCode
+                                    .Forbidden)
                                 }
                             case None => ()
                         }
                         if (req.status !=
                             RequestStatus.ACCEPTED) {
-                            return ApiResponse<Request>.fail(
-                                ErrorCode.InvalidTransition
-                            )
+                            return ApiResponse<Request>
+                                .fail(ErrorCode
+                                .InvalidTransition)
                         }
                         req.status = RequestStatus.DONE
                         req.updatedAt =
                             DateTime.now().toString()
-                        match (postRepo.findById(req.postId)) {
+                        match (postRepo.findById(
+                            req.postId
+                        )) {
                             case Some(post) =>
-                                post.bizStatus = BizStatus.SOLD
+                                post.bizStatus =
+                                    BizStatus.SOLD
                                 postRepo.save(post)
                             case None => ()
                         }
@@ -420,6 +450,11 @@ public class ClaimService {
         req: Request,
         uid: Int64
     ): ApiResponse<Request> {
+        if (req.requestType != RequestType.CLAIM) {
+            return ApiResponse<Request>.fail(
+                ErrorCode.InvalidTransition
+            )
+        }
         match (postRepo.findById(req.postId)) {
             case None =>
                 return ApiResponse<Request>.fail(
@@ -469,19 +504,30 @@ public class ClaimService {
                             ErrorCode.RequestNotFound
                         )
                     case Some(req) =>
-                        match (postRepo.findById(req.postId)) {
+                        if (req.requestType !=
+                            RequestType.CLAIM) {
+                            return ApiResponse<Request>
+                                .fail(ErrorCode
+                                .InvalidTransition)
+                        }
+                        match (postRepo.findById(
+                            req.postId
+                        )) {
                             case Some(post) =>
-                                if (post.authorId != uid) {
-                                    return ApiResponse<Request>
-                                        .fail(ErrorCode.Forbidden)
+                                if (post.authorId !=
+                                    uid) {
+                                    return ApiResponse<
+                                        Request
+                                    >.fail(ErrorCode
+                                    .Forbidden)
                                 }
                             case None => ()
                         }
                         if (req.status !=
                             RequestStatus.PENDING) {
-                            return ApiResponse<Request>.fail(
-                                ErrorCode.InvalidTransition
-                            )
+                            return ApiResponse<Request>
+                                .fail(ErrorCode
+                                .InvalidTransition)
                         }
                         req.status = RequestStatus.REJECTED
                         return ApiResponse<Request>.ok(
@@ -508,26 +554,40 @@ public class ClaimService {
                             ErrorCode.RequestNotFound
                         )
                     case Some(req) =>
-                        match (postRepo.findById(req.postId)) {
+                        if (req.requestType !=
+                            RequestType.CLAIM) {
+                            return ApiResponse<Request>
+                                .fail(ErrorCode
+                                .InvalidTransition)
+                        }
+                        match (postRepo.findById(
+                            req.postId
+                        )) {
                             case Some(post) =>
-                                if (post.authorId != uid) {
-                                    return ApiResponse<Request>
-                                        .fail(ErrorCode.Forbidden)
+                                if (post.authorId !=
+                                    uid) {
+                                    return ApiResponse<
+                                        Request
+                                    >.fail(ErrorCode
+                                    .Forbidden)
                                 }
                             case None => ()
                         }
                         if (req.status !=
                             RequestStatus.ACCEPTED) {
-                            return ApiResponse<Request>.fail(
-                                ErrorCode.InvalidTransition
-                            )
+                            return ApiResponse<Request>
+                                .fail(ErrorCode
+                                .InvalidTransition)
                         }
                         req.status = RequestStatus.DONE
                         req.updatedAt =
                             DateTime.now().toString()
-                        match (postRepo.findById(req.postId)) {
+                        match (postRepo.findById(
+                            req.postId
+                        )) {
                             case Some(post) =>
-                                post.bizStatus = BizStatus.CLAIMED
+                                post.bizStatus =
+                                    BizStatus.CLAIMED
                                 postRepo.save(post)
                             case None => ()
                         }

@@ -287,9 +287,17 @@ public class PostBaseService {
                         let isClaimed =
                             post.bizStatus ==
                             BizStatus.CLAIMED
+                        let isReserved =
+                            post.bizStatus ==
+                            BizStatus.RESERVED
+                        let isMatching =
+                            post.bizStatus ==
+                            BizStatus.MATCHING
                         if (isClosed ||
                             isSold ||
-                            isClaimed) {
+                            isClaimed ||
+                            isReserved ||
+                            isMatching) {
                             return ApiResponse<Post>
                                 .fail(ErrorCode.PostAlreadyClosed)
                         }
