@@ -128,6 +128,11 @@ public class TradeService {
                         ErrorCode.Forbidden
                     )
                 }
+                if (post.bizStatus != BizStatus.ON_SALE) {
+                    return ApiResponse<Request>.fail(
+                        ErrorCode.PostNotAvailable
+                    )
+                }
                 if (req.status != RequestStatus.PENDING) {
                     return ApiResponse<Request>.fail(
                         ErrorCode.InvalidTransition
@@ -410,6 +415,11 @@ public class ClaimService {
                 if (post.authorId != uid) {
                     return ApiResponse<Request>.fail(
                         ErrorCode.Forbidden
+                    )
+                }
+                if (post.bizStatus != BizStatus.OPEN) {
+                    return ApiResponse<Request>.fail(
+                        ErrorCode.PostNotAvailable
                     )
                 }
                 if (req.status != RequestStatus.PENDING) {
