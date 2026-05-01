@@ -278,9 +278,18 @@ public class PostBaseService {
                             return ApiResponse<Post>
                                 .fail(ErrorCode.Forbidden)
                         }
-                        if (post.bizStatus == BizStatus.CLOSED ||
-                            post.bizStatus == BizStatus.SOLD ||
-                            post.bizStatus == BizStatus.CLAIMED) {
+                        let isClosed =
+                            post.bizStatus ==
+                            BizStatus.CLOSED
+                        let isSold =
+                            post.bizStatus ==
+                            BizStatus.SOLD
+                        let isClaimed =
+                            post.bizStatus ==
+                            BizStatus.CLAIMED
+                        if (isClosed ||
+                            isSold ||
+                            isClaimed) {
                             return ApiResponse<Post>
                                 .fail(ErrorCode.PostAlreadyClosed)
                         }

@@ -65,6 +65,11 @@ public class TradeService {
         uid: Int64,
         note: String
     ): ApiResponse<Request> {
+        if (post.isDeleted) {
+            return ApiResponse<Request>.fail(
+                ErrorCode.PostNotFound
+            )
+        }
         if (post.businessType !=
             BusinessType.SecondHand) {
             return ApiResponse<Request>.fail(
@@ -139,6 +144,8 @@ public class TradeService {
                     )
                 }
                 req.status = RequestStatus.ACCEPTED
+                req.updatedAt =
+                    DateTime.now().toString()
                 post.bizStatus = BizStatus.RESERVED
                 postRepo.save(post)
                 return ApiResponse<Request>.ok(
@@ -254,6 +261,8 @@ public class TradeService {
                             )
                         }
                         req.status = RequestStatus.DONE
+                        req.updatedAt =
+                            DateTime.now().toString()
                         match (postRepo.findById(req.postId)) {
                             case Some(post) =>
                                 post.bizStatus = BizStatus.SOLD
@@ -353,6 +362,11 @@ public class ClaimService {
         uid: Int64,
         note: String
     ): ApiResponse<Request> {
+        if (post.isDeleted) {
+            return ApiResponse<Request>.fail(
+                ErrorCode.PostNotFound
+            )
+        }
         let bt = post.businessType
         if (bt != BusinessType.LOST &&
             bt != BusinessType.FOUND) {
@@ -428,6 +442,8 @@ public class ClaimService {
                     )
                 }
                 req.status = RequestStatus.ACCEPTED
+                req.updatedAt =
+                    DateTime.now().toString()
                 post.bizStatus = BizStatus.MATCHING
                 postRepo.save(post)
                 return ApiResponse<Request>.ok(
@@ -507,6 +523,8 @@ public class ClaimService {
                             )
                         }
                         req.status = RequestStatus.DONE
+                        req.updatedAt =
+                            DateTime.now().toString()
                         match (postRepo.findById(req.postId)) {
                             case Some(post) =>
                                 post.bizStatus = BizStatus.CLAIMED
@@ -745,7 +763,16 @@ public class MessageService {
                         return ApiResponse<Message>.fail(
                             ErrorCode.PostNotFound
                         )
-                    case Some(_) =>
+                    case Some(p) =>
+                        if (p.isDeleted) {
+                            return ApiResponse<Message>
+                                .fail(ErrorCode.PostNotFound)
+                        }
+                        if (p.auditStatus !=
+                            AuditStatus.APPROVED) {
+                            return ApiResponse<Message>
+                                .fail(ErrorCode.PostNotAvailable)
+                        }
                         let msg = Message(
                             0, Some(postId),
                             uid, None,
