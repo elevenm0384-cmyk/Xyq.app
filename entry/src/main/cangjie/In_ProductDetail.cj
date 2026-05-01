@@ -16,7 +16,6 @@ public class ProductDetail {
     @State var requestSent: Bool = false
     @State var requestMsg: String = ""
     var onBack: () -> Unit = { => () }
-
     func loadDetail() {
         incrementViewCount(postId)
         recordBrowseHistory(
@@ -24,299 +23,237 @@ public class ProductDetail {
         detail = getPostDetail(postId)
         isLiked = detail.is_favorited
         favoriteCount = detail.favorite_count
-        comments = getMessages(postId)
-    }
-
+        comments = getMessages(postId) }
     func toggleLike() {
         var r = toggleFavorite(
             postId, getSessionUserId(), !isLiked)
-        isLiked = r
-        if (r) { favoriteCount++ }
+        isLiked = r; if (r) { favoriteCount++ }
         else if (favoriteCount > 0) { favoriteCount-- }
     }
-
     func sendComment() {
         if (commentText == "") { return }
         match (addMessage(
-            postId, getSessionUserId(), commentText)) {
+            postId, getSessionUserId(),
+            commentText)) {
             case Some(_) =>
                 commentText = ""
                 comments = getMessages(postId)
-            case None => ()
-        }
-    }
-
+            case None => () } }
     func sendBuyRequest() {
-        if (createRequest(
-            postId, getSessionUserId(),
-            REQ_TYPE_BUY, "")) {
+        if (createRequest(postId,
+            getSessionUserId(), REQ_TYPE_BUY,
+            "")) {
             requestSent = true
-            requestMsg = "已发送购买意向，等待卖家回复"
-        }
-    }
-
+            requestMsg = "已发送购买意向，等待卖家回复" } }
     public func aboutToAppear() { loadDetail() }
 
-    @Builder
-    func renderCommentItem(item: MessageVO) {
-        Column() {
-            Row() {
-                Text(item.from_user.nickname)
-                    .fontSize(13)
-                    .fontWeight(FontWeight.Bold)
-                    .fontColor(0x333333)
-                Blank()
-                Text(item.created_at)
-                    .fontSize(11).fontColor(0x999999)
-            }.width(100.percent)
-            Text(item.content).fontSize(14)
-                .fontColor(0x666666)
-                .margin(top: 4).lineHeight(20)
-            Divider().height(0.5).color(0xFFF0F0F0)
-                .margin(top: 8)
-        }.width(100.percent)
-        .padding(left: 16, right: 16, top: 8)
-    }
+    @Builder func renderCommentItem(
+        item: MessageVO) { Column() { Row() {
+        Text(item.from_user.nickname)
+            .fontSize(13)
+            .fontWeight(FontWeight.Bold)
+            .fontColor(0x333333)
+        Blank()
+        Text(item.created_at)
+            .fontSize(11).fontColor(0x999999)
+    }.width(100.percent)
+    Text(item.content).fontSize(14)
+        .fontColor(0x666666)
+        .margin(top: 4).lineHeight(20)
+    Divider().height(0.5).color(0xFFF0F0F0)
+        .margin(top: 8)
+    }.width(100.percent)
+    .padding(left: 16, right: 16, top: 8) }
 
-    @Builder
-    func renderCommentSection() {
+    @Builder func renderCommentSection() {
         Text("留言 (${comments.size})")
-            .fontSize(16).fontWeight(FontWeight.Bold)
+            .fontSize(16)
+            .fontWeight(FontWeight.Bold)
             .fontColor(0x333333)
             .margin(left: 16, top: 16)
-
         if (comments.size > 0) {
             ForEach(comments,
                 itemGeneratorFunc: {
                     item: MessageVO,
                     index: Int64 =>
-                    renderCommentItem(item)
-                },
+                    renderCommentItem(item) },
                 keyGeneratorFunc: {
                     item: MessageVO,
                     index: Int64 =>
-                    index.toString()
-                })
-        } else {
-            Text("暂无留言").fontSize(14)
-                .fontColor(0x999999)
-                .margin(left: 16, top: 8)
-        }
-
-        Row() {
-            TextInput(text: commentText,
-                placeholder: "输入留言...")
-                .fontSize(14.fp).layoutWeight(1)
-                .height(40)
-                .onChange { val =>
-                    commentText = val }
+                    index.toString() }) }
+        else { Text("暂无留言").fontSize(14)
+            .fontColor(0x999999)
+            .margin(left: 16, top: 8) }
+        Row() { TextInput(
+            text: commentText,
+            placeholder: "输入留言...")
+            .fontSize(14.fp).layoutWeight(1)
+            .height(40).onChange { val =>
+                commentText = val }
             Button("发送").fontSize(14)
                 .fontColor(Color.WHITE)
                 .backgroundColor(0xFF4CAF50)
                 .borderRadius(16).height(36)
                 .margin(left: 8).width(56)
                 .onClick { evt => sendComment() }
-        }.width(100.percent)
-        .padding(left: 16, right: 16,
-            top: 8, bottom: 16)
-    }
+        }.width(100.percent).padding(
+            left: 16, right: 16,
+            top: 8, bottom: 16) }
 
-    @Builder
-    func renderBottomBar() {
+    @Builder func renderBottomBar() {
         if (requestMsg != "") {
             Text(requestMsg).fontSize(13)
                 .fontColor(Color.WHITE)
                 .width(100.percent)
                 .backgroundColor(0xFF4CAF50)
-                .textAlign(TextAlign.Center).padding(8)
-        }
-
-        Row() {
-            Blank()
+                .textAlign(TextAlign.Center)
+                .padding(8) }
+        Row() { Blank()
             Button("私聊").fontSize(14)
                 .fontColor(Color(0xFF4CAF50))
                 .backgroundColor(Color.WHITE)
                 .borderWidth(1)
                 .borderColor(Color(0xFF4CAF50))
-                .borderRadius(20).width(90).height(40)
-                .margin(right: 12).onClick {}
-
+                .borderRadius(20).width(90)
+                .height(40).margin(right: 12)
+                .onClick {}
             if (requestSent) {
                 Button("已申请").fontSize(14)
                     .fontColor(0x999999)
                     .backgroundColor(0xFFF0F0F0)
                     .borderRadius(20).width(100)
-                    .height(40).margin(right: 16)
-            } else {
-                Button("立即购买").fontSize(14)
-                    .fontColor(Color.WHITE)
-                    .backgroundColor(Color(0xFF4CAF50))
-                    .borderRadius(20).width(100)
-                    .height(40).margin(right: 16)
-                    .onClick { evt =>
-                        sendBuyRequest() }
+                    .height(40).margin(right: 16) }
+            else { Button("立即购买")
+                .fontSize(14)
+                .fontColor(Color.WHITE)
+                .backgroundColor(Color(0xFF4CAF50))
+                .borderRadius(20).width(100)
+                .height(40).margin(right: 16)
+                .onClick { evt => sendBuyRequest() }
             }
         }.width(100.percent)
         .margin(top: 12, bottom: 24)
-        .alignItems(VerticalAlign.Center)
-    }
+        .alignItems(VerticalAlign.Center) }
 
-    func build() {
-        Column() {
-            Scroll() {
-                Column() {
-                    Stack() {
-                        if (detail.image_urls.size > 0) {
-                            Image(getImageResource(
-                                detail.image_urls[0]))
-                                .width(100.percent)
-                                .aspectRatio(1)
-                                .objectFit(ImageFit.Cover)
-                        } else {
-                            Image(@r(app.media.start))
-                                .width(100.percent)
-                                .aspectRatio(1)
-                        }
-                        Button() {
-                            Text("<").fontSize(22)
-                                .fontColor(Color.WHITE)
-                                .fontWeight(FontWeight.Bold)
-                        }.backgroundColor(0x66000000)
-                        .borderRadius(16).width(34)
-                        .height(34).position(x: 16, y: 44)
-                        .onClick { evt => onBack() }
-                    }.width(100.percent)
-
-                    if (detail.price != "") {
-                        Text("￥${detail.price}")
-                            .fontSize(28)
-                            .fontWeight(FontWeight.Bold)
-                            .fontColor(0xFFFF4444)
-                            .margin(left: 16, top: 16)
-                            .width(100.percent)
-                    }
-
-                    Text(detail.title).fontSize(20)
-                        .fontWeight(FontWeight.Medium)
-                        .fontColor(0x333333)
-                        .margin(left: 16, top: 6)
-                        .width(100.percent)
-
-                    Row() {
-                        if (detail.category.id > 0) {
-                            Text(detail.category.name)
-                                .fontSize(12)
-                                .fontColor(0xFF4CAF50)
-                                .backgroundColor(0xFFE8F5E9)
-                                .borderRadius(4)
-                                .padding(left: 8, right: 8,
-                                    top: 3, bottom: 3)
-                                .margin(right: 8)
-                        }
-                        Text(getBizLabel(
-                            detail.business_type,
-                            detail.biz_status))
-                            .fontSize(12)
-                            .fontColor(0xFF9800)
-                            .backgroundColor(0xFFFFF3E0)
-                            .borderRadius(4)
-                            .padding(left: 8, right: 8,
-                                top: 3, bottom: 3)
-                    }.margin(left: 16, top: 12)
+    func build() { Column() { Scroll() {
+        Column() { Stack() {
+            if (detail.image_urls.size > 0) {
+                Image(getImageResource(
+                    detail.image_urls[0]))
                     .width(100.percent)
-
-                    Row() {
-                        Text("地点: ${detail.location}")
-                            .fontSize(14)
-                            .fontColor(0x999999)
-                            .margin(left: 16, top: 8)
-                        Blank()
-                        Text("${detail.view_count}次浏览")
-                            .fontSize(14)
-                            .fontColor(0x999999)
-                            .margin(right: 16, top: 8)
-                    }.width(100.percent)
-
-                    Row() {
-                        Blank()
-                        Button() {
-                            if (isLiked) {
-                                Text("❤ ${favoriteCount}")
-                                    .fontSize(14)
-                                    .fontColor(0xFFFF4444)
-                            } else {
-                                Text("♡ ${favoriteCount}")
-                                    .fontSize(14)
-                                    .fontColor(0x999999)
-                            }
-                        }.backgroundColor(Color.TRANSPARENT)
-                        .margin(right: 16)
-                        .onClick { evt => toggleLike() }
-                    }.width(100.percent).margin(top: 6)
-
-                    Divider().margin(
-                        top: 20, left: 16, right: 16)
-
-                    Text("商品描述").fontSize(16)
-                        .fontWeight(FontWeight.Bold)
-                        .fontColor(0x333333)
-                        .margin(left: 16, top: 16)
-
-                    Text(detail.description).fontSize(14)
-                        .fontColor(0x666666)
-                        .margin(left: 16, right: 16,
-                            top: 8)
-                        .lineHeight(22)
-
-                    Row() {
-                        Text("发布者: "
-                            + detail.author.nickname)
-                            .fontSize(14)
-                            .fontColor(0x999999)
-                            .margin(left: 16, top: 16)
-                        Blank()
-                        Text("联系: "
-                            + detail.author.phone)
-                            .fontSize(14)
-                            .fontColor(0x999999)
-                            .margin(right: 16, top: 16)
-                    }.width(100.percent)
-
-                    Row() {
-                        Text("发布于: "
-                            + detail.created_at)
-                            .fontSize(12)
-                            .fontColor(0x999999)
-                            .margin(left: 16, top: 8)
-                        Blank()
-                        if (detail.updated_at != "") {
-                            Text("更新: "
-                                + detail.updated_at)
-                                .fontSize(12)
-                                .fontColor(0x999999)
-                                .margin(right: 16, top: 8)
-                        }
-                    }.width(100.percent)
-
-                    Row() {
-                        Text("审核: "
-                            + getAuditLabel(
-                                detail.audit_status))
-                            .fontSize(12)
-                            .fontColor(0x999999)
-                            .margin(left: 16, top: 8)
-                    }.width(100.percent)
-
-                    Divider().margin(
-                        top: 20, left: 16, right: 16)
-
-                    renderCommentSection()
-                }.width(100.percent)
-                .padding(bottom: 16)
-            }.layoutWeight(1)
-
-            renderBottomBar()
-        }.width(100.percent).height(100.percent)
-        .backgroundColor(0xFFF8F8F8)
-    }
-}
+                    .aspectRatio(1)
+                    .objectFit(ImageFit.Cover) }
+            else { Image(@r(app.media.start))
+                .width(100.percent)
+                .aspectRatio(1) }
+            Button() { Text("<").fontSize(22)
+                .fontColor(Color.WHITE)
+                .fontWeight(FontWeight.Bold)
+            }.backgroundColor(0x66000000)
+            .borderRadius(16).width(34).height(34)
+            .position(x: 16, y: 44)
+            .onClick { evt => onBack() }
+        }.width(100.percent)
+        if (detail.price != "") {
+            Text("￥${detail.price}")
+                .fontSize(28)
+                .fontWeight(FontWeight.Bold)
+                .fontColor(0xFFFF4444)
+                .margin(left: 16, top: 16)
+                .width(100.percent) }
+        Text(detail.title).fontSize(20)
+            .fontWeight(FontWeight.Medium)
+            .fontColor(0x333333)
+            .margin(left: 16, top: 6)
+            .width(100.percent)
+        Row() {
+            if (detail.category.id > 0) {
+                Text(detail.category.name)
+                    .fontSize(12)
+                    .fontColor(0xFF4CAF50)
+                    .backgroundColor(0xFFE8F5E9)
+                    .borderRadius(4)
+                    .padding(left:8, right: 8,
+                        top: 3, bottom: 3)
+                    .margin(right: 8) }
+            Text(getBizLabel(
+                detail.business_type,
+                detail.biz_status))
+                .fontSize(12).fontColor(0xFF9800)
+                .backgroundColor(0xFFFFF3E0)
+                .borderRadius(4)
+                .padding(left: 8, right: 8,
+                    top: 3, bottom: 3)
+        }.margin(left: 16, top: 12)
+        .width(100.percent)
+        Row() { Text("地点: "
+            + detail.location).fontSize(14)
+            .fontColor(0x999999)
+            .margin(left: 16, top: 8)
+            Blank()
+            Text("${detail.view_count}次浏览")
+                .fontSize(14)
+                .fontColor(0x999999)
+                .margin(right: 16, top: 8)
+        }.width(100.percent)
+        Row() { Blank()
+            Button() {
+                if (isLiked) {
+                    Text("❤ ${favoriteCount}")
+                        .fontSize(14)
+                        .fontColor(0xFFFF4444) }
+                else {
+                    Text("♡ ${favoriteCount}")
+                        .fontSize(14)
+                        .fontColor(0x999999) }
+            }.backgroundColor(Color.TRANSPARENT)
+            .margin(right: 16)
+            .onClick { evt => toggleLike() }
+        }.width(100.percent).margin(top: 6)
+        Divider().margin(
+            top: 20, left: 16, right: 16)
+        Text("商品描述").fontSize(16)
+            .fontWeight(FontWeight.Bold)
+            .fontColor(0x333333)
+            .margin(left: 16, top: 16)
+        Text(detail.description).fontSize(14)
+            .fontColor(0x666666)
+            .margin(left: 16, right: 16, top: 8)
+            .lineHeight(22)
+        Row() { Text("发布者: "
+            + detail.author.nickname)
+            .fontSize(14).fontColor(0x999999)
+            .margin(left: 16, top: 16)
+            Blank()
+            Text("联系: "
+                + detail.author.phone)
+                .fontSize(14)
+                .fontColor(0x999999)
+                .margin(right: 16, top: 16)
+        }.width(100.percent)
+        Row() { Text("发布于: "
+            + detail.created_at).fontSize(12)
+            .fontColor(0x999999)
+            .margin(left: 16, top: 8)
+            Blank()
+            if (detail.updated_at != "") {
+                Text("更新: "
+                    + detail.updated_at)
+                    .fontSize(12)
+                    .fontColor(0x999999)
+                    .margin(right: 16, top: 8) }
+        }.width(100.percent)
+        Row() { Text("审核: "
+            + getAuditLabel(
+                detail.audit_status))
+            .fontSize(12)
+            .fontColor(0x999999)
+            .margin(left: 16, top: 8)
+        }.width(100.percent)
+        Divider().margin(
+            top: 20, left: 16, right: 16)
+        renderCommentSection()
+        }.width(100.percent).padding(bottom: 16)
+    }.layoutWeight(1); renderBottomBar()
+    }.width(100.percent).height(100.percent)
+    .backgroundColor(0xFFF8F8F8) } }
