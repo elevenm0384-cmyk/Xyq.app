@@ -199,13 +199,8 @@ public class PostBaseService {
                     req.imageUrls,
                     req.contactInfo
                 )
-                // 初始 biz_status
-                match (req.businessType) {
-                    case BusinessType.SecondHand =>
-                        post.bizStatus = BizStatus.ON_SALE
-                    case _ =>
-                        post.bizStatus = BizStatus.OPEN
-                }
+                // 审核通过前不赋 biz_status
+                // 审核通过时由 EnhancedAdminService 赋正式状态
                 return ApiResponse<Post>.ok(
                     postRepo.save(post)
                 )

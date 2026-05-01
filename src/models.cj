@@ -301,6 +301,7 @@ public class Category {
     public let sceneType: SceneType
     public var sortOrder: Int64
     public var isEnabled: Bool
+    public let createdAt: String
 
     public init(
         id: Int64,
@@ -308,7 +309,8 @@ public class Category {
         parentId: Option<Int64>,
         sceneType: SceneType,
         sortOrder: Int64,
-        isEnabled: Bool
+        isEnabled: Bool,
+        createdAt: String
     ) {
         this.id       = id
         this.name     = name
@@ -316,6 +318,7 @@ public class Category {
         this.sceneType = sceneType
         this.sortOrder = sortOrder
         this.isEnabled = isEnabled
+        this.createdAt = createdAt
     }
 
     public func toString(): String {
@@ -369,7 +372,8 @@ public class Post {
         this.imageUrls  = imageUrls
         this.contactInfo = contactInfo
         this.auditStatus = AuditStatus.PENDING
-        this.bizStatus  = BizStatus.ON_SALE
+        this.bizStatus  = BizStatus.CLOSED
+        // 审核通过后由 EnhancedAdminService 赋实际状态
         this.viewCount  = 0
         this.favoriteCount = 0
         this.createdAt  = ""

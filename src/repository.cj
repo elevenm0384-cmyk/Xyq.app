@@ -274,7 +274,7 @@ public class CategoryRepository {
         for ((name, scene, order) in defs) {
             let c = Category(
                 nextId, name, None,
-                scene, Int64(order), true
+                scene, Int64(order), true, ""
             )
             store.add(nextId, c)
             nextId++

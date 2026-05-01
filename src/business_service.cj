@@ -603,6 +603,13 @@ public class EnhancedAdminService {
                         }
                         post.auditStatus =
                             AuditStatus.APPROVED
+                        // 审核通过后赋正式业务状态
+                        match (post.businessType) {
+                            case BusinessType.SecondHand =>
+                                post.bizStatus = BizStatus.ON_SALE
+                            case _ =>
+                                post.bizStatus = BizStatus.OPEN
+                        }
                         let nowStr =
                             DateTime.now().toString()
                         auditRepo.save(AuditRecord(
