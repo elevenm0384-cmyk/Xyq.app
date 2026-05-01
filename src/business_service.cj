@@ -307,6 +307,7 @@ public class TradeService {
     }
 
     // 获取某个 post 的申请列表
+    // 仅作者本人或管理员可查看
     public func listRequests(
         token: String,
         postId: Int64
@@ -319,8 +320,30 @@ public class TradeService {
                 match (postRepo.findById(postId)) {
                     case Some(post) =>
                         if (post.authorId != uid) {
-                            // 管理员也可查看
-                            ()
+                            // 非作者需管理员权限
+                            let userRepo =
+                                UserRepository
+                                .getInstance()
+                            match (userRepo.findById(
+                                uid
+                            )) {
+                                case Some(u) =>
+                                    match (u.role) {
+                                        case Role.Admin => ()
+                                        case _ =>
+                                            return ApiResponse<
+                                                ArrayList<
+                                                Request
+                                            >>.fail(ErrorCode
+                                            .Forbidden)
+                                    }
+                                case None =>
+                                    return ApiResponse<
+                                        ArrayList<
+                                        Request
+                                    >>.fail(ErrorCode
+                                    .Forbidden)
+                            }
                         }
                     case None => ()
                 }
@@ -530,6 +553,42 @@ public class ClaimService {
                                 .InvalidTransition)
                         }
                         req.status = RequestStatus.REJECTED
+                        return ApiResponse<Request>.ok(
+                            reqRepo.save(req)
+                        )
+                }
+        }
+    }
+
+    // 取消认领申请
+    public func cancelClaim(
+        token: String,
+        requestId: Int64
+    ): ApiResponse<Request> {
+        match (sessions.getUserId(token)) {
+            case None =>
+                return ApiResponse<Request>.fail(
+                    ErrorCode.Unauthorized
+                )
+            case Some(uid) =>
+                match (reqRepo.findById(requestId)) {
+                    case None =>
+                        return ApiResponse<Request>.fail(
+                            ErrorCode.RequestNotFound
+                        )
+                    case Some(req) =>
+                        if (req.requesterId != uid) {
+                            return ApiResponse<Request>
+                                .fail(ErrorCode.Forbidden)
+                        }
+                        if (req.status !=
+                            RequestStatus.PENDING) {
+                            return ApiResponse<Request>
+                                .fail(ErrorCode
+                                .InvalidTransition)
+                        }
+                        req.status =
+                            RequestStatus.CANCELLED
                         return ApiResponse<Request>.ok(
                             reqRepo.save(req)
                         )
@@ -952,7 +1011,26 @@ public class MessageService {
                 return ApiResponse<Unit>.fail(
                     ErrorCode.Unauthorized
                 )
-            case Some(_) =>
+            case Some(uid) =>
+                match (msgRepo.findById(msgId)) {
+                    case Some(m) =>
+                        match (m.toUserId) {
+                            case Some(tid) =>
+                                if (tid != uid) {
+                                    return ApiResponse<Unit>
+                                        .fail(ErrorCode
+                                        .Forbidden)
+                                }
+                            case None =>
+                                return ApiResponse<Unit>
+                                    .fail(ErrorCode
+                                    .Forbidden)
+                        }
+                    case None =>
+                        return ApiResponse<Unit>.fail(
+                            ErrorCode.MessageNotFound
+                        )
+                }
                 if (msgRepo.markRead(msgId)) {
                     return ApiResponse<Unit>.okEmpty()
                 }
