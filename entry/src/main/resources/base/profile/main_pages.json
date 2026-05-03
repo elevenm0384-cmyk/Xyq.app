@@ -1,2 +1,11 @@
 {
+  "src": [
+    "pages/Index",
+    "pages/publish/PostPublishPage",
+    "pages/admin/AuditCenterPage",
+    "pages/admin/StatDashboardPage",
+    "pages/personal/MessageCenterPage",
+    "pages/personal/MyPostsPage",
+    "pages/personal/MyFavoritesPage"
+  ]
 }
