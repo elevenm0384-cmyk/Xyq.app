@@ -52,3 +52,23 @@ Xyq.app/
 ## License
 
 MIT
+
+## 新增功能
+
+```
+src/main/cangjie/
+├── models/
+│   └── ApiModels.cj             // 数据实体定义
+├── services/
+│   └── MockApi.cj               // 接口模拟数据服务
+└── pages/
+    ├── publish/
+    │   └── PostPublishPage.cj   // 【核心】发布内容页
+    ├── personal/
+    │   ├── MyPostsPage.cj       // 我的发布
+    │   ├── MyFavoritesPage.cj   // 我的收藏
+    │   └── MessageCenterPage.cj // 消息中心
+    └── admin/
+        ├── AuditCenterPage.cj   // 【核心】审核中心
+        └── StatDashboardPage.cj // 【核心】统计看板
+```
