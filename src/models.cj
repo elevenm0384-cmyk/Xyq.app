@@ -77,8 +77,9 @@ public enum ItemStatus <: ToString & Equatable<ItemStatus> {
     }
 }
 
-// ===== 枚举：交易状态（二手商品精细流转）=====
-public enum TradeStatus <: ToString & Equatable<TradeStatus> {
+// ===== 交易状态 =====
+public enum TradeStatus <: ToString
+    & Equatable<TradeStatus> {
     | Idle
     | Reserved
     | Sold
@@ -109,8 +110,9 @@ public enum TradeStatus <: ToString & Equatable<TradeStatus> {
     }
 }
 
-// ===== 枚举：认领状态（失物精细流转）=====
-public enum ClaimStatus <: ToString & Equatable<ClaimStatus> {
+// ===== 认领状态 =====
+public enum ClaimStatus <: ToString
+    & Equatable<ClaimStatus> {
     | Idle
     | Claimed
     | Returned
@@ -141,8 +143,9 @@ public enum ClaimStatus <: ToString & Equatable<ClaimStatus> {
     }
 }
 
-// ===== 枚举：留言类型 =====
-public enum MessageType <: ToString & Equatable<MessageType> {
+// ===== 留言类型 =====
+public enum MessageType <: ToString
+    & Equatable<MessageType> {
     | Comment
     | PrivateMsg
 
@@ -175,7 +178,7 @@ public class User {
     public var id: Int64
     public let username: String
     public let password: String
-    public let email: String
+    public var email: String
     public let role: Role
 
     public init(
@@ -224,14 +227,14 @@ public class Category {
 // ===== Entity: BaseItem =====
 public class BaseItem {
     public var id: Int64
-    public let title: String
-    public let description: String
+    public var title: String
+    public var description: String
     public let categoryId: Int64
     public let publisherId: Int64
     public let itemType: ItemType
     public var status: ItemStatus
-    public let imageUrl: String
-    public let contactInfo: String
+    public var imageUrl: String
+    public var contactInfo: String
     // 交易扩展字段（仅二手）
     public var buyerId: Option<Int64>
     public var tradeStatus: TradeStatus
@@ -436,7 +439,8 @@ public class Message {
 }
 
 // ===== Entity: ReviewRecord =====
-public enum ReviewResult <: ToString & Equatable<ReviewResult> {
+public enum ReviewResult <: ToString
+    & Equatable<ReviewResult> {
     | Pending
     | Approved
     | Rejected
