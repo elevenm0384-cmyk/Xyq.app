@@ -100,7 +100,9 @@ func writeJsonStr(s: String): String {
     let size = s.size
     var i: Int64 = 0
     while (i < size) {
-        let ch = s[i..i + 1]
+        let b = s[i]
+        let clen = utf8Len(b)
+        let ch = s[i..i + clen]
         if (ch == "\"") {
             result = result + "\\\""
         } else if (ch == "\\") {
@@ -114,7 +116,7 @@ func writeJsonStr(s: String): String {
         } else {
             result = result + ch
         }
-        i = i + 1
+        i = i + clen
     }
     return result + "\""
 }

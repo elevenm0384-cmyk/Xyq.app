@@ -737,8 +737,12 @@ public func handleUpload(
             ext = ".webp"
         }
     }
+    let nowStr =
+        DateTime.now().toString()
+        .replace(":", "-")
+        .replace(" ", "_")
     let filename =
-        "${DateTime.now().toString()}" +
+        nowStr +
         "_${req.rawBody.size}" + ext
     let dir = Path(UPLOAD_DIR)
     if (!exists(dir)) {
