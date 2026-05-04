@@ -1,6 +1,6 @@
-package ohos_app_cangjie_entry
+﻿package ohos_app_cangjie_entry
 
-// 后端测试用 - 业务逻辑层
+// 鍚庣娴嬭瘯鐢?- 涓氬姟閫昏緫灞?
 var g_currentUserId: Int64 = 0
 var g_currentToken: String = ""
 var g_currentUserVO: UserVO = UserVO()
@@ -22,7 +22,8 @@ public func getSessionUser(): UserVO {
 }
 
 public func login(username: String, password: String): Option<UserVO> {
-    match (DB.findUserByUsername(username)) {
+    let account = username.trimAscii()
+    match (DB.findUserByUsername(account)) {
         case Some(u) =>
             if (u.password_hash != hashPassword(password)) { return None }
             if (u.status != STATUS_ACTIVE) { return None }
@@ -35,16 +36,19 @@ public func login(username: String, password: String): Option<UserVO> {
 }
 
 public func register(username: String, password: String, nickname: String, phone: String): Option<UserVO> {
-    match (DB.findUserByUsername(username)) {
+    let account = username.trimAscii()
+    let name = nickname.trimAscii()
+    let phoneNo = phone.trimAscii()
+    match (DB.findUserByUsername(account)) {
         case Some(_) =>  return None
         case None => ()
     }
     var row = UserRow()
     row.id = DB.nextUserId; DB.nextUserId++
-    row.username = username
+    row.username = account
     row.password_hash = hashPassword(password)
-    row.nickname = nickname
-    row.phone = phone
+    row.nickname = name
+    row.phone = phoneNo
     row.role = ROLE_USER
     row.status = STATUS_ACTIVE
     row.created_at = getCurrentTimestamp()
@@ -144,10 +148,6 @@ public func getPostDetail(postId: Int64): PostDetailVO {
             vo.audit_status = p.audit_status
             vo.biz_status = p.biz_status
             vo.view_count = p.view_count
-            vo.favorite_count = p.favorite_count
-            if (g_currentUserId > 0) {
-                vo.is_favorited = DB.isFavorited(g_currentUserId, p.id)
-            }
             vo.created_at = p.created_at
             vo.updated_at = p.updated_at
             return vo
@@ -203,74 +203,116 @@ public func getHistory(userId: Int64): PageData<PostSummaryVO> {
     return pd
 }
 
-public func toggleFavorite(postId: Int64, userId: Int64, wantFav: Bool): Bool {
-    if (userId == 0) { return false }
-    var hasExisting = false
-    var existingId: Int64 = 0
-    match (DB.findFavorite(userId, postId)) {
-        case Some(f) =>
-            hasExisting = true
-            existingId = f.id
-        case None => ()
-    }
-    if (wantFav && !hasExisting) {
-        var f = FavoriteRow()
-        f.id = DB.nextFavoriteId; DB.nextFavoriteId++
-        f.user_id = userId
-        f.post_id = postId
-        f.created_at = getCurrentTimestamp()
-        DB.favorites = appendToArray(DB.favorites, f)
-        for (i in 0..DB.posts.size) {
-            if (DB.posts[i].id == postId) { DB.posts[i].favorite_count++; break }
-        }
-        return true
-    }
-    if (!wantFav && hasExisting) {
-        var newArr = Array<FavoriteRow>(DB.favorites.size - 1, {i => FavoriteRow()})
-        var idx = 0
-        for (i in 0..DB.favorites.size) {
-            if (DB.favorites[i].id != existingId) {
-                newArr[idx] = DB.favorites[i]; idx++
-            }
-        }
-        DB.favorites = newArr
-        for (i in 0..DB.posts.size) {
-            if (DB.posts[i].id == postId && DB.posts[i].favorite_count > 0) {
-                DB.posts[i].favorite_count--; break
-            }
-        }
-        return false
-    }
-    return false
-}
-
-public func getFavorites(userId: Int64): PageData<PostSummaryVO> {
+public func getMyPublishedPosts(userId: Int64): PageData<PostSummaryVO> {
     if (userId == 0) { return PageData<PostSummaryVO>() }
     var total: Int64 = 0
-    for (f in DB.favorites) {
-        if (f.user_id == userId) { total++ }
+    for (p in DB.posts) {
+        if (!p.is_deleted && p.author_id == userId) { total++ }
     }
     var list = Array<PostSummaryVO>(total, {i => PostSummaryVO()})
     var idx: Int64 = 0
-    for (f in DB.favorites) {
-        if (f.user_id == userId) {
-            match (DB.findPostById(f.post_id)) {
-                case Some(p) =>
-                    list[idx] = postRowToSummary(p)
-                    idx++
-                case None => ()
-            }
+    for (i in (DB.posts.size - 1)..=0 : -1) {
+        if (!DB.posts[i].is_deleted && DB.posts[i].author_id == userId) {
+            list[idx] = postRowToSummary(DB.posts[i])
+            idx++
         }
+        if (idx >= total) { break }
     }
     var pd = PageData<PostSummaryVO>()
     pd.list = list; pd.page = 1; pd.pageSize = total; pd.total = total
     return pd
 }
 
+public func getPendingAuditPosts(): Array<PostSummaryVO> {
+    var total: Int64 = 0
+    for (p in DB.posts) {
+        if (!p.is_deleted && p.audit_status == AUDIT_PENDING) { total++ }
+    }
+    var list = Array<PostSummaryVO>(total, {i => PostSummaryVO()})
+    var idx: Int64 = 0
+    for (i in (DB.posts.size - 1)..=0 : -1) {
+        if (!DB.posts[i].is_deleted && DB.posts[i].audit_status == AUDIT_PENDING) {
+            list[idx] = postRowToSummary(DB.posts[i])
+            idx++
+        }
+        if (idx >= total) { break }
+    }
+    return list
+}
+
+public func auditPost(postId: Int64, approved: Bool): Bool {
+    if (getSessionUser().role != ROLE_ADMIN) { return false }
+    for (i in 0..DB.posts.size) {
+        if (DB.posts[i].id == postId && !DB.posts[i].is_deleted) {
+            if (approved) {
+                DB.posts[i].audit_status = AUDIT_APPROVED
+            } else {
+                DB.posts[i].audit_status = AUDIT_REJECTED
+            }
+            DB.posts[i].updated_at = getCurrentTimestamp()
+            var audit = AuditRow()
+            audit.id = DB.nextAuditId
+            DB.nextAuditId++
+            audit.post_id = postId
+            audit.auditor_id = getSessionUserId()
+            audit.audit_result = DB.posts[i].audit_status
+            audit.created_at = getCurrentTimestamp()
+            DB.audits = appendToArray(DB.audits, audit)
+            return true
+        }
+    }
+    return false
+}
+
+public func getMessageCenter(userId: Int64): Array<MessageVO> {
+    if (userId == 0) { return Array(0, {i => MessageVO()}) }
+    var total: Int64 = 0
+    for (m in DB.messages) {
+        match (DB.findPostById(m.post_id)) {
+            case Some(p) =>
+                if (p.author_id == userId || m.from_user_id == userId || m.to_user_id == userId) { total++ }
+            case None => ()
+        }
+    }
+    var result = Array<MessageVO>(total, {i => MessageVO()})
+    var idx: Int64 = 0
+    for (m in DB.messages) {
+        match (DB.findPostById(m.post_id)) {
+            case Some(p) =>
+                if (p.author_id == userId || m.from_user_id == userId || m.to_user_id == userId) {
+                    var vo = MessageVO()
+                    vo.id = m.id; vo.post_id = m.post_id
+                    vo.message_type = m.message_type
+                    vo.content = m.content
+                    vo.created_at = m.created_at
+                    match (DB.findUserById(m.from_user_id)) {
+                        case Some(u) =>
+                            vo.from_user.id = u.id
+                            vo.from_user.nickname = u.nickname
+                        case None => ()
+                    }
+                    result[idx] = vo; idx++
+                }
+            case None => ()
+        }
+    }
+    return result
+}
+
 public func getMessages(postId: Int64): Array<MessageVO> {
     var rows = DB.findMessagesByPostId(postId)
-    var result = Array<MessageVO>(rows.size, {i => MessageVO()})
+    var total: Int64 = 0
+    for (r in rows) {
+        if (r.message_type == MSG_PUBLIC_COMMENT) {
+            total++
+        }
+    }
+    var result = Array<MessageVO>(total, {i => MessageVO()})
+    var idx: Int64 = 0
     for (i in 0..rows.size) {
+        if (rows[i].message_type != MSG_PUBLIC_COMMENT) {
+            continue
+        }
         var vo = MessageVO()
         vo.id = rows[i].id; vo.post_id = rows[i].post_id
         vo.message_type = rows[i].message_type; vo.content = rows[i].content
@@ -290,7 +332,8 @@ public func getMessages(postId: Int64): Array<MessageVO> {
                 vo.to_user.avatar_url = u.avatar_url
             case None => ()
         }
-        result[i] = vo
+        result[idx] = vo
+        idx++
     }
     return result
 }
@@ -316,16 +359,116 @@ public func addMessage(postId: Int64, fromUserId: Int64, content: String): Optio
     return vo
 }
 
-public func createRequest(postId: Int64, requesterId: Int64, requestType: String, note: String): Bool {
-    if (requesterId == 0) { return false }
-    var row = RequestRow()
-    row.id = DB.nextRequestId; DB.nextRequestId++
-    row.post_id = postId; row.requester_id = requesterId
-    row.request_type = requestType; row.note = note
-    row.status = REQ_STATUS_PENDING
-    row.created_at = getCurrentTimestamp(); row.updated_at = getCurrentTimestamp()
-    DB.requests = appendToArray(DB.requests, row)
-    return true
+public func sendPrivateMessage(postId: Int64, fromUserId: Int64, content: String): Bool {
+    if (fromUserId == 0 || content == "") { return false }
+    match (DB.findPostById(postId)) {
+        case Some(p) =>
+            if (p.author_id == fromUserId) { return false }
+            var row = MessageRow()
+            row.id = DB.nextMessageId; DB.nextMessageId++
+            row.post_id = postId
+            row.from_user_id = fromUserId
+            row.to_user_id = p.author_id
+            row.message_type = MSG_PRIVATE_MESSAGE
+            row.content = content
+            row.created_at = getCurrentTimestamp()
+            DB.messages = appendToArray(DB.messages, row)
+            return true
+        case None => return false
+    }
+}
+
+public func deleteMyPost(postId: Int64, userId: Int64): Bool {
+    if (userId == 0) { return false }
+    for (i in 0..DB.posts.size) {
+        if (DB.posts[i].id == postId
+            && DB.posts[i].author_id == userId
+            && !DB.posts[i].is_deleted) {
+            DB.posts[i].is_deleted = true
+            DB.posts[i].updated_at = getCurrentTimestamp()
+            return true
+        }
+    }
+    return false
+}
+
+public func finishMyPost(postId: Int64, userId: Int64): Bool {
+    if (userId == 0) { return false }
+    for (i in 0..DB.posts.size) {
+        if (DB.posts[i].id == postId
+            && DB.posts[i].author_id == userId
+            && !DB.posts[i].is_deleted) {
+            if (DB.posts[i].business_type == BIZ_TYPE_SECONDHAND) {
+                DB.posts[i].biz_status = BIZ_SOLD
+            } else {
+                DB.posts[i].biz_status = BIZ_CLAIMED
+            }
+            DB.posts[i].closed_at = getCurrentTimestamp()
+            DB.posts[i].updated_at = getCurrentTimestamp()
+            return true
+        }
+    }
+    return false
+}
+
+public func publishPost(
+    businessType: String,
+    title: String,
+    description: String,
+    price: String,
+    location: String,
+    categoryId!: Int64 = 0,
+    imageName!: String = ""
+): Option<CreatePostResult> {
+    if (title == "" || description == "") { return None }
+    if (businessType == BIZ_TYPE_SECONDHAND && price == "") { return None }
+
+    var row = PostRow()
+    row.id = DB.nextPostId
+    DB.nextPostId++
+    row.author_id = getSessionUserId()
+    if (row.author_id == 0) { row.author_id = 1 }
+    if (businessType == BIZ_TYPE_LOST) {
+        if (categoryId > 0) { row.category_id = categoryId }
+        else { row.category_id = 9 }
+        if (imageName != "") {
+            row.image_urls = "[\"" + imageName + "\"]"
+        } else {
+            row.image_urls = "[\"lost_card\"]"
+        }
+    } else if (businessType == BIZ_TYPE_FOUND) {
+        if (categoryId > 0) { row.category_id = categoryId }
+        else { row.category_id = 9 }
+        if (imageName != "") {
+            row.image_urls = "[\"" + imageName + "\"]"
+        } else {
+            row.image_urls = "[\"lost_bag\"]"
+        }
+    } else {
+        row.category_id = 1
+        if (imageName != "") {
+            row.image_urls = "[\"" + imageName + "\"]"
+        } else {
+            row.image_urls = "[\"pdt_camera\"]"
+        }
+    }
+    row.business_type = businessType
+    row.title = title
+    row.description = description
+    row.price = price
+    row.location = location
+    row.audit_status = AUDIT_PENDING
+    row.biz_status = getDefaultBizStatus(businessType)
+    row.view_count = 0
+    row.created_at = getCurrentTimestamp()
+    row.updated_at = getCurrentTimestamp()
+    DB.posts = appendToArray(DB.posts, row)
+
+    var result = CreatePostResult()
+    result.id = row.id
+    result.audit_status = row.audit_status
+    result.biz_status = row.biz_status
+    return result
 }
 
 func userRowToVO(row: UserRow): UserVO {
@@ -354,74 +497,21 @@ func postRowToSummary(row: PostRow): PostSummaryVO {
     var images = parseImageUrls(row.image_urls)
     if (images.size > 0) { vo.cover_image_url = images[0] }
     vo.audit_status = row.audit_status; vo.biz_status = row.biz_status
-    vo.view_count = row.view_count; vo.favorite_count = row.favorite_count
+    vo.view_count = row.view_count
     vo.created_at = row.created_at
     return vo
 }
 
 func sortPosts(arr: Array<PostSummaryVO>, sort_by: String): Array<PostSummaryVO> {
     if (arr.size <= 1) { return arr }
-    if (sort_by == SORT_HOTTEST) {
-        for (i in 0..arr.size) {
-            for (j in (i+1)..arr.size) {
-                if (arr[i].view_count < arr[j].view_count) {
-                    var t = arr[i]; arr[i] = arr[j]; arr[j] = t
-                }
-            }
-        }
+    if (sort_by != SORT_LATEST) {
         return arr
     }
-    if (sort_by == SORT_PRICE_ASC) {
-        for (i in 0..arr.size) {
-            for (j in (i+1)..arr.size) {
-                var pa = parsePrice(arr[i].price)
-                var pb = parsePrice(arr[j].price)
-                if (pa > pb) {
-                    var t = arr[i]; arr[i] = arr[j]; arr[j] = t
-                }
-            }
-        }
-        return arr
-    }
-    if (sort_by == SORT_PRICE_DESC) {
-        for (i in 0..arr.size) {
-            for (j in (i+1)..arr.size) {
-                var pa = parsePrice(arr[i].price)
-                var pb = parsePrice(arr[j].price)
-                if (pa < pb) {
-                    var t = arr[i]; arr[i] = arr[j]; arr[j] = t
-                }
-            }
-        }
-        return arr
-    }
-    if (sort_by == SORT_FAVORITE) {
-        for (i in 0..arr.size) {
-            for (j in (i+1)..arr.size) {
-                if (arr[i].favorite_count < arr[j].favorite_count) {
-                    var t = arr[i]; arr[i] = arr[j]; arr[j] = t
-                }
-            }
-        }
-        return arr
-    }
-    return arr
-}
-
-public func getTimeThreshold(timeRange: String): String {
-    if (timeRange == TIME_24H) { return "2026-04-29 18:00:00" }
-    if (timeRange == TIME_WEEK) { return "2026-04-23 18:00:00" }
-    if (timeRange == TIME_MONTH) { return "2026-03-30 18:00:00" }
-    return ""
-}
-
-func parsePrice(s: String): Int64 {
-    if (s == "") { return 0 }
-    var result: Int64 = 0
-    for (c in s) {
-        if (c >= b'0' && c <= b'9') {
-            result = result * 10 + Int64(c - b'0')
-        }
+    var result = Array<PostSummaryVO>(arr.size, {i => PostSummaryVO()})
+    var idx: Int64 = 0
+    for (i in (arr.size - 1)..=0 : -1) {
+        result[idx] = arr[i]
+        idx++
     }
     return result
 }
@@ -439,3 +529,4 @@ public func getApprovedLostFound(): Array<PostSummaryVO> {
 func appendPostSummary(arr: Array<PostSummaryVO>, item: PostSummaryVO): Array<PostSummaryVO> {
     return arr.concat([item])
 }
+

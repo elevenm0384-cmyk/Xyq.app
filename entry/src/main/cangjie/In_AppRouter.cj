@@ -1,4 +1,4 @@
-package ohos_app_cangjie_entry
+﻿package ohos_app_cangjie_entry
 internal import ohos.base.*
 internal import ohos.component.*
 internal import ohos.state_manage.*
@@ -61,22 +61,23 @@ public class AppRouter {
     func onBackFromSearch() {
         showSearchResult = false; searchQuery = "" }
     func onShowDetail(postId: Int64) {
+        incrementViewCount(postId)
+        recordBrowseHistory(
+            getSessionUserId(), postId)
         detailPostId = postId; showProductDetail = true }
     func onBackFromDetail() {
         showProductDetail = false; refreshKey++ }
     func onShowLostDetail(postId: Int64) {
+        incrementViewCount(postId)
+        recordBrowseHistory(
+            getSessionUserId(), postId)
         detailLostId = postId; showLostDetail = true }
     func onBackFromLostDetail() {
         showLostDetail = false; refreshKey++ }
-    func onCategoryClick(catId: Int64, catName: String) {
-        selectedCategoryId = catId
-        selectedCategoryName = catName
-        categorySceneType = SCENE_SECONDHAND
-        showCategory = true }
     func onLostCategoryClick(catId: Int64, catName: String) {
         selectedCategoryId = catId
         selectedCategoryName = catName
-        categorySceneType = SCENE_LOST
+        categorySceneType = SCENE_ALL
         showCategory = true }
     func onBackFromCategory() {
         showCategory = false; selectedCategoryId = 0
@@ -84,6 +85,17 @@ public class AppRouter {
         categorySceneType = SCENE_SECONDHAND }
     func onShowHistory() { showHistory = true }
     func onBackFromHistory() { showHistory = false }
+    func onLogout() {
+        logout()
+        routeIndex = 0
+        loginPassword = ""
+        loginError = ""
+        showSearchResult = false
+        showProductDetail = false
+        showLostDetail = false
+        showCategory = false
+        showHistory = false
+    }
 
     @Builder func renderAuthPanel() { Stack() {
         if (!showRegisterPanel) { Column() {
@@ -191,11 +203,10 @@ public class AppRouter {
         onShowDetail: { id => onShowDetail(id) },
         onShowLostDetail: { id =>
             onShowLostDetail(id) },
-        onCategoryClick: { catId, catName =>
-            onCategoryClick(catId, catName) },
         onLostCategoryClick: { catId, catName =>
             onLostCategoryClick(catId, catName) },
-        onShowHistory: { => onShowHistory() }) }
+        onShowHistory: { => onShowHistory() },
+        onLogout: { => onLogout() }) }
 
     func build() { Stack() {
         if (routeIndex == 0) { renderAuthPanel() }

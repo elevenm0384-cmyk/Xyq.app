@@ -1,4 +1,4 @@
-package ohos_app_cangjie_entry
+﻿package ohos_app_cangjie_entry
 internal import ohos.base.*
 internal import ohos.component.*
 internal import ohos.state_manage.*
@@ -20,15 +20,13 @@ public class CategoryPage {
     func getCategoryTitle(): String {
         if (sceneType == SCENE_LOST)
         { return "失物分类" }
-        if (sceneType == SCENE_FOUND)
-        { return "招领分类" }; return "商品分类" }
+        return "商品分类" }
     func getBizTypeFilter(): String {
         if (sceneType == SCENE_SECONDHAND)
         { return BIZ_TYPE_SECONDHAND }
         if (sceneType == SCENE_LOST)
         { return BIZ_TYPE_LOST }
-        if (sceneType == SCENE_FOUND)
-        { return BIZ_TYPE_FOUND }; return "" }
+        return "" }
 
     func selectCategory(
         index: Int64, catId: Int64,

@@ -1,20 +1,11 @@
-package ohos_app_cangjie_entry
+﻿package ohos_app_cangjie_entry
 internal import ohos.base.*
 internal import ohos.component.*
 internal import ohos.state_manage.*
 import ohos.state_macro_manage.*
 
 func getAllLostCategories(): Array<CategoryVO> {
-    var names = ["证件", "书包", "电子产品",
-        "书籍", "眼镜", "钥匙", "水杯", "其他"]
-    var result = Array<CategoryVO>()
-    for (i in 0..names.size) {
-        var vo = CategoryVO(); vo.id = 100 + i
-        vo.name = names[i]
-        vo.scene_type = SCENE_LOST
-        vo.sort_order = i; vo.is_enabled = true
-        result = result.concat([vo]) }
-    return result }
+    return getCategories(SCENE_LOST) }
 
 @Component
 public class Homeview {
@@ -22,31 +13,70 @@ public class Homeview {
     @State var schoolName: String
         = "北京航空航天大学"
     @State var searchText: String = ""
-    @State var categories: Array<CategoryVO>
-        = getCategories(SCENE_SECONDHAND)
+    @State var recommendOffset: Int64 = 0
+    @State var allRecommendList: Array<PostSummaryVO>
+        = Array(0, {i => PostSummaryVO()})
     @State var RecommendList: Array<PostSummaryVO>
         = Array(0, {i => PostSummaryVO()})
     @State var lostItemList: Array<PostSummaryVO>
         = getApprovedLostFound()
     @State var lostCategories: Array<CategoryVO>
         = Array<CategoryVO>()
+    @State var showPublishPanel: Bool = false
+    @State var showMyPostsPanel: Bool = false
+    @State var showAuditPanel: Bool = false
     var onSearch: (String) -> Unit = {query => ()}
     var onShowDetail: (Int64) -> Unit = {id => ()}
     var onShowLostDetail: (Int64) -> Unit = {id => ()}
-    var onCategoryClick: (Int64, String) -> Unit
-        = {id, name => ()}
     var onLostCategoryClick: (Int64, String) -> Unit
         = {id, name => ()}
     var onShowHistory: () -> Unit = { => () }
+    var onLogout: () -> Unit = { => () }
 
     public func aboutToAppear() {
         refreshRecommendList()
         lostCategories = getAllLostCategories() }
-    func refreshRecommendList() {
-        RecommendList = getPostList(
+    func loadRecommendList() {
+        allRecommendList = getPostList(
             BIZ_TYPE_SECONDHAND, 0, "", "",
             AUDIT_APPROVED, BIZ_ON_SALE,
-            SORT_LATEST, 1, 6).list }
+            SORT_LATEST, 1, 200).list
+        var count = allRecommendList.size
+        if (count == 0) {
+            RecommendList = Array(0, {i => PostSummaryVO()})
+            return
+        }
+        if (recommendOffset >= count) { recommendOffset = 0 }
+        var size: Int64 = 6
+        if (count < 6) { size = count }
+        var list = Array<PostSummaryVO>(
+            size, {i => PostSummaryVO()})
+        for (i in 0..size) {
+            var idx = recommendOffset + i
+            if (idx >= count) { idx = idx - count }
+            list[i] = allRecommendList[idx]
+        }
+        RecommendList = list
+    }
+    func refreshRecommendList() {
+        recommendOffset = 0
+        loadRecommendList()
+    }
+    func nextRecommendList() {
+        if (allRecommendList.size == 0) {
+            refreshRecommendList()
+            return
+        }
+        recommendOffset += 6
+        if (recommendOffset >= allRecommendList.size) {
+            recommendOffset = 0
+        }
+        loadRecommendList()
+    }
+    func refreshAllLists() {
+        refreshRecommendList()
+        lostItemList = getApprovedLostFound()
+    }
 
     @Builder func renderSchoolBar() { Row() {
         Image(@r(app.media.locallg))
@@ -81,34 +111,6 @@ public class Homeview {
     .margin(right: 5.vp)
     .position(x: 15.vp, y: 40.vp).width(290) }
 
-    @Builder func renderCategoryGrid() { Grid() {
-        ForEach(categories,
-            itemGeneratorFunc: {
-                item: CategoryVO,
-                index: Int64 => GridItem {
-                    Column() {
-                        Image(getCategoryIcon(
-                            item.name))
-                            .width(48.vp).height(48.vp)
-                            .margin(bottom: 8.vp)
-                        Text(item.name)
-                            .fontSize(12.fp)
-                            .fontColor(Color.BLACK)
-                    }.width(100.percent).height(80.vp)
-                    .justifyContent(FlexAlign.Center)
-                    .onClick { evt =>
-                        onCategoryClick(
-                            item.id, item.name) } }
-            },
-            keyGeneratorFunc: {
-                item: CategoryVO,
-                index: Int64 =>
-                index.toString() })
-    }.columnsTemplate("1fr 1fr 1fr 1fr")
-    .rowsTemplate("1fr 1fr")
-    .width(100.percent).height(180.vp)
-    .padding(top: 4.vp, bottom: 4.vp) }
-
     @Builder func renderRecommendHeader() { Row() {
         Text("✦ 为你推荐").fontSize(15)
             .fontWeight(FontWeight.Bold)
@@ -123,7 +125,7 @@ public class Homeview {
             top: 4, bottom: 4)
         .backgroundColor(0xFFE8F5E9)
         .borderRadius(12)
-        .onClick { evt => refreshRecommendList() }
+        .onClick { evt => nextRecommendList() }
     }.margin(bottom: 8, top: 4)
     .width(100.percent)
     .padding(left: 16, right: 16) }
@@ -146,7 +148,6 @@ public class Homeview {
     @Builder func renderProductContent() { Stack() {
         renderSchoolBar(); renderSearchRow()
         Scroll { Column() {
-            renderCategoryGrid()
             renderRecommendHeader()
             renderProductList() }
         }.width(100.percent).height(100.percent)
@@ -282,14 +283,40 @@ public class Homeview {
             }.margin(top: 8, left: 16)
             .width(100.percent)
             Divider().margin(16)
+            if (getSessionUser().role == ROLE_ADMIN) {
+                Row() { Text("审核中心").fontSize(16)
+                    .fontColor(0x333333); Blank()
+                    Text(">").fontSize(18)
+                        .fontColor(0x999999)
+                        .margin(right: 16)
+                }.width(100.percent).padding(left: 16,
+                    right: 8, top: 12, bottom: 12)
+                .onClick { evt => showAuditPanel = true }
+            }
+            Row() { Text("我的发布").fontSize(16)
+                .fontColor(0x333333); Blank()
+                Text(">").fontSize(18)
+                    .fontColor(0x999999)
+                    .margin(right: 16)
+            }.width(100.percent).padding(left: 16,
+                right: 8, top: 12, bottom: 12)
+            .onClick { evt => showMyPostsPanel = true }
             Row() { Text("最近浏览").fontSize(16)
                 .fontColor(0x333333); Blank()
-                Text("〉").fontSize(18)
+                Text(">").fontSize(18)
                     .fontColor(0x999999)
                     .margin(right: 16)
             }.width(100.percent).padding(left: 16,
                 right: 8, top: 12, bottom: 12)
             .onClick { evt => onShowHistory() }
+            Row() { Text("切换账号").fontSize(16)
+                .fontColor(0xFFF56C6C); Blank()
+                Text(">").fontSize(18)
+                    .fontColor(0x999999)
+                    .margin(right: 16)
+            }.width(100.percent).padding(left: 16,
+                right: 8, top: 12, bottom: 12)
+            .onClick { evt => onLogout() }
         } }.width(100.percent).height(100.percent)
         .margin(top: 20)
     } }.width(100.percent) }
@@ -303,11 +330,9 @@ public class Homeview {
             TabContent() { Column() {}
                 .width(100.percent).height(100.percent)
             }.tabBar("")
-            TabContent() { Column() {
-                Text("消息中心").fontSize(14.fp)
-                    .fontColor(Color.GRAY)
-            }.width(100.percent).height(100.percent)
-            .justifyContent(FlexAlign.Center)
+            TabContent() { MessageCenter(
+                onShowDetail: { id =>
+                    onShowDetail(id) })
             }.tabBar("消息")
             TabContent() { renderMyContent() }
                 .tabBar("我的")
@@ -326,8 +351,36 @@ public class Homeview {
         .alignItems(HorizontalAlign.Center)
         }.width(68.vp).height(68.vp)
         .backgroundColor(0xFF4CAF50)
-        .borderRadius(34.vp).onClick {}
+        .borderRadius(34.vp)
+        .onClick { evt => showPublishPanel = true }
         .shadow(radius: 8,
             color: Color(0x664CAF50),
             offsetX: 0, offsetY: 4)
-        .position(x: 158, y: 700) } } }
+        .position(x: 158, y: 700)
+        if (showPublishPanel) {
+            PublishPanel(
+                onCancel: { =>
+                    showPublishPanel = false },
+                onPublished: { =>
+                    showPublishPanel = false
+                    refreshAllLists() })
+        }
+        if (showMyPostsPanel) {
+            MyPostsPanel(
+                onBack: { =>
+                    showMyPostsPanel = false },
+                onShowDetail: { id =>
+                    showMyPostsPanel = false
+                    onShowDetail(id) },
+                onShowLostDetail: { id =>
+                    showMyPostsPanel = false
+                    onShowLostDetail(id) })
+        }
+        if (showAuditPanel) {
+            AuditPanel(
+                onBack: { =>
+                    showAuditPanel = false },
+                onChanged: { =>
+                    refreshAllLists() })
+        }
+    } } }

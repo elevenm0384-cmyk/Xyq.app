@@ -1,4 +1,4 @@
-package ohos_app_cangjie_entry
+﻿package ohos_app_cangjie_entry
 internal import ohos.base.*
 internal import ohos.component.*
 internal import ohos.state_manage.*

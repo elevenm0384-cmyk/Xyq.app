@@ -1,4 +1,4 @@
-package ohos_app_cangjie_entry
+﻿package ohos_app_cangjie_entry
 internal import ohos.base.*
 internal import ohos.component.*
 internal import ohos.state_manage.*
@@ -8,28 +8,16 @@ import ohos.state_macro_manage.*
 public class ProductDetail {
     @State var postId: Int64 = 0
     @State var detail: PostDetailVO = PostDetailVO()
-    @State var isLiked: Bool = false
-    @State var favoriteCount: Int64 = 0
     @State var comments: Array<MessageVO>
         = Array(0, {i => MessageVO()})
     @State var commentText: String = ""
-    @State var requestSent: Bool = false
+    @State var contactText: String = ""
+    @State var contactSent: Bool = false
     @State var requestMsg: String = ""
     var onBack: () -> Unit = { => () }
     func loadDetail() {
-        incrementViewCount(postId)
-        recordBrowseHistory(
-            getSessionUserId(), postId)
         detail = getPostDetail(postId)
-        isLiked = detail.is_favorited
-        favoriteCount = detail.favorite_count
         comments = getMessages(postId) }
-    func toggleLike() {
-        var r = toggleFavorite(
-            postId, getSessionUserId(), !isLiked)
-        isLiked = r; if (r) { favoriteCount++ }
-        else if (favoriteCount > 0) { favoriteCount-- }
-    }
     func sendComment() {
         if (commentText == "") { return }
         match (addMessage(
@@ -39,13 +27,27 @@ public class ProductDetail {
                 commentText = ""
                 comments = getMessages(postId)
             case None => () } }
-    func sendBuyRequest() {
-        if (createRequest(postId,
-            getSessionUserId(), REQ_TYPE_BUY,
-            "")) {
-            requestSent = true
-            requestMsg = "已发送购买意向，等待卖家回复" } }
+    func sendContactMessage() {
+        if (contactText == "") {
+            requestMsg = "请先填写联系方式或想说的话"
+            return
+        }
+        if (sendPrivateMessage(postId, getSessionUserId(),
+            contactText)) {
+            contactText = ""
+            contactSent = true
+            requestMsg = "已发送给卖家，可在消息中心查看" }
+    }
     public func aboutToAppear() { loadDetail() }
+
+    func visibleStatus(): String {
+        if (detail.audit_status != AUDIT_APPROVED) {
+            return getAuditLabel(detail.audit_status)
+        }
+        return getBizLabel(
+            detail.business_type,
+            detail.biz_status)
+    }
 
     @Builder func renderCommentItem(
         item: MessageVO) { Column() { Row() {
@@ -108,28 +110,27 @@ public class ProductDetail {
                 .backgroundColor(0xFF4CAF50)
                 .textAlign(TextAlign.Center)
                 .padding(8) }
-        Row() { Blank()
-            Button("私聊").fontSize(14)
-                .fontColor(Color(0xFF4CAF50))
-                .backgroundColor(Color.WHITE)
-                .borderWidth(1)
-                .borderColor(Color(0xFF4CAF50))
-                .borderRadius(20).width(90)
-                .height(40).margin(right: 12)
-                .onClick {}
-            if (requestSent) {
-                Button("已申请").fontSize(14)
+        Row() {
+            TextInput(text: contactText,
+                placeholder: "给卖家发送联系方式或交易时间")
+                .fontSize(13.fp)
+                .height(40)
+                .layoutWeight(1)
+                .margin(left: 16, right: 8)
+                .onChange { val => contactText = val }
+            if (contactSent) {
+                Button("已发送").fontSize(14)
                     .fontColor(0x999999)
                     .backgroundColor(0xFFF0F0F0)
-                    .borderRadius(20).width(100)
+                    .borderRadius(20).width(96)
                     .height(40).margin(right: 16) }
-            else { Button("立即购买")
+            else { Button("联系卖家")
                 .fontSize(14)
                 .fontColor(Color.WHITE)
                 .backgroundColor(Color(0xFF4CAF50))
-                .borderRadius(20).width(100)
+                .borderRadius(20).width(96)
                 .height(40).margin(right: 16)
-                .onClick { evt => sendBuyRequest() }
+                .onClick { evt => sendContactMessage() }
             }
         }.width(100.percent)
         .margin(top: 12, bottom: 24)
@@ -176,9 +177,7 @@ public class ProductDetail {
                     .padding(left:8, right: 8,
                         top: 3, bottom: 3)
                     .margin(right: 8) }
-            Text(getBizLabel(
-                detail.business_type,
-                detail.biz_status))
+            Text(visibleStatus())
                 .fontSize(12).fontColor(0xFF9800)
                 .backgroundColor(0xFFFFF3E0)
                 .borderRadius(4)
@@ -196,20 +195,6 @@ public class ProductDetail {
                 .fontColor(0x999999)
                 .margin(right: 16, top: 8)
         }.width(100.percent)
-        Row() { Blank()
-            Button() {
-                if (isLiked) {
-                    Text("❤ ${favoriteCount}")
-                        .fontSize(14)
-                        .fontColor(0xFFFF4444) }
-                else {
-                    Text("♡ ${favoriteCount}")
-                        .fontSize(14)
-                        .fontColor(0x999999) }
-            }.backgroundColor(Color.TRANSPARENT)
-            .margin(right: 16)
-            .onClick { evt => toggleLike() }
-        }.width(100.percent).margin(top: 6)
         Divider().margin(
             top: 20, left: 16, right: 16)
         Text("商品描述").fontSize(16)

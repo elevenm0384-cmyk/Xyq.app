@@ -1,4 +1,4 @@
-package ohos_app_cangjie_entry
+﻿package ohos_app_cangjie_entry
 internal import ohos.base.*
 internal import ohos.component.*
 internal import ohos.state_manage.*
@@ -8,27 +8,16 @@ import ohos.state_macro_manage.*
 public class LostDetail {
     @State var postId: Int64 = 0
     @State var detail: PostDetailVO = PostDetailVO()
-    @State var isLiked: Bool = false
-    @State var favoriteCount: Int64 = 0
     @State var comments: Array<MessageVO>
         = Array(0, {i => MessageVO()})
     @State var commentText: String = ""
-    @State var requestSent: Bool = false
+    @State var contactText: String = ""
+    @State var contactSent: Bool = false
     @State var requestMsg: String = ""
     var onBack: () -> Unit = { => () }
     func loadDetail() {
-        incrementViewCount(postId)
-        recordBrowseHistory(
-            getSessionUserId(), postId)
         detail = getPostDetail(postId)
-        isLiked = detail.is_favorited
-        favoriteCount = detail.favorite_count
         comments = getMessages(postId) }
-    func toggleLike() {
-        var r = toggleFavorite(
-            postId, getSessionUserId(), !isLiked)
-        isLiked = r; if (r) { favoriteCount++ }
-        else if (favoriteCount > 0) { favoriteCount-- } }
     func sendComment() {
         if (commentText == "") { return }
         match (addMessage(
@@ -38,13 +27,39 @@ public class LostDetail {
                 commentText = ""
                 comments = getMessages(postId)
             case None => () } }
-    func sendClaimRequest() {
-        if (createRequest(postId,
-            getSessionUserId(), REQ_TYPE_CLAIM,
-            "")) {
-            requestSent = true
-            requestMsg = "已发送认领意向，等待发布者回复" } }
+    func contactLabel(): String {
+        if (detail.business_type == BIZ_TYPE_LOST) {
+            return "联系失主"
+        }
+        return "联系招领人"
+    }
+    func contactPlaceholder(): String {
+        if (detail.business_type == BIZ_TYPE_LOST) {
+            return "给失主发送联系方式或线索"
+        }
+        return "给招领人发送联系方式或认领说明"
+    }
+    func sendContactMessage() {
+        if (contactText == "") {
+            requestMsg = "请先填写联系方式或想说的话"
+            return
+        }
+        if (sendPrivateMessage(postId, getSessionUserId(),
+            contactText)) {
+            contactText = ""
+            contactSent = true
+            requestMsg = "已发送给发布者，可在消息中心查看" }
+    }
     public func aboutToAppear() { loadDetail() }
+
+    func visibleStatus(): String {
+        if (detail.audit_status != AUDIT_APPROVED) {
+            return getAuditLabel(detail.audit_status)
+        }
+        return getBizLabel(
+            detail.business_type,
+            detail.biz_status)
+    }
 
     @Builder func renderCommentItem(
         item: MessageVO) { Column() { Row() {
@@ -107,32 +122,22 @@ public class LostDetail {
                 .backgroundColor(0xFF4CAF50)
                 .textAlign(TextAlign.Center)
                 .padding(8) }
-        Row() { Blank()
-            Button("私聊").fontSize(14)
-                .fontColor(Color(0xFF4CAF50))
-                .backgroundColor(Color.WHITE)
-                .borderWidth(1)
-                .borderColor(Color(0xFF4CAF50))
-                .borderRadius(20).width(90)
-                .height(40).margin(right: 12)
-                .onClick {}
-            if (requestSent) {
-                Button("已申请").fontSize(14)
+        Row() {
+            TextInput(text: contactText,
+                placeholder: contactPlaceholder())
+                .fontSize(13.fp)
+                .height(40)
+                .layoutWeight(1)
+                .margin(left: 16, right: 8)
+                .onChange { val => contactText = val }
+            if (contactSent) {
+                Button("已发送").fontSize(14)
                     .fontColor(0x999999)
                     .backgroundColor(0xFFF0F0F0)
                     .borderRadius(20).width(110)
                     .height(40).margin(right: 16) }
-            else { if (detail.business_type
-                == BIZ_TYPE_LOST) {
-                Button("联系失主").fontSize(14)
-                    .fontColor(Color.WHITE)
-                    .backgroundColor(
-                        Color(0xFF4CAF50))
-                    .borderRadius(20).width(110)
-                    .height(40).margin(right: 16)
-                    .onClick { evt =>
-                        sendClaimRequest() } }
-            else { Button("联系招领人")
+            else {
+                Button(contactLabel())
                 .fontSize(14)
                 .fontColor(Color.WHITE)
                 .backgroundColor(
@@ -140,7 +145,7 @@ public class LostDetail {
                 .borderRadius(20).width(110)
                 .height(40).margin(right: 16)
                 .onClick { evt =>
-                    sendClaimRequest() } } }
+                    sendContactMessage() } }
         }.width(100.percent)
         .margin(top: 12, bottom: 24)
         .alignItems(VerticalAlign.Center) }
@@ -187,9 +192,7 @@ public class LostDetail {
                 .padding(left: 8, right: 8,
                     top: 3, bottom: 3)
                 .margin(right: 8)
-            Text(getBizLabel(
-                detail.business_type,
-                detail.biz_status))
+            Text(visibleStatus())
                 .fontSize(12)
                 .fontColor(0x666666)
                 .backgroundColor(0xFFF0F0F0)
@@ -242,21 +245,10 @@ public class LostDetail {
         }.margin(left: 16, right: 16, top: 16)
         Divider().margin(
             top: 16, left: 16, right: 16)
-        Row() { Text("物品描述").fontSize(16)
+        Text("物品描述").fontSize(16)
             .fontWeight(FontWeight.Bold)
-            .fontColor(0x333333); Blank()
-            Button() {
-                if (isLiked) {
-                    Text("❤ ${favoriteCount}")
-                        .fontSize(14)
-                        .fontColor(0xFFFF4444) }
-                else { Text("♡ ${favoriteCount}")
-                    .fontSize(14)
-                    .fontColor(0x999999) }
-            }.backgroundColor(Color.TRANSPARENT)
-            .onClick { evt => toggleLike() }
-        }.margin(left: 16, right: 16, top: 16)
-        .width(100.percent)
+            .fontColor(0x333333)
+            .margin(left: 16, top: 16)
         Text(detail.description).fontSize(14)
             .fontColor(0x666666)
             .margin(left: 16, right: 16, top: 8)

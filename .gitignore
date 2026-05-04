@@ -8,6 +8,7 @@ target/
 build/
 entry/build/
 oh_modules/
+entry/src/main/cangjie/cj_res/
 out/
 *.exe
 *.cjo
