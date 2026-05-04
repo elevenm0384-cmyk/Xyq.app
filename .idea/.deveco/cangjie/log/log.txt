@@ -1,0 +1,86 @@
+2026-05-04 14:54:33 1777877673789:[Info][Thread 1] LSP Starting over stdin/stdout 
+
+2026-05-04 14:54:33 1777877673791:[Info]receive message body:{"jsonrpc":"2.0","id":"1","method":"initialize","params":{"rootUri":"file:///D%3A/homework/cangjie/homework_app/ourApp/","initializationOptions":{"cangjieRootUri":"file:///D%3A/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie","multiModuleOption":{"file:///D%3A/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie":{"package_requires":{"path_option":["file:///C%3A/Users/周慧文/.cangjie-sdk/5.0/cangjie/build/linux_ohos_aarch64_llvm/ohos","file:///C%3A/Users/周慧文/.cangjie-sdk/5.0/cangjie/build/x86_64-w64-mingw32/macro/ohos","file:///D%3A/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie","file:///D%3A/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie"],"package_option":{}},"name":"ohos_app_cangjie_entry","src_path":"file:///D%3A/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie","requires":{"cj_res_entry":{"path":"file:///D%3A/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie/cj_res"}}},"file:///D%3A/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie/cj_res":{"package_requires":{"path_option":[],"package_option":{}},"name":"cj_res_entry","src_path":"file:///D%3A/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie/cj_res/src","requires":{}}},"cachePath":"D:\\homework\\cangjie\\homework_app\\ourApp\\.idea\\.deveco\\cangjie","stdLibPathOption":"C:\\Users\\周慧文\\AppData\\Roaming\\Huawei\\DevEcoStudio5.0\\plugins\\devecostudio-cangjie-plugin-windows-5.0.13.200\\lib\\src","modulesHomeOption":"C:\\Users\\周慧文\\.cangjie-sdk\\5.0\\cangjie\\compiler"},"capabilities":{"workspace":{"applyEdit":true,"workspaceEdit":{},"didChangeWatchedFiles":{},"symbol":{"symbolKind":{"valueSet":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]}},"executeCommand":{},"workspaceFolders":false,"configuration":false,"semanticTokens":{"refreshSupport":true}},"textDocument":{"synchronization":{"willSave":true,"willSaveWaitUntil":true,"didSave":true},"completion":{"completionItem":{"snippetSupport":true},"completionItemKind":{"valueSet":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]}},"hover":{},"signatureHelp":{},"references":{},"documentHighlight":{"dynamicRegistration":true},"formatting":{},"rangeFormatting":{},"onTypeFormatting":{},"definition":{},"implementation":{},"codeAction":{"codeActionLiteralSupport":{}},"documentLink":{},"rename":{"prepareSupport":true},"callHierarchy":{},"semanticTokens":{"tokenTypes":["namespace","type","class","enum","interface","struct","typeParameter","parameter","global_variable","variable","property","enumMember","event","function","method","macro","keyword","modifier","comment","string","number","regexp","operator","member","label","nonTypeTemplate","dependent"],"tokenModifiers":["declaration","definition","readonly","static","deprecated","abstract","async","modification","documentation","defaultLibrary"],"dynamicRegistration":true}}}}}
+2026-05-04 14:54:33 1777877673791:[Info]LD_LIBRARY_PATH is : C:\Users\?????\.cangjie-sdk\5.0\cangjie\compiler\runtime\lib\windows_x86_64_llvm\libcangjie-runtime.dll
+2026-05-04 14:54:33 1777877673791:[Info]Load modules from (modulesHomeOption):c:\Users\�ܻ���\.cangjie-sdk\5.0\cangjie\compiler
+2026-05-04 14:54:33 1777877673795:[Info]cjcPath is C:\Users\?????\.cangjie-sdk\5.0\cangjie\compiler\bin\
+2026-05-04 14:54:33 1777877673958:[Warning]#### execute SetSourceCodeImportStatus start ####
+2026-05-04 14:54:33 1777877673958:[Warning]#### execute SetSourceCodeImportStatus end ####
+2026-05-04 14:54:33 1777877673958:[Warning]#### execute PerformParse start ####
+2026-05-04 14:54:33 1777877673977:[Warning]#### execute PerformParse end ####
+2026-05-04 14:54:33 1777877673977:[Warning]#### execute PerformConditionCompile start ####
+2026-05-04 14:54:33 1777877673979:[Warning]#### execute PerformConditionCompile end ####
+2026-05-04 14:54:33 1777877673979:[Info][Thread 1] Insert cjo cache of package  ohos_app_cangjie_entry.cj_res.src 
+
+2026-05-04 14:54:33 1777877673979:[Warning]#### execute SetSourceCodeImportStatus start ####
+2026-05-04 14:54:33 1777877673979:[Warning]#### execute SetSourceCodeImportStatus end ####
+2026-05-04 14:54:33 1777877673979:[Warning]#### execute PerformParse start ####
+2026-05-04 14:54:33 1777877673980:[Warning]#### execute PerformParse end ####
+2026-05-04 14:54:33 1777877673980:[Warning]#### execute PerformConditionCompile start ####
+2026-05-04 14:54:33 1777877673980:[Warning]#### execute PerformConditionCompile end ####
+2026-05-04 14:54:33 1777877673981:[Info][Thread 1] Insert cjo cache of package  ohos_app_cangjie_entry 
+
+2026-05-04 14:54:33 1777877673981:[Warning]#### execute SetSourceCodeImportStatus start ####
+2026-05-04 14:54:33 1777877673981:[Warning]#### execute SetSourceCodeImportStatus end ####
+2026-05-04 14:54:33 1777877673981:[Warning]#### execute PerformParse start ####
+2026-05-04 14:54:34 1777877674006:[Warning]#### execute PerformParse end ####
+2026-05-04 14:54:34 1777877674006:[Warning]#### execute PerformConditionCompile start ####
+2026-05-04 14:54:34 1777877674007:[Warning]#### execute PerformConditionCompile end ####
+2026-05-04 14:54:34 1777877674007:[Info][Thread 1] Insert cjo cache of package  cj_res_entry 
+
+2026-05-04 14:54:34 1777877674353:[Info][Thread 5] start execute task  cj_res_entry 
+
+2026-05-04 14:54:34 1777877674354:[Info][Thread 6] start execute task  ohos_app_cangjie_entry.cj_res.src 
+
+2026-05-04 14:54:34 1777877674358:[Warning]#### execute PerformImportPackage start ####
+2026-05-04 14:54:34 1777877674367:[Warning]#### execute PerformImportPackage end ####
+2026-05-04 14:54:34 1777877674367:[Warning]#### execute PerformMacroExpand start ####
+2026-05-04 14:54:34 1777877674368:[Warning]#### execute PerformMacroExpand end ####
+2026-05-04 14:54:34 1777877674368:[Warning]#### execute PerformSema start ####
+2026-05-04 14:54:34 1777877674387:[Warning]#### execute PerformImportPackage start ####
+2026-05-04 14:54:34 1777877674396:[Warning]#### execute PerformImportPackage end ####
+2026-05-04 14:54:34 1777877674396:[Warning]#### execute PerformMacroExpand start ####
+2026-05-04 14:54:34 1777877674398:[Warning]#### execute PerformMacroExpand end ####
+2026-05-04 14:54:34 1777877674398:[Warning]#### execute PerformSema start ####
+2026-05-04 14:54:34 1777877674560:[Warning]#### execute PerformSema end ####
+2026-05-04 14:54:34 1777877674561:[Warning]#### execute DeleteASTLoaders start ####
+2026-05-04 14:54:34 1777877674569:[Warning]#### execute DeleteASTLoaders end ####
+2026-05-04 14:54:34 1777877674569:[Warning]#### execute ExportAST start ####
+2026-05-04 14:54:34 1777877674579:[Warning]#### execute PerformSema end ####
+2026-05-04 14:54:34 1777877674579:[Warning]#### execute DeleteASTLoaders start ####
+2026-05-04 14:54:34 1777877674580:[Warning]#### execute DeleteASTLoaders end ####
+2026-05-04 14:54:34 1777877674580:[Warning]#### execute ExportAST start ####
+2026-05-04 14:54:34 1777877674582:[Warning]#### execute ExportAST end ####
+2026-05-04 14:54:34 1777877674584:[Info][Thread 5] Update cjo cache of package  cj_res_entry 
+
+2026-05-04 14:54:34 1777877674591:[Warning]#### execute ExportAST end ####
+2026-05-04 14:54:34 1777877674592:[Info][Thread 6] Update cjo cache of package  ohos_app_cangjie_entry.cj_res.src 
+
+2026-05-04 14:54:34 1777877674615:[Info][Thread 5] cj_res_entry error count:  0 
+
+2026-05-04 14:54:34 1777877674617:[Info][Thread 6] ohos_app_cangjie_entry.cj_res.src error count:  0 
+
+2026-05-04 14:54:34 1777877674622:[Info][Thread 5] finish execute task  cj_res_entry 
+
+2026-05-04 14:54:34 1777877674622:[Info][Thread 7] start execute task  ohos_app_cangjie_entry 
+
+2026-05-04 14:54:34 1777877674625:[Info][Thread 6] finish execute task  ohos_app_cangjie_entry.cj_res.src 
+
+2026-05-04 14:54:34 1777877674650:[Warning]#### execute PerformImportPackage start ####
+2026-05-04 14:54:34 1777877674767:[Warning]#### execute PerformImportPackage end ####
+2026-05-04 14:54:34 1777877674768:[Warning]#### execute PerformMacroExpand start ####
+2026-05-04 14:54:34 1777877674865:[Warning]#### execute PerformMacroExpand end ####
+2026-05-04 14:54:34 1777877674865:[Warning]#### execute PerformSema start ####
+2026-05-04 14:54:34 1777877674872:[Warning]#### execute PerformSema end ####
+2026-05-04 14:54:34 1777877674872:[Warning]#### execute DeleteASTLoaders start ####
+2026-05-04 14:54:34 1777877674880:[Warning]#### execute DeleteASTLoaders end ####
+2026-05-04 14:54:34 1777877674880:[Warning]#### execute ExportAST start ####
+2026-05-04 14:54:34 1777877674880:[Warning]#### execute ExportAST end ####
+2026-05-04 14:54:34 1777877674880:[Info][Thread 7] Update cjo cache of package  ohos_app_cangjie_entry 
+
+2026-05-04 14:54:34 1777877674881:[Info][Thread 7] finish execute task  ohos_app_cangjie_entry 
+
+2026-05-04 14:54:34 1777877674881:[Info][Thread 1] All tasks are completed in full compilation 
+
+2026-05-04 14:54:34 1777877674895:[Info]send message body:{"id":"1","jsonrpc":"2.0","result":{"capabilities":{"breakpointsProvider":true,"callHierarchyProvider":true,"completionProvider":{"resolveProvider":false,"triggerCharacters":[".","`"]},"definitionProvider":true,"documentHighlightProvider":true,"documentLinkProvider":{"resolveProvider":true},"documentSymbolProvider":true,"hoverProvider":true,"referencesProvider":true,"renameProvider":{"prepareProvider":true},"semaHighlightProvider":true,"semanticTokensProvider":{"full":{"delta":true},"legend":{"tokenModifiers":["declaration","documentation","static","abstract","deprecated","async","readonly"],"tokenTypes":["comment","keyword","string","number","regexp","operator","namespace","type","struct","class","interface","enum","typeParameter","function","member","property","macro","variable","parameter","label"]},"range":false},"signatureHelpProvider":{"triggerCharacters":["(",","]},"textDocumentSync":2,"typeHierarchyProvider":true,"workspaceSymbolProvider":true},"serverInfo":{"name":"Cangjie language server","version":"1.0"}}}
+2026-05-04 14:54:34 1777877674897:[Info]receive message body:{"jsonrpc":"2.0","method":"initialized","params":{"editors":[{"uri":"file:///D%3A/homework/cangjie/homework_app/ourApp/entry/build-profile.json5","selected":true}]}}

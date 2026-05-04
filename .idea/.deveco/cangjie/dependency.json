@@ -1,0 +1,40 @@
+{
+	"multiModuleOption":{
+		"file:///D%3A/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie":{
+			"name":"ohos_app_cangjie_entry",
+			"package_requires":{
+				"package_option":{
+					
+				},
+				"path_option":[
+					"file:///C%3A/Users/周慧文/.cangjie-sdk/5.0/cangjie/build/linux_ohos_aarch64_llvm/ohos",
+					"file:///C%3A/Users/周慧文/.cangjie-sdk/5.0/cangjie/build/x86_64-w64-mingw32/macro/ohos",
+					"file:///D%3A/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie",
+					"file:///D%3A/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie"
+				]
+			},
+			"requires":{
+				"cj_res_entry":{
+					"path":"file:///D%3A/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie/cj_res"
+				}
+			},
+			"src_path":"file:///D%3A/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie"
+		},
+		"file:///D%3A/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie/cj_res":{
+			"name":"cj_res_entry",
+			"package_requires":{
+				"package_option":{
+					
+				},
+				"path_option":[
+					
+				]
+			},
+			"requires":{
+				
+			},
+			"src_path":"file:///D%3A/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie/cj_res/src"
+		}
+	},
+	"requiresEnvPath":"C:/Users/周慧文/.cangjie-sdk/5.0/cangjie/build/linux_ohos_aarch64_llvm/ohos;C:/Users/周慧文/.cangjie-sdk/5.0/cangjie/build/x86_64-w64-mingw32/macro/ohos;D:/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie;D:/homework/cangjie/homework_app/ourApp/entry/src/main/cangjie;"
+}

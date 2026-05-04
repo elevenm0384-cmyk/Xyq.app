@@ -1,0 +1,631 @@
+[2026-05-04T14:21:59.661] [DEBUG] debug-file - env: nodejsVersion=v18.20.1
+[2026-05-04T14:22:00.069] [DEBUG] debug-file - Hvigor init with startParameters:{
+  hvigorfileTypeCheck: false,
+  parallelExecution: true,
+  incrementalExecution: true,
+  printStackTrace: false,
+  daemon: false,
+  analyze: 0,
+  logLevel: Level { level: 20000, levelStr: 'INFO', colour: 'green' }
+}
+[2026-05-04T14:22:00.087] [DEBUG] debug-file - hvigorfile, resolving D:\homework\cangjie\homework_app\ourApp\hvigorfile.ts
+[2026-05-04T14:22:01.374] [DEBUG] debug-file - hvigorfile, require result:  { default: { system: [Function: appTasks], plugins: [] } }
+[2026-05-04T14:22:01.559] [DEBUG] debug-file - Start initialize project's product build option map with build mode debug.
+[2026-05-04T14:22:01.568] [DEBUG] debug-file - Local scan or download HarmonyOS sdk components toolchains,ets,js,native,previewer
+[2026-05-04T14:22:01.563] [DEBUG] debug-file - Obtain build option for product 'default'in this build.
+[2026-05-04T14:22:01.572] [DEBUG] debug-file - Local scan or download hmscore sdk components toolchains,ets,native
+[2026-05-04T14:22:01.578] [DEBUG] debug-file - Start recording SDK configuration permission data.
+[2026-05-04T14:22:01.591] [DEBUG] debug-file - Sdk init in 26 ms 
+[2026-05-04T14:22:01.613] [DEBUG] debug-file - Project task initialization takes 21 ms 
+[2026-05-04T14:22:01.620] [DEBUG] debug-file - hvigorfile, resolving D:\homework\cangjie\homework_app\ourApp\entry\hvigorfile.ts
+[2026-05-04T14:21:59.665] [DEBUG] debug-file - env: hvigor-config.json5 content = {
+  modelVersion: '5.0.5',
+  dependencies: {
+    '@ohos/cangjie-build-support': 'file:cangjie-build-support-3.1.132.tgz'
+  },
+  execution: {},
+  logging: {},
+  debugging: {},
+  nodeOptions: {}
+}
+[2026-05-04T14:22:01.631] [DEBUG] debug-file - hvigor build process will be closed with an error.
+[2026-05-04T14:22:01.687] [DEBUG] debug-file - Create  resident worker with id: 0.
+[2026-05-04T14:22:00.070] [DEBUG] debug-file - Since current hvigor version 5.17.6 differs from last hvigor version 
+      undefined, delete file-cache.json and task-cache.json.
+[2026-05-04T14:22:01.656] [WARN] debug-file - BUILD FAILED in 1 s 602 ms 
+[2026-05-04T14:22:01.375] [DEBUG] debug-file - hvigorfile, binding system plugins [Function: appTasks]
+[2026-05-04T14:22:01.559] [DEBUG] debug-file - Picking option from product 'default' with build mode 'debug'.
+[2026-05-04T14:22:01.565] [DEBUG] debug-file - No signingConfig found, initRemoteHspCache failed.
+[2026-05-04T14:22:01.614] [DEBUG] debug-file - hvigorfile, binding custom plugins []
+[2026-05-04T14:22:01.626] [DEBUG] debug-file - hvigorfile, require result:  { default: { system: [Function: hapTasks], plugins: [] } }
+[2026-05-04T14:21:59.667] [DEBUG] debug-file - env: daemon=false
+[2026-05-04T14:22:01.643] [DEBUG] debug-file - ERROR: stacktrace = Error: Schema validate failed.
+	 Detail: Please check the following fields.
+{
+  instancePath: '',
+  keyword: 'enum',
+  params: {
+    allowedValues: [
+      'apiType',
+      'targets',
+      'showInServiceCenter',
+      'buildOption',
+      'buildOptionSet',
+      'buildModeBinder',
+      'entryModules'
+    ]
+  },
+  message: 'must be equal to one of the allowed values',
+  location: 'D:/homework/cangjie/homework_app/ourApp/entry/build-profile.json5:1:2'
+} 
+{
+  instancePath: '',
+  keyword: 'propertyNames',
+  params: { propertyName: 'abiFilters' },
+  message: 'property name must be valid',
+  location: 'D:/homework/cangjie/homework_app/ourApp/entry/build-profile.json5:1:2'
+} 
+
+    at OhosLogger.errorMessageExit (D:\deveco\DevEco Studio\tools\hvigor\hvigor\src\base\log\hvigor-log.js:1:3224)
+    at OhosLogger._printErrorAndExit (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\utils\log\ohos-logger.js:1:1978)
+    at ValidateUtil.doSchemaCheck (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\utils\validate\validate-util.js:1:9552)
+    at ValidateUtil.submitSchemaCheckWork (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\utils\validate\validate-util.js:1:8381)
+    at ModuleModelImpl.moduleBuildProfileCheck (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\model\module\core-module-model-impl.js:1:7957)
+    at PluginBuilder.createModuleModel (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\plugin\factory\core-plugin-builder.js:1:241)
+    at PluginBuilder.initPluginParam (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\plugin\factory\plugin-builder.js:1:1059)
+    at PluginBuilder.createStageHapPlugin (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\plugin\factory\plugin-builder.js:1:738)
+    at PluginFactory.getHapPlugin (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\plugin\factory\plugin-factory.js:1:4638)
+    at createHapTask (C:\Users\周慧文\.hvigor\project_caches\f7db94dbe853a2a9604f564df82524b2\workspace\node_modules\.pnpm\cangjie-build-support@file+_db24869a8f3edf23453b078f75d2daf1\node_modules\cangjie-build-support\src\plugin\cangjie-plugin-factory.js:1:1023)
+[2026-05-04T14:22:01.690] [DEBUG] debug-file - Create  resident worker with id: 1.
+[2026-05-04T14:22:00.070] [DEBUG] debug-file - Cache service initialization finished in 2 ms 
+[2026-05-04T14:22:01.682] [DEBUG] debug-file - Since there is no instance or instance is terminated, create a new worker pool.
+[2026-05-04T14:22:01.559] [DEBUG] debug-file - Product 'default' build option initialized
+[2026-05-04T14:22:01.614] [DEBUG] debug-file - hvigorfile, no custom plugins were found in D:\homework\cangjie\homework_app\ourApp\hvigorfile.ts
+[2026-05-04T14:22:01.626] [DEBUG] debug-file - hvigorfile, binding system plugins [Function: hapTasks]
+[2026-05-04T14:21:59.667] [DEBUG] debug-file - no-daemon, use the parent process.execArgv --max-old-space-size=8192,--expose-gc
+[2026-05-04T14:22:01.643] [ERROR] debug-file - Error: Schema validate failed.
+	 Detail: Please check the following fields.
+{
+  instancePath: '',
+  keyword: 'enum',
+  params: {
+    allowedValues: [
+      'apiType',
+      'targets',
+      'showInServiceCenter',
+      'buildOption',
+      'buildOptionSet',
+      'buildModeBinder',
+      'entryModules'
+    ]
+  },
+  message: 'must be equal to one of the allowed values',
+  location: 'D:/homework/cangjie/homework_app/ourApp/entry/build-profile.json5:1:2'
+} 
+{
+  instancePath: '',
+  keyword: 'propertyNames',
+  params: { propertyName: 'abiFilters' },
+  message: 'property name must be valid',
+  location: 'D:/homework/cangjie/homework_app/ourApp/entry/build-profile.json5:1:2'
+} 
+
+    at OhosLogger.errorMessageExit (D:\deveco\DevEco Studio\tools\hvigor\hvigor\src\base\log\hvigor-log.js:1:3224)
+    at OhosLogger._printErrorAndExit (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\utils\log\ohos-logger.js:1:1978)
+    at ValidateUtil.doSchemaCheck (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\utils\validate\validate-util.js:1:9552)
+    at ValidateUtil.submitSchemaCheckWork (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\utils\validate\validate-util.js:1:8381)
+    at ModuleModelImpl.moduleBuildProfileCheck (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\model\module\core-module-model-impl.js:1:7957)
+    at PluginBuilder.createModuleModel (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\plugin\factory\core-plugin-builder.js:1:241)
+    at PluginBuilder.initPluginParam (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\plugin\factory\plugin-builder.js:1:1059)
+    at PluginBuilder.createStageHapPlugin (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\plugin\factory\plugin-builder.js:1:738)
+    at PluginFactory.getHapPlugin (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\plugin\factory\plugin-factory.js:1:4638)
+    at createHapTask (C:\Users\周慧文\.hvigor\project_caches\f7db94dbe853a2a9604f564df82524b2\workspace\node_modules\.pnpm\cangjie-build-support@file+_db24869a8f3edf23453b078f75d2daf1\node_modules\cangjie-build-support\src\plugin\cangjie-plugin-factory.js:1:1023)
+[2026-05-04T14:22:01.693] [DEBUG] debug-file - Current worker pool is stopped or closed.
+[2026-05-04T14:22:01.682] [DEBUG] debug-file - Worker pool is initialized with config:  {
+  minPoolNum: 2,
+  maxPoolNum: undefined,
+  maxCoreSize: undefined,
+  cacheCapacity: undefined,
+  cacheTtl: undefined
+}
+[2026-05-04T14:22:01.559] [DEBUG] debug-file - End initialize project's product build option map with build mode 'debug'.
+[2026-05-04T14:22:01.614] [DEBUG] debug-file - hvigorfile, resolve finished D:\homework\cangjie\homework_app\ourApp\hvigorfile.ts
+[2026-05-04T14:22:01.693] [DEBUG] debug-file - Clear worker 0.
+[2026-05-04T14:22:01.693] [DEBUG] debug-file - Worker 0 has been cleared.
+[2026-05-04T14:22:01.693] [DEBUG] debug-file - Current idle worker size: 1.
+[2026-05-04T14:22:01.693] [DEBUG] debug-file - Current busy worker size: 0.
+[2026-05-04T14:22:01.693] [DEBUG] debug-file - Clear worker 1.
+[2026-05-04T14:22:01.693] [DEBUG] debug-file - Worker 1 has been cleared.
+[2026-05-04T14:22:01.693] [DEBUG] debug-file - Current idle worker size: 0.
+[2026-05-04T14:22:01.693] [DEBUG] debug-file - Current busy worker size: 0.
+[2026-05-04T14:22:01.694] [DEBUG] debug-file - hvigor build process will be closed.
+[2026-05-04T14:22:01.697] [DEBUG] debug-file - worker[0] exits with exit code 0.
+[2026-05-04T14:22:01.697] [DEBUG] debug-file - worker[1] exits with exit code 0.
+[2026-05-04T14:22:01.697] [DEBUG] debug-file - Current worker pool is terminated.
+[2026-05-04T14:51:05.936] [DEBUG] debug-file - env: nodejsVersion=v18.20.1
+[2026-05-04T14:51:05.985] [DEBUG] debug-file - env: daemon=true
+[2026-05-04T14:51:05.938] [DEBUG] debug-file - env: hvigor-config.json5 content = {
+  modelVersion: '5.0.5',
+  dependencies: {
+    '@ohos/cangjie-build-support': 'file:cangjie-build-support-3.1.132.tgz'
+  },
+  execution: {},
+  logging: {},
+  debugging: {},
+  nodeOptions: {}
+}
+[2026-05-04T14:51:06.466] [DEBUG] debug-file - java daemon tryConnect failed Error: connect ECONNREFUSED 127.0.0.1:45050
+[2026-05-04T14:51:06.471] [DEBUG] debug-file - java daemon started at port 45050 pid 23880
+[2026-05-04T14:51:06.489] [DEBUG] debug-file - session manager: set active socket. socketId=wx50hNSNgd1OTbWwAAAB
+[2026-05-04T14:51:07.085] [DEBUG] debug-file - watch worker: worker id should be larger than 0. Nothing will be sent to any worker thread.
+[2026-05-04T14:51:07.097] [DEBUG] debug-file - Hvigor init with startParameters:{
+  hvigorfileTypeCheck: false,
+  parallelExecution: true,
+  incrementalExecution: true,
+  printStackTrace: false,
+  daemon: true,
+  analyze: 0,
+  logLevel: Level { level: 20000, levelStr: 'INFO', colour: 'green' }
+}
+[2026-05-04T14:51:07.099] [DEBUG] debug-file - Cache service initialization finished in 2 ms 
+[2026-05-04T14:51:07.108] [DEBUG] debug-file - hvigorfile, resolving D:\homework\cangjie\homework_app\ourApp\hvigorfile.ts
+[2026-05-04T14:51:08.432] [DEBUG] debug-file - hvigorfile, require result:  { default: { plugins: [] } }
+[2026-05-04T14:51:08.432] [DEBUG] debug-file - hvigorfile, binding system plugins null
+[2026-05-04T14:51:08.594] [DEBUG] debug-file - Start initialize project's product build option map with build mode debug.
+[2026-05-04T14:51:08.594] [DEBUG] debug-file - Picking option from product 'default' with build mode 'debug'.
+[2026-05-04T14:51:08.595] [DEBUG] debug-file - Product 'default' build option initialized
+[2026-05-04T14:51:08.595] [DEBUG] debug-file - End initialize project's product build option map with build mode 'debug'.
+[2026-05-04T14:51:08.597] [DEBUG] debug-file - Obtain build option for product 'default'in this build.
+[2026-05-04T14:51:08.598] [DEBUG] debug-file - No signingConfig found, initRemoteHspCache failed.
+[2026-05-04T14:51:08.601] [DEBUG] debug-file - Local scan or download HarmonyOS sdk components toolchains,ets,js,native,previewer
+[2026-05-04T14:51:08.604] [DEBUG] debug-file - Local scan or download hmscore sdk components toolchains,ets,native
+[2026-05-04T14:51:08.608] [DEBUG] debug-file - Start recording SDK configuration permission data.
+[2026-05-04T14:51:08.623] [DEBUG] debug-file - Sdk init in 24 ms 
+[2026-05-04T14:51:08.639] [DEBUG] debug-file - Project task initialization takes 15 ms 
+[2026-05-04T14:51:08.639] [DEBUG] debug-file - hvigorfile, binding custom plugins []
+[2026-05-04T14:51:08.639] [DEBUG] debug-file - hvigorfile, no custom plugins were found in D:\homework\cangjie\homework_app\ourApp\hvigorfile.ts
+[2026-05-04T14:51:08.639] [DEBUG] debug-file - hvigorfile, resolve finished D:\homework\cangjie\homework_app\ourApp\hvigorfile.ts
+[2026-05-04T14:51:08.643] [DEBUG] debug-file - hvigorfile, resolving D:\homework\cangjie\homework_app\ourApp\entry\hvigorfile.ts
+[2026-05-04T14:51:08.648] [DEBUG] debug-file - hvigorfile, require result:  { default: { plugins: [] } }
+[2026-05-04T14:51:08.648] [DEBUG] debug-file - hvigorfile, binding system plugins null
+[2026-05-04T14:51:08.652] [DEBUG] debug-file - hvigor build process will be closed with an error.
+[2026-05-04T14:51:08.653] [DEBUG] debug-file - ERROR: stacktrace = Error: Schema validate failed.
+	 Detail: Please check the following fields.
+{
+  instancePath: '',
+  keyword: 'enum',
+  params: {
+    allowedValues: [
+      'apiType',
+      'targets',
+      'showInServiceCenter',
+      'buildOption',
+      'buildOptionSet',
+      'buildModeBinder',
+      'entryModules'
+    ]
+  },
+  message: 'must be equal to one of the allowed values',
+  location: 'D:/homework/cangjie/homework_app/ourApp/entry/build-profile.json5:1:2'
+} 
+{
+  instancePath: '',
+  keyword: 'propertyNames',
+  params: { propertyName: 'abiFilters' },
+  message: 'property name must be valid',
+  location: 'D:/homework/cangjie/homework_app/ourApp/entry/build-profile.json5:1:2'
+} 
+
+    at OhosLogger.errorMessageExit (D:\deveco\DevEco Studio\tools\hvigor\hvigor\src\base\log\hvigor-log.js:1:3224)
+    at OhosLogger._printErrorAndExit (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\utils\log\ohos-logger.js:1:1978)
+    at ValidateUtil.doSchemaCheck (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\utils\validate\validate-util.js:1:9552)
+    at ValidateUtil.submitSchemaCheckWork (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\utils\validate\validate-util.js:1:8381)
+    at ModuleModelImpl.moduleBuildProfileCheck (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\model\module\core-module-model-impl.js:1:7957)
+    at PluginBuilder.createModuleModel (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\plugin\factory\core-plugin-builder.js:1:241)
+    at PluginBuilder.initPluginParam (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\plugin\factory\plugin-builder.js:1:1059)
+    at PluginBuilder.createStageHapPlugin (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\plugin\factory\plugin-builder.js:1:738)
+    at PluginFactory.getHapPlugin (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\plugin\factory\plugin-factory.js:1:4638)
+    at createHapTask (C:\Users\周慧文\.hvigor\project_caches\f7db94dbe853a2a9604f564df82524b2\workspace\node_modules\.pnpm\cangjie-build-support@file+_db24869a8f3edf23453b078f75d2daf1\node_modules\cangjie-build-support\src\plugin\cangjie-plugin-factory.js:1:1023)
+[2026-05-04T14:51:08.653] [ERROR] debug-file - Error: Schema validate failed.
+	 Detail: Please check the following fields.
+{
+  instancePath: '',
+  keyword: 'enum',
+  params: {
+    allowedValues: [
+      'apiType',
+      'targets',
+      'showInServiceCenter',
+      'buildOption',
+      'buildOptionSet',
+      'buildModeBinder',
+      'entryModules'
+    ]
+  },
+  message: 'must be equal to one of the allowed values',
+  location: 'D:/homework/cangjie/homework_app/ourApp/entry/build-profile.json5:1:2'
+} 
+{
+  instancePath: '',
+  keyword: 'propertyNames',
+  params: { propertyName: 'abiFilters' },
+  message: 'property name must be valid',
+  location: 'D:/homework/cangjie/homework_app/ourApp/entry/build-profile.json5:1:2'
+} 
+
+    at OhosLogger.errorMessageExit (D:\deveco\DevEco Studio\tools\hvigor\hvigor\src\base\log\hvigor-log.js:1:3224)
+    at OhosLogger._printErrorAndExit (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\utils\log\ohos-logger.js:1:1978)
+    at ValidateUtil.doSchemaCheck (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\utils\validate\validate-util.js:1:9552)
+    at ValidateUtil.submitSchemaCheckWork (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\utils\validate\validate-util.js:1:8381)
+    at ModuleModelImpl.moduleBuildProfileCheck (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\model\module\core-module-model-impl.js:1:7957)
+    at PluginBuilder.createModuleModel (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\plugin\factory\core-plugin-builder.js:1:241)
+    at PluginBuilder.initPluginParam (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\plugin\factory\plugin-builder.js:1:1059)
+    at PluginBuilder.createStageHapPlugin (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\plugin\factory\plugin-builder.js:1:738)
+    at PluginFactory.getHapPlugin (D:\deveco\DevEco Studio\tools\hvigor\hvigor-ohos-plugin\src\plugin\factory\plugin-factory.js:1:4638)
+    at createHapTask (C:\Users\周慧文\.hvigor\project_caches\f7db94dbe853a2a9604f564df82524b2\workspace\node_modules\.pnpm\cangjie-build-support@file+_db24869a8f3edf23453b078f75d2daf1\node_modules\cangjie-build-support\src\plugin\cangjie-plugin-factory.js:1:1023)
+[2026-05-04T14:51:08.663] [WARN] debug-file - BUILD FAILED in 1 s 575 ms 
+[2026-05-04T14:51:08.676] [DEBUG] debug-file - Since there is no instance or instance is terminated, create a new worker pool.
+[2026-05-04T14:51:08.677] [DEBUG] debug-file - Worker pool is initialized with config:  {
+  minPoolNum: 2,
+  maxPoolNum: undefined,
+  maxCoreSize: undefined,
+  cacheCapacity: undefined,
+  cacheTtl: undefined
+}
+[2026-05-04T14:51:08.678] [DEBUG] debug-file - Create  resident worker with id: 0.
+[2026-05-04T14:51:08.679] [DEBUG] debug-file - Create  resident worker with id: 1.
+[2026-05-04T14:51:08.680] [DEBUG] debug-file - Cleanup worker 0.
+[2026-05-04T14:51:08.683] [DEBUG] debug-file - session manager: send message to worker process.
+[2026-05-04T14:51:08.684] [DEBUG] debug-file - session manager: send message to worker process.
+[2026-05-04T14:51:08.681] [DEBUG] debug-file - Worker 0 has been cleaned up.
+[2026-05-04T14:51:08.681] [DEBUG] debug-file - Current idle worker size: 1.
+[2026-05-04T14:51:08.681] [DEBUG] debug-file - Current resident worker size: 2.
+[2026-05-04T14:51:08.681] [DEBUG] debug-file - Cleanup worker 1.
+[2026-05-04T14:51:08.681] [DEBUG] debug-file - Worker 1 has been cleaned up.
+[2026-05-04T14:51:08.681] [DEBUG] debug-file - Current idle worker size: 0.
+[2026-05-04T14:51:08.681] [DEBUG] debug-file - Current resident worker size: 2.
+[2026-05-04T14:51:08.681] [DEBUG] debug-file - hvigor build process will be closed.
+[2026-05-04T14:51:08.684] [DEBUG] debug-file - watch worker: worker id should be larger than 0. Nothing will be sent to any worker thread.
+[2026-05-04T14:51:08.684] [DEBUG] debug-file - watch worker: worker id should be larger than 0. Nothing will be sent to any worker thread.
+[2026-05-04T14:51:08.687] [DEBUG] debug-file - worker[1] exits with exit code 0.
+[2026-05-04T14:51:08.687] [DEBUG] debug-file - worker[0] exits with exit code 0.
+[2026-05-04T14:54:33.070] [DEBUG] debug-file - session manager: set active socket. socketId=td6H_2LW3Wxjq7k6AAAD
+[2026-05-04T14:54:33.074] [DEBUG] debug-file - watch worker: worker id should be larger than 0. Nothing will be sent to any worker thread.
+[2026-05-04T14:54:33.083] [DEBUG] debug-file - Hvigor init with startParameters:{
+  hvigorfileTypeCheck: false,
+  parallelExecution: true,
+  incrementalExecution: true,
+  printStackTrace: false,
+  daemon: true,
+  analyze: 0,
+  logLevel: Level { level: 20000, levelStr: 'INFO', colour: 'green' }
+}
+[2026-05-04T14:54:33.084] [DEBUG] debug-file - Cache service initialization finished in 2 ms 
+[2026-05-04T14:54:33.092] [DEBUG] debug-file - hvigorfile, resolving D:\homework\cangjie\homework_app\ourApp\hvigorfile.ts
+[2026-05-04T14:54:33.096] [DEBUG] debug-file - hvigorfile, require result:  { default: { plugins: [] } }
+[2026-05-04T14:54:33.096] [DEBUG] debug-file - hvigorfile, binding system plugins null
+[2026-05-04T14:54:33.101] [DEBUG] debug-file - Start initialize project's product build option map with build mode debug.
+[2026-05-04T14:54:33.101] [DEBUG] debug-file - Picking option from product 'default' with build mode 'debug'.
+[2026-05-04T14:54:33.101] [DEBUG] debug-file - Product 'default' build option initialized
+[2026-05-04T14:54:33.101] [DEBUG] debug-file - End initialize project's product build option map with build mode 'debug'.
+[2026-05-04T14:54:33.102] [DEBUG] debug-file - Obtain build option for product 'default'in this build.
+[2026-05-04T14:54:33.103] [DEBUG] debug-file - No signingConfig found, initRemoteHspCache failed.
+[2026-05-04T14:54:33.108] [DEBUG] debug-file - Start recording SDK configuration permission data.
+[2026-05-04T14:54:33.123] [DEBUG] debug-file - Sdk init in 19 ms 
+[2026-05-04T14:54:33.134] [DEBUG] debug-file - Project task initialization takes 11 ms 
+[2026-05-04T14:54:33.134] [DEBUG] debug-file - hvigorfile, binding custom plugins []
+[2026-05-04T14:54:33.134] [DEBUG] debug-file - hvigorfile, no custom plugins were found in D:\homework\cangjie\homework_app\ourApp\hvigorfile.ts
+[2026-05-04T14:54:33.134] [DEBUG] debug-file - hvigorfile, resolve finished D:\homework\cangjie\homework_app\ourApp\hvigorfile.ts
+[2026-05-04T14:54:33.138] [DEBUG] debug-file - hvigorfile, resolving D:\homework\cangjie\homework_app\ourApp\entry\hvigorfile.ts
+[2026-05-04T14:54:33.141] [DEBUG] debug-file - hvigorfile, require result:  { default: { plugins: [] } }
+[2026-05-04T14:54:33.141] [DEBUG] debug-file - hvigorfile, binding system plugins null
+[2026-05-04T14:54:33.147] [DEBUG] debug-file - Start initialize module-target build option map, moduleName=entry, buildMode=debug
+[2026-05-04T14:54:33.147] [DEBUG] debug-file - Target 'default' config initialized
+[2026-05-04T14:54:33.148] [DEBUG] debug-file - Module 'entry' target 'default' build option initialized
+[2026-05-04T14:54:33.148] [DEBUG] debug-file - End initialize module-target build option map, moduleName=entry
+[2026-05-04T14:54:33.148] [DEBUG] debug-file - Obtain build option for module 'entry' target 'default'in this build.
+[2026-05-04T14:54:33.153] [DEBUG] debug-file - Module entry task initialization takes 4 ms 
+[2026-05-04T14:54:33.153] [DEBUG] debug-file - hvigorfile, binding custom plugins []
+[2026-05-04T14:54:33.153] [DEBUG] debug-file - hvigorfile, no custom plugins were found in D:\homework\cangjie\homework_app\ourApp\entry\hvigorfile.ts
+[2026-05-04T14:54:33.153] [DEBUG] debug-file - hvigorfile, resolve finished D:\homework\cangjie\homework_app\ourApp\entry\hvigorfile.ts
+[2026-05-04T14:54:33.171] [DEBUG] debug-file - hvigorfile, resolve hvigorfile dependencies in 17 ms 
+[2026-05-04T14:54:33.172] [DEBUG] debug-file - project has submodules:entry
+[2026-05-04T14:54:33.174] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.174] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.177] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.177] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.181] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.181] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.182] [DEBUG] debug-file - Start to initialize dependency information.
+[2026-05-04T14:54:33.188] [DEBUG] debug-file - Module entry Collected Dependency: 
+[2026-05-04T14:54:33.188] [DEBUG] debug-file - Module entry's total dependency: 0
+[2026-05-04T14:54:33.190] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.190] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.195] [DEBUG] debug-file - start to load updatedOhPackageInfo to the disk
+[2026-05-04T14:54:33.198] [DEBUG] debug-file - load to the disk finished
+[2026-05-04T14:54:33.199] [DEBUG] debug-file - Start to initialize dependency information.
+[2026-05-04T14:54:33.200] [DEBUG] debug-file - Module ourApp Collected Dependency: 
+[2026-05-04T14:54:33.200] [DEBUG] debug-file - Module ourApp's total dependency: 0
+[2026-05-04T14:54:33.200] [DEBUG] debug-file - Start to initialize dependency information.
+[2026-05-04T14:54:33.202] [DEBUG] debug-file - Module entry Collected Dependency: 
+[2026-05-04T14:54:33.202] [DEBUG] debug-file - Module entry's total dependency: 0
+[2026-05-04T14:54:33.205] [DEBUG] debug-file - Configuration phase cost:118 ms 
+[2026-05-04T14:54:33.207] [DEBUG] debug-file - Configuration task cost before running: 131 ms 
+[2026-05-04T14:54:33.207] [DEBUG] debug-file - Executing task :entry:init
+[2026-05-04T14:54:33.208] [DEBUG] debug-file - entry : init cost memory 0.015472412109375
+[2026-05-04T14:54:33.208] [DEBUG] debug-file - runTaskFromQueue task cost before running: 132 ms 
+[2026-05-04T14:54:33.208] [INFO] debug-file - Finished :entry:init... after 1 ms 
+[2026-05-04T14:54:33.208] [DEBUG] debug-file - Executing task ::init
+[2026-05-04T14:54:33.208] [DEBUG] debug-file - ourApp : init cost memory 0.01276397705078125
+[2026-05-04T14:54:33.208] [DEBUG] debug-file - runTaskFromQueue task cost before running: 132 ms 
+[2026-05-04T14:54:33.208] [INFO] debug-file - Finished ::init... after 1 ms 
+[2026-05-04T14:54:33.221] [DEBUG] debug-file - Obtain build option for module 'entry' target 'default'in this build.
+[2026-05-04T14:54:33.224] [DEBUG] debug-file - There's no busy workers and idle workers need cleanup.
+[2026-05-04T14:54:33.224] [DEBUG] debug-file - hvigor build process will be closed.
+[2026-05-04T14:54:33.230] [DEBUG] debug-file - session manager: send message to worker process.
+[2026-05-04T14:54:33.230] [DEBUG] debug-file - session manager: send message to worker process.
+[2026-05-04T14:54:33.231] [DEBUG] debug-file - watch worker: worker id should be larger than 0. Nothing will be sent to any worker thread.
+[2026-05-04T14:54:33.231] [DEBUG] debug-file - watch worker: worker id should be larger than 0. Nothing will be sent to any worker thread.
+[2026-05-04T14:54:33.501] [DEBUG] debug-file - session manager: set active socket. socketId=U7gCTa_otqj20NysAAAF
+[2026-05-04T14:54:33.506] [DEBUG] debug-file - watch worker: worker id should be larger than 0. Nothing will be sent to any worker thread.
+[2026-05-04T14:54:33.515] [DEBUG] debug-file - Hvigor init with startParameters:{
+  hvigorfileTypeCheck: false,
+  parallelExecution: true,
+  incrementalExecution: true,
+  printStackTrace: false,
+  daemon: true,
+  analyze: 0,
+  logLevel: Level { level: 20000, levelStr: 'INFO', colour: 'green' }
+}
+[2026-05-04T14:54:33.516] [DEBUG] debug-file - Cache service initialization finished in 1 ms 
+[2026-05-04T14:54:33.523] [DEBUG] debug-file - hvigorfile, resolving D:\homework\cangjie\homework_app\ourApp\hvigorfile.ts
+[2026-05-04T14:54:33.527] [DEBUG] debug-file - hvigorfile, require result:  { default: { plugins: [] } }
+[2026-05-04T14:54:33.527] [DEBUG] debug-file - hvigorfile, binding system plugins null
+[2026-05-04T14:54:33.531] [DEBUG] debug-file - Start initialize project's product build option map with build mode debug.
+[2026-05-04T14:54:33.531] [DEBUG] debug-file - Picking option from product 'default' with build mode 'debug'.
+[2026-05-04T14:54:33.531] [DEBUG] debug-file - Product 'default' build option initialized
+[2026-05-04T14:54:33.532] [DEBUG] debug-file - End initialize project's product build option map with build mode 'debug'.
+[2026-05-04T14:54:33.532] [DEBUG] debug-file - Obtain build option for product 'default'in this build.
+[2026-05-04T14:54:33.533] [DEBUG] debug-file - No signingConfig found, initRemoteHspCache failed.
+[2026-05-04T14:54:33.538] [DEBUG] debug-file - Start recording SDK configuration permission data.
+[2026-05-04T14:54:33.549] [DEBUG] debug-file - Sdk init in 16 ms 
+[2026-05-04T14:54:33.561] [DEBUG] debug-file - Project task initialization takes 11 ms 
+[2026-05-04T14:54:33.561] [DEBUG] debug-file - hvigorfile, binding custom plugins []
+[2026-05-04T14:54:33.561] [DEBUG] debug-file - hvigorfile, no custom plugins were found in D:\homework\cangjie\homework_app\ourApp\hvigorfile.ts
+[2026-05-04T14:54:33.561] [DEBUG] debug-file - hvigorfile, resolve finished D:\homework\cangjie\homework_app\ourApp\hvigorfile.ts
+[2026-05-04T14:54:33.564] [DEBUG] debug-file - hvigorfile, resolving D:\homework\cangjie\homework_app\ourApp\entry\hvigorfile.ts
+[2026-05-04T14:54:33.567] [DEBUG] debug-file - hvigorfile, require result:  { default: { plugins: [] } }
+[2026-05-04T14:54:33.567] [DEBUG] debug-file - hvigorfile, binding system plugins null
+[2026-05-04T14:54:33.570] [DEBUG] debug-file - Start initialize module-target build option map, moduleName=entry, buildMode=debug
+[2026-05-04T14:54:33.570] [DEBUG] debug-file - Target 'default' config initialized
+[2026-05-04T14:54:33.570] [DEBUG] debug-file - Module 'entry' target 'default' build option initialized
+[2026-05-04T14:54:33.570] [DEBUG] debug-file - End initialize module-target build option map, moduleName=entry
+[2026-05-04T14:54:33.571] [DEBUG] debug-file - Obtain build option for module 'entry' target 'default'in this build.
+[2026-05-04T14:54:33.572] [DEBUG] debug-file - Module entry task initialization takes 1 ms 
+[2026-05-04T14:54:33.572] [DEBUG] debug-file - hvigorfile, binding custom plugins []
+[2026-05-04T14:54:33.572] [DEBUG] debug-file - hvigorfile, no custom plugins were found in D:\homework\cangjie\homework_app\ourApp\entry\hvigorfile.ts
+[2026-05-04T14:54:33.572] [DEBUG] debug-file - hvigorfile, resolve finished D:\homework\cangjie\homework_app\ourApp\entry\hvigorfile.ts
+[2026-05-04T14:54:33.588] [DEBUG] debug-file - hvigorfile, resolve hvigorfile dependencies in 15 ms 
+[2026-05-04T14:54:33.588] [DEBUG] debug-file - project has submodules:entry
+[2026-05-04T14:54:33.590] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.590] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.592] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.592] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.595] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.595] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.595] [DEBUG] debug-file - Start to initialize dependency information.
+[2026-05-04T14:54:33.597] [DEBUG] debug-file - Module entry Collected Dependency: 
+[2026-05-04T14:54:33.597] [DEBUG] debug-file - Module entry's total dependency: 0
+[2026-05-04T14:54:33.599] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.599] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.602] [DEBUG] debug-file - start to load updatedOhPackageInfo to the disk
+[2026-05-04T14:54:33.604] [DEBUG] debug-file - load to the disk finished
+[2026-05-04T14:54:33.605] [DEBUG] debug-file - Start to initialize dependency information.
+[2026-05-04T14:54:33.606] [DEBUG] debug-file - Module ourApp Collected Dependency: 
+[2026-05-04T14:54:33.606] [DEBUG] debug-file - Module ourApp's total dependency: 0
+[2026-05-04T14:54:33.606] [DEBUG] debug-file - Start to initialize dependency information.
+[2026-05-04T14:54:33.607] [DEBUG] debug-file - Module entry Collected Dependency: 
+[2026-05-04T14:54:33.607] [DEBUG] debug-file - Module entry's total dependency: 0
+[2026-05-04T14:54:33.609] [DEBUG] debug-file - Configuration phase cost:90 ms 
+[2026-05-04T14:54:33.610] [DEBUG] debug-file - Configuration task cost before running: 102 ms 
+[2026-05-04T14:54:33.611] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.611] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.613] [DEBUG] debug-file - Executing task :entry:default@CangjiePreBuild
+[2026-05-04T14:54:33.616] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.616] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.723] [DEBUG] debug-file - current product is not Atomic service.
+[2026-05-04T14:54:33.723] [DEBUG] debug-file - Use tool [win32: JAVA_HOME, CLASSPATH]
+ [
+  { JAVA_HOME: 'D:\\deveco\\DevEco Studio\\jbr' },
+  { CLASSPATH: undefined }
+]
+[2026-05-04T14:54:33.723] [DEBUG] debug-file - Use tool [win32: NODE_HOME]
+ [ { NODE_HOME: 'D:\\deveco\\DevEco Studio\\tools\\node' } ]
+[2026-05-04T14:54:33.724] [DEBUG] debug-file - entry : default@CangjiePreBuild cost memory 2.0739364624023438
+[2026-05-04T14:54:33.724] [DEBUG] debug-file - runTaskFromQueue task cost before running: 216 ms 
+[2026-05-04T14:54:33.725] [INFO] debug-file - Finished :entry:default@CangjiePreBuild... after 111 ms 
+[2026-05-04T14:54:33.726] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.726] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.727] [DEBUG] debug-file - Executing task :entry:default@AddApiDependencies
+[2026-05-04T14:54:33.727] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.727] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.728] [DEBUG] debug-file - entry : default@AddApiDependencies cost memory 0.043853759765625
+[2026-05-04T14:54:33.728] [DEBUG] debug-file - runTaskFromQueue task cost before running: 220 ms 
+[2026-05-04T14:54:33.728] [INFO] debug-file - Finished :entry:default@AddApiDependencies... after 1 ms 
+[2026-05-04T14:54:33.728] [INFO] debug-file - Disabled :entry:default@PreBuild... 
+[2026-05-04T14:54:33.729] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.729] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.730] [DEBUG] debug-file - Executing task :entry:default@GenerateTomlDependencies
+[2026-05-04T14:54:33.730] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.730] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.732] [DEBUG] debug-file - entry : default@GenerateTomlDependencies cost memory 0.28980255126953125
+[2026-05-04T14:54:33.732] [DEBUG] debug-file - runTaskFromQueue task cost before running: 224 ms 
+[2026-05-04T14:54:33.732] [INFO] debug-file - Finished :entry:default@GenerateTomlDependencies... after 3 ms 
+[2026-05-04T14:54:33.734] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.734] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.734] [DEBUG] debug-file - Executing task :entry:default@MergeProfile
+[2026-05-04T14:54:33.735] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.735] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.735] [DEBUG] debug-file - Change app api release type with 'Release'
+[2026-05-04T14:54:33.735] [DEBUG] debug-file - Change app compile API version with '5.0.5.165'
+[2026-05-04T14:54:33.735] [DEBUG] debug-file - Change app target API version with '50005017'
+[2026-05-04T14:54:33.735] [DEBUG] debug-file - Change app minimum API version with '50005017'
+[2026-05-04T14:54:33.735] [DEBUG] debug-file - Use cli appEnvironment
+[2026-05-04T14:54:33.739] [DEBUG] debug-file - entry : default@MergeProfile cost memory 0.225250244140625
+[2026-05-04T14:54:33.739] [DEBUG] debug-file - runTaskFromQueue task cost before running: 231 ms 
+[2026-05-04T14:54:33.739] [INFO] debug-file - Finished :entry:default@MergeProfile... after 5 ms 
+[2026-05-04T14:54:33.740] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.740] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.747] [DEBUG] debug-file - Executing task :entry:default@GeneratePkgContextInfo
+[2026-05-04T14:54:33.747] [DEBUG] debug-file - Task 'entry:default@GeneratePkgContextInfo' cost while wrapping incremental declarations: 1 ms 
+[2026-05-04T14:54:33.748] [DEBUG] debug-file - entry : default@GeneratePkgContextInfo cost memory 0.05303955078125
+[2026-05-04T14:54:33.748] [DEBUG] debug-file - runTaskFromQueue task cost before running: 240 ms 
+[2026-05-04T14:54:33.748] [INFO] debug-file - Finished :entry:default@GeneratePkgContextInfo... after 2 ms 
+[2026-05-04T14:54:33.749] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.750] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.751] [DEBUG] debug-file - Executing task :entry:default@ProcessProfile
+[2026-05-04T14:54:33.751] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.751] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.752] [DEBUG] debug-file - [
+  'D:\\deveco\\DevEco Studio\\tools\\node\\node.exe',
+  'D:\\deveco\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\bin\\ark\\ts2abc.js',
+  '--target-api-version',
+  '17'
+]
+[2026-05-04T14:54:33.824] [DEBUG] debug-file - 12.0.6.0
+[2026-05-04T14:54:33.828] [DEBUG] debug-file - entry : default@ProcessProfile cost memory 2.0163726806640625
+[2026-05-04T14:54:33.828] [DEBUG] debug-file - runTaskFromQueue task cost before running: 320 ms 
+[2026-05-04T14:54:33.828] [INFO] debug-file - Finished :entry:default@ProcessProfile... after 78 ms 
+[2026-05-04T14:54:33.829] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.829] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.830] [DEBUG] debug-file - Executing task :entry:default@ProcessRouterMap
+[2026-05-04T14:54:33.832] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.832] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.833] [DEBUG] debug-file - entry : default@ProcessRouterMap cost memory 0.19732666015625
+[2026-05-04T14:54:33.834] [DEBUG] debug-file - runTaskFromQueue task cost before running: 326 ms 
+[2026-05-04T14:54:33.835] [INFO] debug-file - Finished :entry:default@ProcessRouterMap... after 4 ms 
+[2026-05-04T14:54:33.836] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.836] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.837] [DEBUG] debug-file - restool module names: entry; moduleName=entry, taskName=default@ProcessResource
+[2026-05-04T14:54:33.839] [DEBUG] debug-file - Executing task :entry:default@ProcessResource
+[2026-05-04T14:54:33.840] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.840] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.841] [DEBUG] debug-file - entry : default@ProcessResource cost memory 0.21736907958984375
+[2026-05-04T14:54:33.842] [DEBUG] debug-file - runTaskFromQueue task cost before running: 334 ms 
+[2026-05-04T14:54:33.843] [INFO] debug-file - Finished :entry:default@ProcessResource... after 4 ms 
+[2026-05-04T14:54:33.844] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:33.844] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:33.845] [DEBUG] debug-file - restool module names: entry; moduleName=entry, taskName=default@CompileResource
+[2026-05-04T14:54:33.846] [DEBUG] debug-file - Executing task :entry:default@CompileResource
+[2026-05-04T14:54:33.851] [DEBUG] debug-file - Use tool [D:\deveco\DevEco Studio\sdk\default\openharmony\toolchains\restool.exe]
+ [
+  'D:\\deveco\\DevEco Studio\\sdk\\default\\openharmony\\toolchains\\restool.exe',
+  '-l',
+  'D:\\homework\\cangjie\\homework_app\\ourApp\\entry\\build\\default\\intermediates\\res\\default\\resConfig.json'
+]
+[2026-05-04T14:54:33.852] [DEBUG] debug-file - current process  memoryUsage: {
+  rss: 189661184,
+  heapTotal: 154603520,
+  heapUsed: 120772272,
+  external: 3246550,
+  arrayBuffers: 240348
+} os memoryUsage :13.762561798095703
+[2026-05-04T14:54:33.907] [DEBUG] debug-file - Info: thread pool is started
+
+[2026-05-04T14:54:33.907] [DEBUG] debug-file - Info: GenericCompiler::CompileFiles
+Info: thread pool is started
+
+[2026-05-04T14:54:33.910] [DEBUG] debug-file - Info: thread pool is stopped
+
+[2026-05-04T14:54:33.911] [DEBUG] debug-file - Info: GenericCompiler::CompileFiles
+
+[2026-05-04T14:54:33.911] [DEBUG] debug-file - Info: thread pool is started
+
+[2026-05-04T14:54:33.911] [DEBUG] debug-file - Info: thread pool is stopped
+
+[2026-05-04T14:54:33.911] [DEBUG] debug-file - Info: GenericCompiler::CompileFiles
+
+[2026-05-04T14:54:33.911] [DEBUG] debug-file - Info: thread pool is started
+
+[2026-05-04T14:54:33.912] [DEBUG] debug-file - Info: thread pool is stopped
+
+[2026-05-04T14:54:33.915] [DEBUG] debug-file - 05-04 14:54:33.915 18400 19788 E C01400/ImageTranscoderUtils: DecodeToRGBA IN
+05-04 14:54:33.915 18400 19788 E C01400/ImageTranscoderUtils: ImageFilter IN D:\homework\cangjie\homework_app\ourApp\AppScope\resources\base\media\background.png
+
+[2026-05-04T14:54:33.942] [DEBUG] debug-file - 05-04 14:54:33.942 18400 19788 E C01400/ImageTranscoderUtils: DecodeToRGBA IN
+05-04 14:54:33.942 18400 19788 E C01400/ImageTranscoderUtils: ImageFilter IN D:\homework\cangjie\homework_app\ourApp\AppScope\resources\base\media\foreground.png
+
+[2026-05-04T14:54:33.965] [DEBUG] debug-file - Info: can't scale media json file.
+
+[2026-05-04T14:54:33.965] [DEBUG] debug-file - Warning: D:\homework\cangjie\homework_app\ourApp\AppScope\resources\base\media\layered_image.json is not png format
+
+[2026-05-04T14:54:33.966] [DEBUG] debug-file - Info: thread pool is stopped
+
+[2026-05-04T14:54:33.966] [DEBUG] debug-file - Info: restool resources compile success.
+
+[2026-05-04T14:54:34.022] [DEBUG] debug-file - astcenc customized so is not be opened when dlclose!
+
+[2026-05-04T14:54:34.027] [DEBUG] debug-file - entry : default@CompileResource cost memory 1.2051239013671875
+[2026-05-04T14:54:34.027] [DEBUG] debug-file - runTaskFromQueue task cost before running: 519 ms 
+[2026-05-04T14:54:34.027] [INFO] debug-file - Finished :entry:default@CompileResource... after 181 ms 
+[2026-05-04T14:54:34.029] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:34.029] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:34.030] [DEBUG] debug-file - Executing task :entry:default@GenerateCangjieResource
+[2026-05-04T14:54:34.031] [DEBUG] debug-file - jsonObjWithoutParam {} at undefined
+[2026-05-04T14:54:34.031] [DEBUG] debug-file - jsonObjWithoutParam {"name":"entry","version":"1.0.0","description":"Please describe the basic information.","main":"","author":"","license":"","dependencies":{}} at undefined
+[2026-05-04T14:54:34.038] [DEBUG] debug-file - entry : default@GenerateCangjieResource cost memory 1.43670654296875
+[2026-05-04T14:54:34.039] [DEBUG] debug-file - runTaskFromQueue task cost before running: 531 ms 
+[2026-05-04T14:54:34.039] [INFO] debug-file - Finished :entry:default@GenerateCangjieResource... after 9 ms 
+[2026-05-04T14:54:34.040] [DEBUG] debug-file - Executing task :entry:SyncCangjieResource
+[2026-05-04T14:54:34.041] [DEBUG] debug-file - entry : SyncCangjieResource cost memory 0.0208587646484375
+[2026-05-04T14:54:34.041] [DEBUG] debug-file - runTaskFromQueue task cost before running: 533 ms 
+[2026-05-04T14:54:34.041] [INFO] debug-file - Finished :entry:SyncCangjieResource... after 1 ms 
+[2026-05-04T14:54:34.048] [DEBUG] debug-file - BUILD SUCCESSFUL in 541 ms 
+[2026-05-04T14:54:34.049] [DEBUG] debug-file - Update task entry:default@CangjiePreBuild input file:D:\homework\cangjie\homework_app\ourApp\AppScope\app.json5 cache by regenerate.
+[2026-05-04T14:54:34.050] [DEBUG] debug-file - Update task entry:default@CangjiePreBuild input file:D:\homework\cangjie\homework_app\ourApp\entry\src\main\module.json5 cache by regenerate.
+[2026-05-04T14:54:34.050] [DEBUG] debug-file - Update task entry:default@CangjiePreBuild input file:D:\homework\cangjie\homework_app\ourApp\build-profile.json5 cache by regenerate.
+[2026-05-04T14:54:34.050] [DEBUG] debug-file - Update task entry:default@CangjiePreBuild input file:D:\homework\cangjie\homework_app\ourApp\entry\build-profile.json5 cache by regenerate.
+[2026-05-04T14:54:34.050] [DEBUG] debug-file - Update task entry:default@CangjiePreBuild input file:D:\homework\cangjie\homework_app\ourApp\hvigor\hvigor-config.json5 cache by regenerate.
+[2026-05-04T14:54:34.050] [DEBUG] debug-file - Update task entry:default@CangjiePreBuild input file:D:\homework\cangjie\homework_app\ourApp\entry\oh-package.json5 cache by regenerate.
+[2026-05-04T14:54:34.051] [DEBUG] debug-file - Update task entry:default@CangjiePreBuild input file:D:\homework\cangjie\homework_app\ourApp\oh-package.json5 cache by regenerate.
+[2026-05-04T14:54:34.051] [DEBUG] debug-file - Incremental task entry:default@CangjiePreBuild post-execution cost:3 ms .
+[2026-05-04T14:54:34.051] [DEBUG] debug-file - Update task entry:default@MergeProfile input file:D:\homework\cangjie\homework_app\ourApp\AppScope\app.json5 cache by regenerate.
+[2026-05-04T14:54:34.051] [DEBUG] debug-file - Update task entry:default@MergeProfile input file:D:\homework\cangjie\homework_app\ourApp\build-profile.json5 cache by regenerate.
+[2026-05-04T14:54:34.051] [DEBUG] debug-file - Update task entry:default@MergeProfile input file:D:\homework\cangjie\homework_app\ourApp\entry\src\main\module.json5 cache by regenerate.
+[2026-05-04T14:54:34.051] [DEBUG] debug-file - Update task entry:default@MergeProfile output file:D:\homework\cangjie\homework_app\ourApp\entry\build\default\intermediates\merge_profile\default\module.json cache.
+[2026-05-04T14:54:34.052] [DEBUG] debug-file - Incremental task entry:default@MergeProfile post-execution cost:1 ms .
+[2026-05-04T14:54:34.052] [DEBUG] debug-file - Update task entry:default@GeneratePkgContextInfo output file:D:\homework\cangjie\homework_app\ourApp\entry\build\default\intermediates\loader\default\pkgContextInfo.json cache.
+[2026-05-04T14:54:34.052] [DEBUG] debug-file - Incremental task entry:default@GeneratePkgContextInfo post-execution cost:1 ms .
+[2026-05-04T14:54:34.052] [DEBUG] debug-file - Update task entry:default@ProcessProfile input file:D:\homework\cangjie\homework_app\ourApp\entry\build\default\intermediates\merge_profile\default\module.json cache by regenerate.
+[2026-05-04T14:54:34.052] [DEBUG] debug-file - Update task entry:default@ProcessProfile output file:D:\homework\cangjie\homework_app\ourApp\entry\build\default\intermediates\process_profile\default\module.json cache.
+[2026-05-04T14:54:34.052] [DEBUG] debug-file - Incremental task entry:default@ProcessProfile post-execution cost:1 ms .
+[2026-05-04T14:54:34.053] [DEBUG] debug-file - Update task entry:default@ProcessRouterMap input file:D:\homework\cangjie\homework_app\ourApp\entry\oh-package.json5 cache by regenerate.
+[2026-05-04T14:54:34.053] [DEBUG] debug-file - Update task entry:default@ProcessRouterMap input file:D:\homework\cangjie\homework_app\ourApp\oh-package.json5 cache by regenerate.
+[2026-05-04T14:54:34.053] [DEBUG] debug-file - Update task entry:default@ProcessRouterMap input file:D:\homework\cangjie\homework_app\ourApp\entry\src\main\module.json5 cache by regenerate.
+[2026-05-04T14:54:34.054] [DEBUG] debug-file - Update task entry:default@ProcessRouterMap input file:D:\homework\cangjie\homework_app\ourApp\entry\build\default\intermediates\loader\default\pkgContextInfo.json cache by regenerate.
+[2026-05-04T14:54:34.054] [DEBUG] debug-file - Update task entry:default@ProcessRouterMap output file:D:\homework\cangjie\homework_app\ourApp\entry\build\default\intermediates\router_map\default\temp-router-map.json cache.
+[2026-05-04T14:54:34.054] [DEBUG] debug-file - Update task entry:default@ProcessRouterMap output file:D:\homework\cangjie\homework_app\ourApp\entry\build\default\intermediates\router_map\default\loader-router-map.json cache.
+[2026-05-04T14:54:34.054] [DEBUG] debug-file - Incremental task entry:default@ProcessRouterMap post-execution cost:2 ms .
+[2026-05-04T14:54:34.054] [DEBUG] debug-file - Update task entry:default@ProcessResource output file:D:\homework\cangjie\homework_app\ourApp\entry\build\default\intermediates\res\default\resConfig.json cache.
+[2026-05-04T14:54:34.054] [DEBUG] debug-file - Update task entry:default@ProcessResource output file:D:\homework\cangjie\homework_app\ourApp\entry\build\default\intermediates\res\default\opt-compression.json cache.
+[2026-05-04T14:54:34.054] [DEBUG] debug-file - Incremental task entry:default@ProcessResource post-execution cost:1 ms .
+[2026-05-04T14:54:34.055] [DEBUG] debug-file - Update task entry:default@CompileResource input file:D:\homework\cangjie\homework_app\ourApp\entry\src\main\resources cache by regenerate.
+[2026-05-04T14:54:34.063] [DEBUG] debug-file - Update task entry:default@CompileResource input file:D:\homework\cangjie\homework_app\ourApp\AppScope\resources cache by regenerate.
+[2026-05-04T14:54:34.065] [DEBUG] debug-file - Update task entry:default@CompileResource input file:D:\homework\cangjie\homework_app\ourApp\entry\build\default\intermediates\process_profile\default\module.json cache by regenerate.
+[2026-05-04T14:54:34.065] [DEBUG] debug-file - Update task entry:default@CompileResource input file:D:\homework\cangjie\homework_app\ourApp\entry\build\default\intermediates\res\default\resConfig.json cache by regenerate.
+[2026-05-04T14:54:34.065] [DEBUG] debug-file - Update task entry:default@CompileResource output file:D:\homework\cangjie\homework_app\ourApp\entry\build\default\intermediates\res\default cache.
+[2026-05-04T14:54:34.067] [DEBUG] debug-file - Update task entry:default@CompileResource output file:D:\homework\cangjie\homework_app\ourApp\entry\build\default\generated\r\default\ResourceTable.h cache.
+[2026-05-04T14:54:34.067] [DEBUG] debug-file - Update task entry:default@CompileResource output file:D:\homework\cangjie\homework_app\ourApp\entry\build\default\generated\r\default cache.
+[2026-05-04T14:54:34.068] [DEBUG] debug-file - Incremental task entry:default@CompileResource post-execution cost:14 ms .
+[2026-05-04T14:54:34.068] [DEBUG] debug-file - Update task entry:default@GenerateCangjieResource input file:C:\Users\周慧文\.cangjie-sdk\5.0\cangjie\SysR.cj cache by regenerate.
+[2026-05-04T14:54:34.069] [DEBUG] debug-file - Update task entry:default@GenerateCangjieResource input file:D:\homework\cangjie\homework_app\ourApp\entry\src\main\module.json5 cache by regenerate.
+[2026-05-04T14:54:34.069] [DEBUG] debug-file - Update task entry:default@GenerateCangjieResource input file:D:\homework\cangjie\homework_app\ourApp\entry\oh-package.json5 cache by regenerate.
+[2026-05-04T14:54:34.069] [DEBUG] debug-file - Update task entry:default@GenerateCangjieResource input file:D:\homework\cangjie\homework_app\ourApp\entry\src\main\cangjie\cjpm.toml cache by regenerate.
+[2026-05-04T14:54:34.069] [DEBUG] debug-file - Update task entry:default@GenerateCangjieResource input file:D:\homework\cangjie\homework_app\ourApp\entry\build\default\intermediates\res\default\ResourceTable.txt cache by regenerate.
+[2026-05-04T14:54:34.069] [DEBUG] debug-file - Incremental task entry:default@GenerateCangjieResource post-execution cost:2 ms .
+[2026-05-04T14:54:34.084] [DEBUG] debug-file - There's no busy workers and idle workers need cleanup.
+[2026-05-04T14:54:34.084] [DEBUG] debug-file - hvigor build process will be closed.
+[2026-05-04T14:54:34.089] [DEBUG] debug-file - session manager: send message to worker process.
+[2026-05-04T14:54:34.090] [DEBUG] debug-file - session manager: send message to worker process.
+[2026-05-04T14:54:34.090] [DEBUG] debug-file - watch worker: worker id should be larger than 0. Nothing will be sent to any worker thread.
+[2026-05-04T14:54:34.090] [DEBUG] debug-file - watch worker: worker id should be larger than 0. Nothing will be sent to any worker thread.

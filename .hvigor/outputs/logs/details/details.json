@@ -1,0 +1,39 @@
+{
+  "HVIGOR_OHOS_PLUGIN": {
+    "MODULES": [
+      {
+        "MODULE_NAME": "1043bfc77febe75fafec0c4309faccf1",
+        "API_TYPE": "stageMode"
+      }
+    ],
+    "BUILD_MODE": "debug",
+    "USE_NORMALIZED_OHMURL": true
+  },
+  "HVIGOR": {
+    "IS_INCREMENTAL": true,
+    "IS_DAEMON": true,
+    "IS_PARALLEL": true,
+    "IS_HVIGORFILE_TYPE_CHECK": false,
+    "TASK_TIME": {
+      "1043bfc77febe75fafec0c4309faccf1": {
+        "init": 484500,
+        "CangjiePreBuild": 111811300,
+        "AddApiDependencies": 384700,
+        "GenerateTomlDependencies": 2155800,
+        "MergeProfile": 4792700,
+        "GeneratePkgContextInfo": 1377000,
+        "ProcessProfile": 77283000,
+        "ProcessRouterMap": 4026100,
+        "ProcessResource": 5085700,
+        "CompileResource": 181215800,
+        "GenerateCangjieResource": 9147200,
+        "SyncCangjieResource": 489700
+      },
+      "APP": {
+        "init": 223200
+      }
+    },
+    "TOTAL_TIME": 540356400,
+    "BUILD_ID": "202605041454335070"
+  }
+}

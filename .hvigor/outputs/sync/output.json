@@ -1,0 +1,164 @@
+{
+  "ohos-module-entry": {
+    "SELECT_TARGET": "default",
+    "MODULE_BUILD_DIR": "D:\\homework\\cangjie\\homework_app\\ourApp\\entry\\build",
+    "DEPENDENCY_INFO": {},
+    "TARGETS": {
+      "default": {
+        "SOURCE_ROOT": "D:\\homework\\cangjie\\homework_app\\ourApp\\entry\\src\\main",
+        "RESOURCES_PATH": [
+          "D:\\homework\\cangjie\\homework_app\\ourApp\\entry\\src\\main\\resources"
+        ],
+        "BUILD_PATH": {
+          "OUTPUT_PATH": "D:\\homework\\cangjie\\homework_app\\ourApp\\entry\\build\\default\\outputs\\default",
+          "INTERMEDIA_PATH": "D:\\homework\\cangjie\\homework_app\\ourApp\\entry\\build\\default\\intermediates",
+          "JS_ASSETS_PATH": "D:\\homework\\cangjie\\homework_app\\ourApp\\entry\\build\\default\\intermediates\\loader_out\\default",
+          "JS_LITE_ASSETS_PATH": "D:\\homework\\cangjie\\homework_app\\ourApp\\entry\\build\\default\\intermediates\\loader_out_lite\\default",
+          "RES_PATH": "D:\\homework\\cangjie\\homework_app\\ourApp\\entry\\build\\default\\intermediates\\res\\default",
+          "RES_PROFILE_PATH": "D:\\homework\\cangjie\\homework_app\\ourApp\\entry\\build\\default\\intermediates\\res\\default\\resources\\base\\profile",
+          "ETS_SUPER_VISUAL_PATH": "D:\\homework\\cangjie\\homework_app\\ourApp\\entry\\build\\default\\cache\\default\\default@CompileArkTS\\esmodule",
+          "JS_SUPER_VISUAL_PATH": "D:\\homework\\cangjie\\homework_app\\ourApp\\entry\\build\\default\\cache\\default\\default@CompileJS\\jsbundle",
+          "WORKER_LOADER": "D:\\homework\\cangjie\\homework_app\\ourApp\\entry\\build\\default\\intermediates\\loader\\default\\loader.json",
+          "MANIFEST_JSON": "D:\\homework\\cangjie\\homework_app\\ourApp\\entry\\build\\default\\intermediates\\manifest\\default",
+          "OUTPUT_METADATA_JSON": "D:\\homework\\cangjie\\homework_app\\ourApp\\entry\\build\\default\\intermediates\\hap_metadata\\default\\output_metadata.json",
+          "SOURCE_MAP_DIR": "D:\\homework\\cangjie\\homework_app\\ourApp\\entry\\build\\default\\intermediates\\source_map\\default"
+        },
+        "BUILD_OPTION": {
+          "debuggable": true
+        }
+      }
+    },
+    "BUILD_OPTION": {
+      "default-default": {
+        "debuggable": true,
+        "copyFrom": "default",
+        "strictMode": {
+          "caseSensitiveCheck": true,
+          "useNormalizedOHMUrl": true
+        },
+        "cangjieOptions": {
+          "abiFilters": [
+            "arm64-v8a",
+            "x86_64"
+          ],
+          "path": "./src/main/cangjie/cjpm.toml"
+        },
+        "nativeLib": {
+          "filter": {
+            "enableOverride": true
+          }
+        },
+        "name": "debug"
+      }
+    },
+    "BUILD_PROFILE_OPT": {
+      "apiType": "stageMode",
+      "buildOption": {
+        "cangjieOptions": {
+          "abiFilters": [
+            "arm64-v8a",
+            "x86_64"
+          ],
+          "path": "./src/main/cangjie/cjpm.toml"
+        },
+        "nativeLib": {
+          "filter": {
+            "enableOverride": true
+          }
+        }
+      },
+      "buildOptionSet": [
+        {
+          "name": "default"
+        },
+        {
+          "name": "debug"
+        },
+        {
+          "name": "release"
+        }
+      ],
+      "targets": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    "BUILD_CACHE_DIR": ""
+  },
+  "ohos-project": {
+    "SELECT_PRODUCT_NAME": "default",
+    "MODULE_BUILD_DIR": "D:\\homework\\cangjie\\homework_app\\ourApp\\build",
+    "BUNDLE_NAME": "com.example.myapplication",
+    "BUILD_PATH": {
+      "OUTPUT_PATH": "D:\\homework\\cangjie\\homework_app\\ourApp\\build\\outputs\\default"
+    },
+    "MODULES": [
+      {
+        "name": "entry",
+        "srcPath": "D:\\homework\\cangjie\\homework_app\\ourApp\\entry",
+        "targets": [
+          {
+            "name": "default",
+            "applyToProducts": [
+              "default"
+            ]
+          }
+        ],
+        "belongProjectPath": "D:\\homework\\cangjie\\homework_app\\ourApp"
+      }
+    ],
+    "PROFILE_OPT": {
+      "app": {
+        "signingConfigs": [],
+        "products": [
+          {
+            "name": "default",
+            "signingConfig": "default",
+            "targetSdkVersion": "5.0.5(17)",
+            "compatibleSdkVersion": "5.0.5(17)",
+            "runtimeOS": "HarmonyOS",
+            "buildOption": {
+              "strictMode": {
+                "caseSensitiveCheck": true,
+                "useNormalizedOHMUrl": true
+              }
+            }
+          }
+        ],
+        "buildModeSet": [
+          {
+            "name": "debug"
+          },
+          {
+            "name": "release"
+          }
+        ]
+      },
+      "modules": [
+        {
+          "name": "entry",
+          "srcPath": "./entry",
+          "targets": [
+            {
+              "name": "default",
+              "applyToProducts": [
+                "default"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "CONFIG_PROPERTIES": {
+      "enableSignTask": true,
+      "skipNativeIncremental": false,
+      "hvigor.keepDependency": true
+    },
+    "OVERALL_PROJECT_PATHS": [
+      "D:\\homework\\cangjie\\homework_app\\ourApp"
+    ],
+    "BUILD_CACHE_DIR": ""
+  },
+  "version": 1
+}
