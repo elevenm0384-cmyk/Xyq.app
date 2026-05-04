@@ -104,7 +104,7 @@ public class CategoryPage {
                 }.width(100.percent)
             }.layoutWeight(1)
             .justifyContent(FlexAlign.Center)
-            .alignSelf(HorizontalAlign.Start)
+            .alignSelf(ItemAlign.Start)
         }.padding(10)
     }.width(100.percent)
     .backgroundColor(Color.WHITE)
