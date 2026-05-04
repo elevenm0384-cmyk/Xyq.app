@@ -13,3 +13,8 @@ out/
 *.exe
 *.cjo
 .DS_Store
+
+**/cj_res
+**/*.cj.macrocall
+**/ability_mainability_entry.cj
+**/module_**_entry.cj
