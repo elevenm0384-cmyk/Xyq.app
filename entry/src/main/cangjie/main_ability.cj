@@ -21,6 +21,6 @@ class MainAbility <: Ability {
 
     public override func onWindowStageCreate(windowStage: WindowStage): Unit {
         AppLog.info("MainAbility onWindowStageCreate.")
-        windowStage.loadContent("EntryView")
+        windowStage.loadContent("AppRouter")
     }
 }
